@@ -5,8 +5,10 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/Admonistrator/source/repos/ASCII_FPS/ASCII_FPS/Content/Font.spritefont</File>
+    <File>C:/Users/Admonistrator/source/repos/ASCII_FPS/ASCII_FPS/Content/textures/bricks01.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
 </SourceFileCollection>

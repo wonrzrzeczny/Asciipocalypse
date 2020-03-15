@@ -29,6 +29,7 @@ namespace ASCII_FPS
 
 
         public static string debug = "";
+        public static Color[,] texture;
 
         protected override void Initialize()
         {
@@ -36,8 +37,11 @@ namespace ASCII_FPS
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
             scene = new Scene();
-            scene.AddTriangle(new Triangle(new Vector3(-5f, 4f, 20f), new Vector3(5f, 4f, 24f), new Vector3(1f, -5f, 18f), new Vector3(0.5f, 0.2f, 0.8f)));
-            scene.AddTriangle(new Triangle(new Vector3(-10f, 6f, 22f), new Vector3(2f, -2f, 34f), new Vector3(-4f, -2f, 28f), new Vector3(0.9f, 0.3f, 0.2f)));
+            scene.AddWall(-5, -20, -5, 20, 4, Vector3.One);
+            scene.AddWall(5, -20, 5, 20, 4, Vector3.One);
+            scene.AddWall(-20, 30, 20, 30, 4, Vector3.One);
+            scene.AddWall(-15, -30, -15, 30, 4, Vector3.One);
+            scene.AddWall(15, -30, 15, 30, 4, Vector3.One);
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
 
             graphics.PreferredBackBufferWidth = 1920;
@@ -50,6 +54,18 @@ namespace ASCII_FPS
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("Font");
+
+            Texture2D t = Content.Load<Texture2D>("textures/bricks01");
+            Color[] color1d = new Color[t.Width * t.Height];
+            t.GetData(color1d);
+            texture = new Color[t.Width, t.Height];
+            for (int i = 0; i < t.Width; i++)
+            {
+                for (int j = 0; j < t.Height; j++)
+                {
+                    texture[i, j] = color1d[i + j * t.Width];
+                }
+            }
         }
         
         protected override void UnloadContent()
@@ -102,9 +118,9 @@ namespace ASCII_FPS
                 for (int j = 0; j < console.Height; j++)
                 {
                     int color = console.Color[i, j];
-                    int r = (color << 5) & 0xe0;
-                    int g = (color << 2) & 0xe0;
-                    int b = color & 0xc0;
+                    int r = ((color & 0b111) * 0b1001001) >> 1;
+                    int g = (((color >> 3) & 0b111) * 0b1001001) >> 1;
+                    int b = ((color >> 6) & 0b11) * 0b1010101;
                     spriteBatch.DrawString(font, console.Data[i, j].ToString(), new Vector2(i, j) * Console.FONT_SIZE, new Color(r, g, b));
                 }
             }

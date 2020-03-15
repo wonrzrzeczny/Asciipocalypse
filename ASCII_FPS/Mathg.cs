@@ -39,9 +39,9 @@ namespace ASCII_FPS
 
         public static byte ColorTo8Bit(Vector3 c)
         {
-            byte r = (byte)(Clamp(c.X, 0, 1) * 8);
-            byte g = (byte)(Clamp(c.Y, 0, 1) * 8);
-            byte b = (byte)(Clamp(c.Z, 0, 1) * 4);
+            byte r = (byte)(Clamp(c.X, 0, 0.9f) * 8);
+            byte g = (byte)(Clamp(c.Y, 0, 0.9f) * 8);
+            byte b = (byte)(Clamp(c.Z, 0, 0.8f) * 4);
 
             return (byte)(r + (g << 3) + (b << 6));
         }

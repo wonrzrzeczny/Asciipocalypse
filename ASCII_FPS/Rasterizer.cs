@@ -9,6 +9,8 @@ namespace ASCII_FPS
         private Console console;
         private float[,] zBuffer;
 
+        private const string fogString = "@&#8o*,:.";
+
         public Rasterizer(Console console)
         {
             this.console = console;
@@ -17,8 +19,6 @@ namespace ASCII_FPS
 
         public void Raster(Scene scene, Camera camera)
         {
-            ASCII_FPS.debug = "";
-
             // Reset console
             for (int i = 0; i < console.Width; i++)
             {
@@ -47,28 +47,32 @@ namespace ASCII_FPS
                 Vector3 v1 = t1 * triangle.V2 + (1 - t1) * triangle.V0; // near plane intersection with v2--v0
                 Vector3 v2 = t2 * triangle.V0 + (1 - t2) * triangle.V1; // near plane intersection with v0--v1
 
+                Vector2 uv0 = t0 * triangle.UV1 + (1 - t0) * triangle.UV2; // uv corresponding to v0
+                Vector2 uv1 = t1 * triangle.UV2 + (1 - t1) * triangle.UV0; // uv corresponding to v1
+                Vector2 uv2 = t2 * triangle.UV0 + (1 - t2) * triangle.UV1; // uv corresponding to v2
+
                 if (s0 && s1 && s2) // fully beyond
                     triangles.Add(triangle);
                 else if (s0 && !s1 && !s2) // one vertex beyond
-                    triangles.Add(new Triangle(triangle.V0, v2, v1, triangle.Color));
+                    triangles.Add(new Triangle(triangle.V0, v2, v1, triangle.Color, triangle.UV0, uv2, uv1));
                 else if (s1 && !s2 && !s0)
-                    triangles.Add(new Triangle(triangle.V1, v0, v2, triangle.Color));
+                    triangles.Add(new Triangle(triangle.V1, v0, v2, triangle.Color, triangle.UV1, uv0, uv2));
                 else if (s2 && !s0 && !s1)
-                    triangles.Add(new Triangle(triangle.V2, v1, v0, triangle.Color));
+                    triangles.Add(new Triangle(triangle.V2, v1, v0, triangle.Color, triangle.UV2, uv1, uv0));
                 else if (!s0 && s1 && s2) // two vertices beyond
                 {
-                    triangles.Add(new Triangle(triangle.V2, v1, triangle.V1, triangle.Color));
-                    triangles.Add(new Triangle(v1, v2, triangle.V1, triangle.Color));
+                    triangles.Add(new Triangle(triangle.V2, v1, triangle.V1, triangle.Color, triangle.UV2, uv1, triangle.UV1));
+                    triangles.Add(new Triangle(v1, v2, triangle.V1, triangle.Color, uv1, uv2, triangle.UV1));
                 }
                 else if (!s1 && s2 && s0)
                 {
-                    triangles.Add(new Triangle(triangle.V0, v2, triangle.V2, triangle.Color));
-                    triangles.Add(new Triangle(v2, v0, triangle.V2, triangle.Color));
+                    triangles.Add(new Triangle(triangle.V0, v2, triangle.V2, triangle.Color, triangle.UV0, uv2, triangle.UV2));
+                    triangles.Add(new Triangle(v2, v0, triangle.V2, triangle.Color, uv2, uv0, triangle.UV2));
                 }
                 else if (!s2 && s0 && s1)
                 {
-                    triangles.Add(new Triangle(triangle.V1, v0, triangle.V0, triangle.Color));
-                    triangles.Add(new Triangle(v0, v1, triangle.V0, triangle.Color));
+                    triangles.Add(new Triangle(triangle.V1, v0, triangle.V0, triangle.Color, triangle.UV1, uv0, triangle.UV0));
+                    triangles.Add(new Triangle(v0, v1, triangle.V0, triangle.Color, uv0, uv1, triangle.UV0));
                 }
             }
 
@@ -88,8 +92,6 @@ namespace ASCII_FPS
                 float z1 = v1.Z / v1.W;
                 float z2 = v2.Z / v2.W;
 
-                ASCII_FPS.debug += triangle.V0 + " " + triangle.V1 + " " + triangle.V2 + "\n";
-
                 float minX = Math.Min(p0.X, Math.Min(p1.X, p2.X));
                 float maxX = Math.Max(p0.X, Math.Max(p1.X, p2.X));
                 float minY = Math.Min(p0.Y, Math.Min(p1.Y, p2.Y));
@@ -108,15 +110,19 @@ namespace ASCII_FPS
 
                         Vector3 bar = Mathg.Barycentric(new Vector2(x, y), p0, p1, p2);
 
-                        if (bar.X > 0 && bar.Y > 0 && bar.Z > 0)
+                        if (bar.X >= 0 && bar.Y >= 0 && bar.Z >= 0)
                         {
                             float z = z0 * bar.X + z1 * bar.Y + z2 * bar.Z;
                             
                             if (z > -1 && z < 1 && z < zBuffer[i, j])
                             {
                                 zBuffer[i, j] = z;
-                                console.Data[i, j] = '#';
-                                console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Color);
+                                console.Data[i, j] = fogString[(int)(Math.Max(0f, z * z * z) * fogString.Length)];
+
+                                // Sample from texture
+                                Vector2 uv = bar.X * triangle.UV0 / v0.W + bar.Y * triangle.UV1 / v1.W + bar.Z * triangle.UV2 / v2.W;
+                                uv /= bar.X / v0.W + bar.Y / v1.W + bar.Z / v2.W;
+                                console.Color[i, j] = Mathg.ColorTo8Bit(ASCII_FPS.texture[(int)(uv.X * 256) & 0xff, (int)(uv.Y * 256) & 0xff].ToVector3());
                             }
                         }
                     }
