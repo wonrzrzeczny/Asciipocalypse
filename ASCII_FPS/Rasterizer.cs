@@ -101,6 +101,12 @@ namespace ASCII_FPS
                 int minJ = Math.Max(0, (int)((minY + 1f) * 0.5f * console.Height));
                 int maxJ = Math.Min(console.Height, (int)((maxY + 1f) * 0.5f * console.Height) + 1);
 
+                // Values for barycentric coordinates calculation
+                float dot11 = Vector2.Dot(p1 - p0, p1 - p0);
+                float dot22 = Vector2.Dot(p2 - p0, p2 - p0);
+                float dot12 = Vector2.Dot(p1 - p0, p2 - p0);
+                float det = dot11 * dot22 - dot12 * dot12;
+
                 for (int i = minI; i < maxI; i++)
                 {
                     for (int j = minJ; j < maxJ; j++)
@@ -108,7 +114,7 @@ namespace ASCII_FPS
                         float x = 2f * i / console.Width - 1;
                         float y = 2f * j / console.Height - 1;
 
-                        Vector3 bar = Mathg.Barycentric(new Vector2(x, y), p0, p1, p2);
+                        Vector3 bar = Mathg.Barycentric(new Vector2(x, y), p0, p1, p2, dot11, dot22, dot12, det);
 
                         if (bar.X >= 0 && bar.Y >= 0 && bar.Z >= 0)
                         {

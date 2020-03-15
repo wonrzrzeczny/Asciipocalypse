@@ -110,6 +110,8 @@ namespace ASCII_FPS
         
         protected override void Draw(GameTime gameTime)
         {
+            debug = gameTime.ElapsedGameTime.Milliseconds + " ms";
+
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
