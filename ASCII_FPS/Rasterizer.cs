@@ -147,7 +147,7 @@ namespace ASCII_FPS
                             {
                                 zBuffer[i, j] = z;
 
-                                int fogId = (z < 0) ? 0 : (int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]);
+                                int fogId = (z < 0) ? 0 : Math.Min((int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]), fogString.Length - 1);
                                 console.Data[i, j] = fogString[fogId];
 
                                 // Sample from texture

@@ -37,11 +37,19 @@ namespace ASCII_FPS
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
             scene = new Scene();
-            scene.AddWall(-5, -20, -5, 20, 4, Vector3.One);
+            /*scene.AddWall(-5, -20, -5, 20, 4, Vector3.One);
             scene.AddWall(5, -20, 5, 20, 4, Vector3.One);
             scene.AddWall(-20, 30, 20, 30, 4, Vector3.One);
             scene.AddWall(-15, -30, -15, 30, 4, Vector3.One);
-            scene.AddWall(15, -30, 15, 30, 4, Vector3.One);
+            scene.AddWall(15, -30, 15, 30, 4, Vector3.One);*/
+            for (int i = 0; i < 50; i++)
+            {
+                float x0 = (float)random.NextDouble() * 400f;
+                float z0 = (float)random.NextDouble() * 400f;
+                float x1 = (float)random.NextDouble() * 400f;
+                float z1 = (float)random.NextDouble() * 400f;
+                scene.AddWall(x0, z0, x1, z1, 4f, Vector3.One);
+            }
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
 
             graphics.PreferredBackBufferWidth = 1920;
@@ -93,6 +101,13 @@ namespace ASCII_FPS
                 rotation -= 0.0005f * (float)Math.PI * gameTime.ElapsedGameTime.Milliseconds;
             if (keyboard.IsKeyDown(Keys.Right))
                 rotation += 0.0005f * (float)Math.PI * gameTime.ElapsedGameTime.Milliseconds;
+
+            if (keyboard.IsKeyDown(Keys.LeftShift))
+            {
+                shift *= 2.5f;
+                rotation *= 2.5f;
+            }
+
             Matrix rotationMatrix = Mathg.RotationMatrix(-rotation);
 
             foreach (Triangle triangle in scene.triangles)
