@@ -8,13 +8,24 @@ namespace ASCII_FPS
     {
         private Console console;
         private float[,] zBuffer;
+        private float[,] offset;
+        private Random rand;
 
-        private const string fogString = "@&#8x*,:.";
+        private const string fogString = "@&#8x*,:. ";
 
         public Rasterizer(Console console)
         {
+            rand = new Random();
             this.console = console;
             zBuffer = new float[console.Width, console.Height];
+            offset = new float[console.Width, console.Height];
+            for (int i = 0; i < console.Width; i++)
+            {
+                for (int j = 0; j < console.Height; j++)
+                {
+                    offset[i, j] = (float)rand.NextDouble() - 0.5f;
+                }
+            }
         }
 
         public void Raster(Scene scene, Camera camera)
@@ -135,7 +146,9 @@ namespace ASCII_FPS
                             if (z > -1 && z < 1 && z < zBuffer[i, j])
                             {
                                 zBuffer[i, j] = z;
-                                console.Data[i, j] = fogString[(int)(Math.Max(0f, z * z * z) * fogString.Length)];
+
+                                int fogId = (z < 0) ? 0 : (int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]);
+                                console.Data[i, j] = fogString[fogId];
 
                                 // Sample from texture
                                 Vector2 uv = bar.X * triangle.UV0 / v0.W + bar.Y * triangle.UV1 / v1.W + bar.Z * triangle.UV2 / v2.W;
