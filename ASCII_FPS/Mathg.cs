@@ -30,19 +30,6 @@ namespace ASCII_FPS
             return new Vector3(bar0, bar1, bar2);
         }
 
-        // Version with precomputed values that are independent of p
-        public static Vector3 Barycentric(Vector2 p, Vector2 v0, Vector2 v1, Vector2 v2, float dot11, float dot22, float dot12, float det)
-        {
-            float dotp1 = Vector2.Dot(p - v0, v1 - v0);
-            float dotp2 = Vector2.Dot(p - v0, v2 - v0);
-
-            float bar1 = (dot22 * dotp1 - dot12 * dotp2) / det;
-            float bar2 = (dot11 * dotp2 - dot12 * dotp1) / det;
-            float bar0 = 1 - bar1 - bar2;
-
-            return new Vector3(bar0, bar1, bar2);
-        }
-
         public static float Clamp(float v, float min, float max)
         {
             if (v < min) return min;

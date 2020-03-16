@@ -9,7 +9,7 @@ namespace ASCII_FPS
         private Console console;
         private float[,] zBuffer;
 
-        private const string fogString = "@&#8o*,:.";
+        private const string fogString = "@&#8x*,:.";
 
         public Rasterizer(Console console)
         {
@@ -29,6 +29,7 @@ namespace ASCII_FPS
                     zBuffer[i, j] = 1;
                 }
             }
+
 
             // Clipping triangles with near plane - warning, very ugly code ahead
             List<Triangle> triangles = new List<Triangle>();
@@ -76,6 +77,7 @@ namespace ASCII_FPS
                 }
             }
 
+
             // Render
             Matrix m = camera.ProjectionMatrix;
             foreach (Triangle triangle in triangles)
@@ -101,21 +103,31 @@ namespace ASCII_FPS
                 int minJ = Math.Max(0, (int)((minY + 1f) * 0.5f * console.Height));
                 int maxJ = Math.Min(console.Height, (int)((maxY + 1f) * 0.5f * console.Height) + 1);
 
-                // Values for barycentric coordinates calculation
-                float dot11 = Vector2.Dot(p1 - p0, p1 - p0);
-                float dot22 = Vector2.Dot(p2 - p0, p2 - p0);
-                float dot12 = Vector2.Dot(p1 - p0, p2 - p0);
-                float det = dot11 * dot22 - dot12 * dot12;
+                // Four corners of rectangle
+                Vector2 topLeft = new Vector2(2f * minI / console.Width - 1f, 2f * minJ / console.Height - 1f);
+                Vector2 bottomLeft = new Vector2(2f * minI / console.Width - 1f, 2f * maxJ / console.Height - 1f);
+                Vector2 topRight = new Vector2(2f * maxI / console.Width - 1f, 2f * minJ / console.Height - 1f);
+                Vector2 bottomRight = new Vector2(2f * maxI / console.Width - 1f, 2f * maxJ / console.Height - 1f);
+
+                // Barycentric coordinates of corners
+                Vector3 barTopLeft = Mathg.Barycentric(topLeft, p0, p1, p2);
+                Vector3 barBottomLeft = Mathg.Barycentric(bottomLeft, p0, p1, p2);
+                Vector3 barTopRight = Mathg.Barycentric(topRight, p0, p1, p2);
+                Vector3 barBottomRight = Mathg.Barycentric(bottomRight, p0, p1, p2);
 
                 for (int i = minI; i < maxI; i++)
                 {
+                    // Barycentric coordinates of points on top and bottom edge, interpolated from corners
+                    float t = (float)(i - minI) / (maxI - minI);
+                    Vector3 barTop = barTopLeft * (1 - t) + barTopRight * t;
+                    Vector3 barBottom = barBottomLeft * (1 - t) + barBottomRight * t;
+                    
                     for (int j = minJ; j < maxJ; j++)
                     {
-                        float x = 2f * i / console.Width - 1;
-                        float y = 2f * j / console.Height - 1;
-
-                        Vector3 bar = Mathg.Barycentric(new Vector2(x, y), p0, p1, p2, dot11, dot22, dot12, det);
-
+                        // Barycentric coordinates of point (i, j), interpolated from top and bottom
+                        float t2 = (float)(j - minJ) / (maxJ - minJ);
+                        Vector3 bar = barTop * (1 - t2) + barBottom * t2;
+                        
                         if (bar.X >= 0 && bar.Y >= 0 && bar.Z >= 0)
                         {
                             float z = z0 * bar.X + z1 * bar.Y + z2 * bar.Z;

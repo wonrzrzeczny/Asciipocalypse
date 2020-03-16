@@ -43,10 +43,10 @@ namespace ASCII_FPS
         {
             get
             {
-                return new Matrix(2 * Near / nearScreenWidth, 0, 0, 0,
-                                  0, 2 * Near / nearScreenHeight, 0, 0,
-                                  0, 0, (Far + Near) / (Far - Near), 1,
-                                  0, 0, -2 * Near * Far / (Far - Near), 0);
+                return new Matrix(2 * Near / nearScreenWidth,  0,                            0,                               0,
+                                  0,                           2 * Near / nearScreenHeight,  0,                               0,
+                                  0,                           0,                            (Far + Near) / (Far - Near),     1,
+                                  0,                           0,                            -2 * Near * Far / (Far - Near),  0);
             }
         }
     }
