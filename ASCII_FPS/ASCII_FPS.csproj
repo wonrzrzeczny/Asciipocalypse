@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AsciiTexture.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="ASCII_FPS.cs" />

@@ -29,7 +29,7 @@ namespace ASCII_FPS
 
 
         public static string debug = "";
-        public static Color[,] texture;
+        public AsciiTexture texture1, texture2;
 
         protected override void Initialize()
         {
@@ -42,14 +42,6 @@ namespace ASCII_FPS
             scene.AddWall(-20, 30, 20, 30, 4, Vector3.One);
             scene.AddWall(-15, -30, -15, 30, 4, Vector3.One);
             scene.AddWall(15, -30, 15, 30, 4, Vector3.One);*/
-            for (int i = 0; i < 50; i++)
-            {
-                float x0 = (float)random.NextDouble() * 400f;
-                float z0 = (float)random.NextDouble() * 400f;
-                float x1 = (float)random.NextDouble() * 400f;
-                float z1 = (float)random.NextDouble() * 400f;
-                scene.AddWall(x0, z0, x1, z1, 4f, Vector3.One);
-            }
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
 
             graphics.PreferredBackBufferWidth = 1920;
@@ -62,17 +54,17 @@ namespace ASCII_FPS
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("Font");
+            
+            texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
+            texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
 
-            Texture2D t = Content.Load<Texture2D>("textures/bricks01");
-            Color[] color1d = new Color[t.Width * t.Height];
-            t.GetData(color1d);
-            texture = new Color[t.Width, t.Height];
-            for (int i = 0; i < t.Width; i++)
+            for (int i = 0; i < 50; i++)
             {
-                for (int j = 0; j < t.Height; j++)
-                {
-                    texture[i, j] = color1d[i + j * t.Width];
-                }
+                float x0 = (float)random.NextDouble() * 400f;
+                float z0 = (float)random.NextDouble() * 400f;
+                float x1 = (float)random.NextDouble() * 400f;
+                float z1 = (float)random.NextDouble() * 400f;
+                scene.AddWall(x0, z0, x1, z1, 4f, random.Next(2) == 0 ? texture1 : texture2);
             }
         }
         

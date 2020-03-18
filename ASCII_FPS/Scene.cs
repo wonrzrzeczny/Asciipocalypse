@@ -17,13 +17,13 @@ namespace ASCII_FPS
             triangles.Add(triangle);
         }
 
-        public void AddWall(float x0, float z0, float x1, float z1, float h, Vector3 color)
+        public void AddWall(float x0, float z0, float x1, float z1, float h, AsciiTexture texture)
         {
             float ratio = (new Vector2(x0, z0) - new Vector2(x1, z1)).Length() / h;
 
-            triangles.Add(new Triangle(new Vector3(x0, h, z0), new Vector3(x1, h, z1), new Vector3(x0, -h, z0), color, 
+            triangles.Add(new Triangle(new Vector3(x0, h, z0), new Vector3(x1, h, z1), new Vector3(x0, -h, z0), texture, 
                 new Vector2(0f, 0f), new Vector2(ratio, 0f), new Vector2(0f, 1f)));
-            triangles.Add(new Triangle(new Vector3(x0, -h, z0), new Vector3(x1, h, z1), new Vector3(x1, -h, z1), color,
+            triangles.Add(new Triangle(new Vector3(x0, -h, z0), new Vector3(x1, h, z1), new Vector3(x1, -h, z1), texture,
                 new Vector2(0f, 1f), new Vector2(ratio, 0f), new Vector2(ratio, 1f)));
         }
     }
