@@ -29,19 +29,13 @@ namespace ASCII_FPS
 
 
         public static string debug = "";
-        public AsciiTexture texture1, texture2;
+        public static AsciiTexture texture1, texture2;
 
         protected override void Initialize()
         {
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
-            scene = new Scene();
-            /*scene.AddWall(-5, -20, -5, 20, 4, Vector3.One);
-            scene.AddWall(5, -20, 5, 20, 4, Vector3.One);
-            scene.AddWall(-20, 30, 20, 30, 4, Vector3.One);
-            scene.AddWall(-15, -30, -15, 30, 4, Vector3.One);
-            scene.AddWall(15, -30, 15, 30, 4, Vector3.One);*/
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
 
             graphics.PreferredBackBufferWidth = 1920;
@@ -58,14 +52,7 @@ namespace ASCII_FPS
             texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
             texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
 
-            for (int i = 0; i < 50; i++)
-            {
-                float x0 = (float)random.NextDouble() * 400f;
-                float z0 = (float)random.NextDouble() * 400f;
-                float x1 = (float)random.NextDouble() * 400f;
-                float z1 = (float)random.NextDouble() * 400f;
-                scene.AddWall(x0, z0, x1, z1, 4f, random.Next(2) == 0 ? texture1 : texture2);
-            }
+            scene = Scenes.Scenes.Level1();
         }
         
         protected override void UnloadContent()
@@ -135,8 +122,7 @@ namespace ASCII_FPS
             }
             spriteBatch.DrawString(font, debug, Vector2.Zero, Color.White);
             spriteBatch.End();
-
-
+            
             base.Draw(gameTime);
         }
     }
