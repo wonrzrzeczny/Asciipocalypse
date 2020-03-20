@@ -87,7 +87,8 @@ namespace ASCII_FPS
                 rotation *= 2.5f;
             }
 
-            camera.CameraPos += shift;
+            if (scene.CheckMovement(camera.CameraPos, shift))
+                camera.CameraPos += shift;
             camera.Rotation += rotation;
 
             base.Update(gameTime);

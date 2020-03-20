@@ -57,7 +57,6 @@ namespace ASCII_FPS
 
             // Render
             Matrix projectionMatrix = camera.ProjectionMatrix;
-            System.Console.WriteLine(Vector4.Transform(new Vector4(triangles[0].V0, 1), camera.CameraSpaceMatrix));
             foreach (Triangle triangle in triangles)
             {
                 Vector4 v0 = Vector4.Transform(new Vector4(triangle.V0, 1), projectionMatrix);

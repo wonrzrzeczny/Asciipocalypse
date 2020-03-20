@@ -38,6 +38,11 @@ namespace ASCII_FPS
             return new Vector3(bar0, bar1, bar2);
         }
 
+        public static float Cross2D(Vector2 a, Vector2 b)
+        {
+            return a.X * b.Y - a.Y * b.X;
+        }
+
         public static float Clamp(float v, float min, float max)
         {
             if (v < min) return min;
