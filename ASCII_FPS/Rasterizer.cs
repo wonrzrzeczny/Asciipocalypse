@@ -41,16 +41,28 @@ namespace ASCII_FPS
                 }
             }
 
+            //Tranform to camera space
+            List<Triangle> triangles = new List<Triangle>();
+            Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
+            foreach (Triangle triangle in scene.triangles)
+            {
+                Vector3 v0 = Vector3.Transform(triangle.V0, cameraSpaceMatrix);
+                Vector3 v1 = Vector3.Transform(triangle.V1, cameraSpaceMatrix);
+                Vector3 v2 = Vector3.Transform(triangle.V2, cameraSpaceMatrix);
+                triangles.Add(new Triangle(v0, v1, v2, triangle.Texture, triangle.UV0, triangle.UV1, triangle.UV2));
+            }
+
             // Clipping
-            List<Triangle> triangles = ClipTriangles(scene, camera);
+            triangles = ClipTriangles(triangles, camera);
 
             // Render
-            Matrix m = camera.ProjectionMatrix;
+            Matrix projectionMatrix = camera.ProjectionMatrix;
+            System.Console.WriteLine(Vector4.Transform(new Vector4(triangles[0].V0, 1), camera.CameraSpaceMatrix));
             foreach (Triangle triangle in triangles)
             {
-                Vector4 v0 = Vector4.Transform(new Vector4(triangle.V0, 1), m);
-                Vector4 v1 = Vector4.Transform(new Vector4(triangle.V1, 1), m);
-                Vector4 v2 = Vector4.Transform(new Vector4(triangle.V2, 1), m);
+                Vector4 v0 = Vector4.Transform(new Vector4(triangle.V0, 1), projectionMatrix);
+                Vector4 v1 = Vector4.Transform(new Vector4(triangle.V1, 1), projectionMatrix);
+                Vector4 v2 = Vector4.Transform(new Vector4(triangle.V2, 1), projectionMatrix);
 
                 Vector2 p0 = new Vector2(v0.X, -v0.Y) / v0.W;
                 Vector2 p1 = new Vector2(v1.X, -v1.Y) / v1.W;
@@ -117,11 +129,11 @@ namespace ASCII_FPS
         }
 
         // Clipping triangles with near plane - warning, very ugly code ahead
-        public List<Triangle> ClipTriangles(Scene scene, Camera camera)
+        public List<Triangle> ClipTriangles(List<Triangle> triangles, Camera camera)
         {
-            List<Triangle> triangles = new List<Triangle>();
+            List<Triangle> trianglesOut = new List<Triangle>();
 
-            foreach (Triangle triangle in scene.triangles)
+            foreach (Triangle triangle in triangles)
             {
                 bool s0 = triangle.V0.Z > camera.Near;
                 bool s1 = triangle.V1.Z > camera.Near;
@@ -140,31 +152,31 @@ namespace ASCII_FPS
                 Vector2 uv2 = t2 * triangle.UV0 + (1 - t2) * triangle.UV1; // uv corresponding to v2
 
                 if (s0 && s1 && s2) // fully beyond
-                    triangles.Add(triangle);
+                    trianglesOut.Add(triangle);
                 else if (s0 && !s1 && !s2) // one vertex beyond
-                    triangles.Add(new Triangle(triangle.V0, v2, v1, triangle.Texture, triangle.UV0, uv2, uv1));
+                    trianglesOut.Add(new Triangle(triangle.V0, v2, v1, triangle.Texture, triangle.UV0, uv2, uv1));
                 else if (s1 && !s2 && !s0)
-                    triangles.Add(new Triangle(triangle.V1, v0, v2, triangle.Texture, triangle.UV1, uv0, uv2));
+                    trianglesOut.Add(new Triangle(triangle.V1, v0, v2, triangle.Texture, triangle.UV1, uv0, uv2));
                 else if (s2 && !s0 && !s1)
-                    triangles.Add(new Triangle(triangle.V2, v1, v0, triangle.Texture, triangle.UV2, uv1, uv0));
+                    trianglesOut.Add(new Triangle(triangle.V2, v1, v0, triangle.Texture, triangle.UV2, uv1, uv0));
                 else if (!s0 && s1 && s2) // two vertices beyond
                 {
-                    triangles.Add(new Triangle(triangle.V2, v1, triangle.V1, triangle.Texture, triangle.UV2, uv1, triangle.UV1));
-                    triangles.Add(new Triangle(v1, v2, triangle.V1, triangle.Texture, uv1, uv2, triangle.UV1));
+                    trianglesOut.Add(new Triangle(triangle.V2, v1, triangle.V1, triangle.Texture, triangle.UV2, uv1, triangle.UV1));
+                    trianglesOut.Add(new Triangle(v1, v2, triangle.V1, triangle.Texture, uv1, uv2, triangle.UV1));
                 }
                 else if (!s1 && s2 && s0)
                 {
-                    triangles.Add(new Triangle(triangle.V0, v2, triangle.V2, triangle.Texture, triangle.UV0, uv2, triangle.UV2));
-                    triangles.Add(new Triangle(v2, v0, triangle.V2, triangle.Texture, uv2, uv0, triangle.UV2));
+                    trianglesOut.Add(new Triangle(triangle.V0, v2, triangle.V2, triangle.Texture, triangle.UV0, uv2, triangle.UV2));
+                    trianglesOut.Add(new Triangle(v2, v0, triangle.V2, triangle.Texture, uv2, uv0, triangle.UV2));
                 }
                 else if (!s2 && s0 && s1)
                 {
-                    triangles.Add(new Triangle(triangle.V1, v0, triangle.V0, triangle.Texture, triangle.UV1, uv0, triangle.UV0));
-                    triangles.Add(new Triangle(v0, v1, triangle.V0, triangle.Texture, uv0, uv1, triangle.UV0));
+                    trianglesOut.Add(new Triangle(triangle.V1, v0, triangle.V0, triangle.Texture, triangle.UV1, uv0, triangle.UV0));
+                    trianglesOut.Add(new Triangle(v0, v1, triangle.V0, triangle.Texture, uv0, uv1, triangle.UV0));
                 }
             }
 
-            return triangles;
+            return trianglesOut;
         }
     }
 }

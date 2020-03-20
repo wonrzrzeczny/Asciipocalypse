@@ -49,5 +49,21 @@ namespace ASCII_FPS
                                   0,                           0,                            -2 * Near * Far / (Far - Near),  0);
             }
         }
+
+        public Matrix CameraSpaceMatrix
+        {
+            get
+            {
+                return Mathg.TranslationMatrix(-CameraPos) * Mathg.RotationMatrix(-Rotation);
+            }
+        }
+
+        public Vector3 Forward
+        {
+            get
+            {
+                return new Vector3((float)Math.Sin(Rotation), 0f, (float)Math.Cos(Rotation));
+            }
+        }
     }
 }

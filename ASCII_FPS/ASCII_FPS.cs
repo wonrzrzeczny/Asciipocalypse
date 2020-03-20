@@ -71,9 +71,9 @@ namespace ASCII_FPS
 
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keys.Up))
-                shift += 0.02f * gameTime.ElapsedGameTime.Milliseconds * Vector3.Forward;
+                shift += 0.02f * gameTime.ElapsedGameTime.Milliseconds * camera.Forward;
             if (keyboard.IsKeyDown(Keys.Down))
-                shift += 0.02f * gameTime.ElapsedGameTime.Milliseconds * Vector3.Backward;
+                shift -= 0.02f * gameTime.ElapsedGameTime.Milliseconds * camera.Forward;
 
             float rotation = 0f;
             if (keyboard.IsKeyDown(Keys.Left))
@@ -87,17 +87,8 @@ namespace ASCII_FPS
                 rotation *= 2.5f;
             }
 
-            Matrix rotationMatrix = Mathg.RotationMatrix(-rotation);
-
-            foreach (Triangle triangle in scene.triangles)
-            {
-                triangle.V0 += shift;
-                triangle.V1 += shift;
-                triangle.V2 += shift;
-                triangle.V0 = Vector3.Transform(triangle.V0, rotationMatrix);
-                triangle.V1 = Vector3.Transform(triangle.V1, rotationMatrix);
-                triangle.V2 = Vector3.Transform(triangle.V2, rotationMatrix);
-            }
+            camera.CameraPos += shift;
+            camera.Rotation += rotation;
 
             base.Update(gameTime);
         }

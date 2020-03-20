@@ -13,6 +13,14 @@ namespace ASCII_FPS
                               0,                       0,  0,                        1);
         }
 
+        public static Matrix TranslationMatrix(Vector3 translation)
+        {
+            return new Matrix(1,              0,              0,              0,
+                              0,              1,              0,              0,
+                              0,              0,              1,              0,
+                              translation.X,  translation.Y,  translation.Z,  1);
+        }
+
         public static Vector3 Barycentric(Vector2 p, Vector2 v0, Vector2 v1, Vector2 v2)
         {
             float dotp1 = Vector2.Dot(p - v0, v1 - v0);
