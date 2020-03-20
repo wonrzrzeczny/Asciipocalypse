@@ -32,15 +32,23 @@ namespace ASCII_FPS
             walls.Add(new Vector2[2] { new Vector2(x0, z0), new Vector2(x1, z1) });
         }
 
-        public bool CheckMovement(Vector3 from, Vector3 direction)
+        public bool CheckMovement(Vector3 from, Vector3 direction, float radius)
         {
             Vector2 from2 = new Vector2(from.X, from.Z);
             Vector2 direction2 = new Vector2(direction.X, direction.Z);
             Vector2 to2 = from2 + direction2;
             foreach (Vector2[] wall in walls)
             {
-                if (Mathg.Cross2D(wall[1] - wall[0], from2 - wall[0]) * Mathg.Cross2D(wall[1] - wall[0], to2 - wall[0]) < 0 &&
-                    Mathg.Cross2D(to2 - from2, wall[0] - from2) * Mathg.Cross2D(to2 - from2, wall[1] - from2) < 0)
+                Vector2 v0 = wall[0];
+                Vector2 v1 = wall[1];
+                Vector2 directionOffest = Vector2.Normalize(new Vector2((v1 - v0).Y, -(v1 - v0).X));
+                if (Mathg.Cross2D(v1 - v0, from2 - v0) > 0)
+                    directionOffest *= -1;
+                v0 += directionOffest * radius;
+                v1 += directionOffest * radius;
+
+                if (Mathg.Cross2D(v1 - v0, from2 - v0) * Mathg.Cross2D(v1 - v0, to2 - v0) < 0 &&
+                    Mathg.Cross2D(to2 - from2, v0 - from2) * Mathg.Cross2D(to2 - from2, v1 - from2) < 0)
                     return false;
             }
 
