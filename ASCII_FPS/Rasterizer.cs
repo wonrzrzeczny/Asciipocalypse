@@ -44,12 +44,16 @@ namespace ASCII_FPS
             //Tranform to camera space
             List<Triangle> triangles = new List<Triangle>();
             Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
-            foreach (Triangle triangle in scene.triangles)
+            foreach (MeshObject mesh in scene.meshes)
             {
-                Vector3 v0 = Vector3.Transform(triangle.V0, cameraSpaceMatrix);
-                Vector3 v1 = Vector3.Transform(triangle.V1, cameraSpaceMatrix);
-                Vector3 v2 = Vector3.Transform(triangle.V2, cameraSpaceMatrix);
-                triangles.Add(new Triangle(v0, v1, v2, triangle.Texture, triangle.UV0, triangle.UV1, triangle.UV2));
+                Matrix meshToCameraMatrix = mesh.WorldSpaceMatrix * cameraSpaceMatrix;
+                foreach (Triangle triangle in mesh.triangles)
+                {
+                    Vector3 v0 = Vector3.Transform(triangle.V0, meshToCameraMatrix);
+                    Vector3 v1 = Vector3.Transform(triangle.V1, meshToCameraMatrix);
+                    Vector3 v2 = Vector3.Transform(triangle.V2, meshToCameraMatrix);
+                    triangles.Add(new Triangle(v0, v1, v2, triangle.Texture, triangle.UV0, triangle.UV1, triangle.UV2));
+                }
             }
 
             // Clipping

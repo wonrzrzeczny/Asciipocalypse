@@ -91,6 +91,11 @@ namespace ASCII_FPS
                 camera.CameraPos += shift;
             camera.Rotation += rotation;
 
+            foreach (MeshObject mesh in scene.meshes)
+            {
+                mesh.Rotation += 0.0001f * gameTime.ElapsedGameTime.Milliseconds;
+            }
+
             base.Update(gameTime);
         }
         
