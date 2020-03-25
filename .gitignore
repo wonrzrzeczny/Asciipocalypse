@@ -1,3 +1,8 @@
 .vs/**
 ASCII_FPS/obj/**
 ASCII_FPS/bin/**
+ASCII_FPS/Content/obj/**
+ASCII_FPS/Content/bin/**
+OBJContentPipelineExtension/obj/**
+packages/**
+OBJContentPipelineExtension/bin/**

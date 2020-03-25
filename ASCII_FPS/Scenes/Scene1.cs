@@ -4,7 +4,7 @@ namespace ASCII_FPS.Scenes
 {
     public static partial class Scenes
     {
-        public static Scene Level1()
+		public static Scene Level1()
         {
             Scene scene = new Scene();
 
@@ -33,6 +33,8 @@ namespace ASCII_FPS.Scenes
             scene.AddTriangle(new Triangle(tlh, trh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY));
             scene.AddTriangle(new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One));
             scene.AddTriangle(new Triangle(tlh, brh, blh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY));
+
+			scene.AddMesh(new MeshObject(ASCII_FPS.barrelModel, ASCII_FPS.barrelTexture, new Vector3(0f, -2f, 0f)));
 
             return scene;
         }

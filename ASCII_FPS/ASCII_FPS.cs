@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using OBJContentPipelineExtension;
 using System;
 
 namespace ASCII_FPS
@@ -29,7 +30,8 @@ namespace ASCII_FPS
 
 
         public static string debug = "";
-        public static AsciiTexture texture1, texture2;
+        public static AsciiTexture texture1, texture2, barrelTexture;
+        public static OBJFile barrelModel;
 
         protected override void Initialize()
         {
@@ -51,6 +53,8 @@ namespace ASCII_FPS
             
             texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
             texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
+			barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
+            barrelModel = Content.Load<OBJFile>("models/barrel");
 
             scene = Scenes.Scenes.Level1();
         }
@@ -90,11 +94,6 @@ namespace ASCII_FPS
             if (scene.CheckMovement(camera.CameraPos, shift, 0.65f))
                 camera.CameraPos += shift;
             camera.Rotation += rotation;
-
-            foreach (MeshObject mesh in scene.meshes)
-            {
-                mesh.Rotation += 0.0001f * gameTime.ElapsedGameTime.Milliseconds;
-            }
 
             base.Update(gameTime);
         }

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCII_FPS", "ASCII_FPS\ASCII_FPS.csproj", "{BE83E903-A8A8-464C-8FD3-B6AE81BD54FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBJContentPipelineExtension", "OBJContentPipelineExtension\OBJContentPipelineExtension.csproj", "{FD14C16C-54BC-4F6A-A59C-227A90F849B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BE83E903-A8A8-464C-8FD3-B6AE81BD54FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE83E903-A8A8-464C-8FD3-B6AE81BD54FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE83E903-A8A8-464C-8FD3-B6AE81BD54FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD14C16C-54BC-4F6A-A59C-227A90F849B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD14C16C-54BC-4F6A-A59C-227A90F849B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD14C16C-54BC-4F6A-A59C-227A90F849B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD14C16C-54BC-4F6A-A59C-227A90F849B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
