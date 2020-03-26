@@ -46,6 +46,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="ASCII_FPS.cs" />
+    <Compile Include="GameComponents\Projectile.cs" />
     <Compile Include="MeshObject.cs" />
     <Compile Include="PrimitiveMeshes.cs" />
     <Compile Include="Scenes\Scene1.cs" />

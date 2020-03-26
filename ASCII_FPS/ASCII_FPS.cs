@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using OBJContentPipelineExtension;
 using System;
+using System.Collections.Generic;
 
 namespace ASCII_FPS
 {
@@ -33,12 +35,15 @@ namespace ASCII_FPS
         public static AsciiTexture texture1, texture2, barrelTexture;
         public static OBJFile barrelModel;
 
-        protected override void Initialize()
+		private List<Projectile> projectiles;
+
+		protected override void Initialize()
         {
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+			projectiles = new List<Projectile>();
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -64,8 +69,9 @@ namespace ASCII_FPS
             Content.Unload();
         }
 
+
 		KeyboardState keyboardPrev;
-        protected override void Update(GameTime gameTime)
+		protected override void Update(GameTime gameTime)
         {
             KeyboardState keyboard = Keyboard.GetState();
 
@@ -80,7 +86,7 @@ namespace ASCII_FPS
             if (keyboard.IsKeyDown(Keys.Down))
                 shift -= 0.02f * gameTime.ElapsedGameTime.Milliseconds * camera.Forward;
 
-            float rotation = 0f;
+			float rotation = 0f;
             if (keyboard.IsKeyDown(Keys.Left))
                 rotation -= 0.0005f * (float)Math.PI * gameTime.ElapsedGameTime.Milliseconds;
             if (keyboard.IsKeyDown(Keys.Right))
@@ -97,7 +103,23 @@ namespace ASCII_FPS
             camera.Rotation += rotation;
 
 			if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
-				scene.AddMesh(PrimitiveMeshes.Octahedron(camera.CameraPos, 0.4f, texture1));
+			{
+				MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
+				projectiles.Add(new Projectile(camera.Forward, 75f, projectileMesh));
+				scene.AddMesh(projectileMesh);
+			}
+
+			List<Projectile> newProjectiles = new List<Projectile>();
+			foreach (Projectile projectile in projectiles)
+			{
+				Vector3 position = projectile.Position;
+				projectile.Update(gameTime);
+				Vector3 translation = projectile.Position - position;
+				if (scene.CheckMovement(position, translation, 0f))
+					newProjectiles.Add(projectile);
+				else scene.meshes.Remove(projectile.MeshObject);
+			}
+			projectiles = newProjectiles;
 
 			keyboardPrev = keyboard;
 

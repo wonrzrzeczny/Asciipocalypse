@@ -30,6 +30,15 @@ namespace ASCII_FPS.Scenes
 			triangles.AddRange(MakeWall(-40f, 30f, -40f, -30f, 4f, ASCII_FPS.texture1));
 			triangles.AddRange(MakeWall(-40f, -30f, -30f, -40f, 4f, ASCII_FPS.texture1));
 
+			scene.AddWall(-30f, -40f, 30f, -40f);
+			scene.AddWall(30f, -40f, 40f, -30f);
+			scene.AddWall(40f, -30f, 40f, 30f);
+			scene.AddWall(40f, 30f, 30f, 40f);
+			scene.AddWall(30f, 40f, -30f, 40f);
+			scene.AddWall(-30f, 40f, -40f, 30f);
+			scene.AddWall(-40f, 30f, -40f, -30f);
+			scene.AddWall(-40f, -30f, -30f, -40f);
+
 			Vector3 trl = new Vector3(40f, -4f, 40f);
 			Vector3 trh = new Vector3(40f, 4f, 40f);
 
