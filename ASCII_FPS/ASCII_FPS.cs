@@ -63,7 +63,8 @@ namespace ASCII_FPS
         {
             Content.Unload();
         }
-        
+
+		KeyboardState keyboardPrev;
         protected override void Update(GameTime gameTime)
         {
             KeyboardState keyboard = Keyboard.GetState();
@@ -94,6 +95,11 @@ namespace ASCII_FPS
             if (scene.CheckMovement(camera.CameraPos, shift, 0.65f))
                 camera.CameraPos += shift;
             camera.Rotation += rotation;
+
+			if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
+				scene.AddMesh(PrimitiveMeshes.Octahedron(camera.CameraPos, 0.4f, texture1));
+
+			keyboardPrev = keyboard;
 
             base.Update(gameTime);
         }

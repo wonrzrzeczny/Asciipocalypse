@@ -47,6 +47,7 @@
     <Compile Include="Console.cs" />
     <Compile Include="ASCII_FPS.cs" />
     <Compile Include="MeshObject.cs" />
+    <Compile Include="PrimitiveMeshes.cs" />
     <Compile Include="Scenes\Scene1.cs" />
     <Compile Include="Mathg.cs" />
     <Compile Include="Program.cs" />
