@@ -78,19 +78,23 @@ namespace ASCII_FPS
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            rasterizer.Raster(scene, camera);
+			float seconds = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
 
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keys.Up))
-                shift += 0.02f * gameTime.ElapsedGameTime.Milliseconds * camera.Forward;
+                shift += 20f * seconds * camera.Forward;
             if (keyboard.IsKeyDown(Keys.Down))
-                shift -= 0.02f * gameTime.ElapsedGameTime.Milliseconds * camera.Forward;
+                shift -= 20f * seconds * camera.Forward;
+			if (keyboard.IsKeyDown(Keys.X))
+				shift += 10f * seconds * camera.Right;
+			if (keyboard.IsKeyDown(Keys.Z))
+				shift -= 10f * seconds * camera.Right;
 
 			float rotation = 0f;
             if (keyboard.IsKeyDown(Keys.Left))
-                rotation -= 0.0005f * (float)Math.PI * gameTime.ElapsedGameTime.Milliseconds;
+                rotation -= 0.5f * (float)Math.PI * seconds;
             if (keyboard.IsKeyDown(Keys.Right))
-                rotation += 0.0005f * (float)Math.PI * gameTime.ElapsedGameTime.Milliseconds;
+                rotation += 0.5f * (float)Math.PI * seconds;
 
             if (keyboard.IsKeyDown(Keys.LeftShift))
             {
@@ -98,9 +102,10 @@ namespace ASCII_FPS
                 rotation *= 2.5f;
             }
 
-            if (scene.CheckMovement(camera.CameraPos, shift, 0.65f))
-                camera.CameraPos += shift;
-            camera.Rotation += rotation;
+			Vector3 realShift = scene.SmoothMovement(camera.CameraPos, shift, 0.65f);
+			camera.CameraPos += realShift;
+
+			camera.Rotation += rotation;
 
 			if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
 			{
@@ -123,12 +128,16 @@ namespace ASCII_FPS
 
 			keyboardPrev = keyboard;
 
-            base.Update(gameTime);
+
+
+			rasterizer.Raster(scene, camera);
+
+			base.Update(gameTime);
         }
         
         protected override void Draw(GameTime gameTime)
         {
-            debug = gameTime.ElapsedGameTime.Milliseconds + " ms";
+            //debug = gameTime.ElapsedGameTime.Milliseconds + " ms";
 
             GraphicsDevice.Clear(Color.Black);
 

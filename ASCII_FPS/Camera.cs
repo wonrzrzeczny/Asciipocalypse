@@ -65,5 +65,13 @@ namespace ASCII_FPS
                 return new Vector3((float)Math.Sin(Rotation), 0f, (float)Math.Cos(Rotation));
             }
         }
-    }
+
+		public Vector3 Right
+		{
+			get
+			{
+				return new Vector3((float)Math.Cos(Rotation), 0f, (float)-Math.Sin(Rotation));
+			}
+		}
+	}
 }
