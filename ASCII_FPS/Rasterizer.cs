@@ -55,9 +55,11 @@ namespace ASCII_FPS
                     triangles.Add(new Triangle(v0, v1, v2, triangle.Texture, triangle.UV0, triangle.UV1, triangle.UV2));
                 }
             }
+			ASCII_FPS.triangleCount = triangles.Count;
 
             // Clipping
             triangles = ClipTriangles(triangles, camera);
+			ASCII_FPS.triangleCountClipped = triangles.Count;
 
             // Render
             Matrix projectionMatrix = camera.ProjectionMatrix;

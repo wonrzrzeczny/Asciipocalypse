@@ -30,8 +30,13 @@ namespace ASCII_FPS
         Scene scene;
         Camera camera;
 
+		
+		public static int triangleCount = 0;
+		public static int triangleCountClipped = 0;
+		public static int frames = 0;
+		public static float timeElapsed = 0f;
+		public static float fps = 0f;
 
-        public static string debug = "";
         public static AsciiTexture texture1, texture2, barrelTexture;
         public static OBJFile barrelModel;
 
@@ -137,7 +142,15 @@ namespace ASCII_FPS
         
         protected override void Draw(GameTime gameTime)
         {
-            //debug = gameTime.ElapsedGameTime.Milliseconds + " ms";
+			frames += 1;
+			timeElapsed += gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+			if (timeElapsed > 1f)
+			{
+				fps = frames / timeElapsed;
+				timeElapsed = 0f;
+				frames = 0;
+			}
+			string debug = fps + " FPS\nNumber of triangles: " + triangleCount + "\nNumber of triangles after clipping: " + triangleCountClipped;
 
             GraphicsDevice.Clear(Color.Black);
 
