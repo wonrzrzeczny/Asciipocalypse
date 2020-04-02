@@ -53,7 +53,7 @@ namespace ASCII_FPS.Scenes
 			float x = (right - left) / 2;
 			float yc0 = -corridorWidth / 2;
 			float yc1 = corridorWidth / 2;
-			float y1 = (top - bottom) / 2;
+			float y1 = (bottom - top) / 2;
 			float y0 = -y1;
 
 			Vector2 vecTop = new Vector2(x, y0);
@@ -121,7 +121,7 @@ namespace ASCII_FPS.Scenes
 					float bottom = top + tileSize;
 					bool[] roomCorridors = new bool[4] { corridors[x, y, 0], corridors[x, y, 1], corridors[x, y, 2], corridors[x, y, 3] };
 
-					zones[x, y] = new Zone(new RectangleF(left, right, top, bottom));
+					zones[x, y] = new Zone(new RectangleF(left, top, tileSize, tileSize));
 					zones[x, y].AddMesh(MakeFloor(left, right, top, bottom, 4f));
 					zones[x, y].AddMesh(MakeRoomWalls(left, right, top, bottom, roomCorridors, 2f, 10f, 4f));
 

@@ -44,7 +44,17 @@ namespace ASCII_FPS
             //Tranform to camera space
             List<Triangle> triangles = new List<Triangle>();
             Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
-            foreach (MeshObject mesh in scene.dynamicMeshes)
+			Zone activeZone = null;
+			foreach (Zone zone in scene.zones)
+			{
+				if (zone.Bounds.TestPoint(new Vector2(camera.CameraPos.X, camera.CameraPos.Z)))
+					activeZone = zone;
+			}
+
+			if (activeZone == null)
+				return;
+
+            foreach (MeshObject mesh in activeZone.meshes)
             {
                 Matrix meshToCameraMatrix = mesh.WorldSpaceMatrix * cameraSpaceMatrix;
                 foreach (Triangle triangle in mesh.triangles)
@@ -56,7 +66,7 @@ namespace ASCII_FPS
                 }
             }
 			ASCII_FPS.triangleCount = triangles.Count;
-
+			
             // Clipping
             triangles = ClipTriangles(triangles, camera);
 			ASCII_FPS.triangleCountClipped = triangles.Count;
