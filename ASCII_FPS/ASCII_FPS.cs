@@ -116,7 +116,7 @@ namespace ASCII_FPS
 			{
 				MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
 				projectiles.Add(new Projectile(camera.Forward, 75f, projectileMesh));
-				scene.AddMesh(projectileMesh);
+				scene.AddDynamicMesh(projectileMesh);
 			}
 
 			List<Projectile> newProjectiles = new List<Projectile>();
@@ -127,7 +127,7 @@ namespace ASCII_FPS
 				Vector3 translation = projectile.Position - position;
 				if (scene.CheckMovement(position, translation, 0f))
 					newProjectiles.Add(projectile);
-				else scene.meshes.Remove(projectile.MeshObject);
+				else scene.dynamicMeshes.Remove(projectile.MeshObject);
 			}
 			projectiles = newProjectiles;
 

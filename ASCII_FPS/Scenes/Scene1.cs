@@ -48,7 +48,7 @@ namespace ASCII_FPS.Scenes
 						new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
 						new Triangle(tlh, brh, blh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY)
 					};
-					scene.AddMesh(new MeshObject(triangles, Vector3.Zero, 0f));
+					scene.AddDynamicMesh(new MeshObject(triangles, Vector3.Zero, 0f));
 				}
 			}
 		}
@@ -96,7 +96,7 @@ namespace ASCII_FPS.Scenes
 						bottom = new Vector2(bottom.Y, -bottom.X);
 					}
 
-					scene.AddMesh(new MeshObject(roomTriangles, new Vector3(shiftX, 0f, shiftY), 0f));
+					scene.AddDynamicMesh(new MeshObject(roomTriangles, new Vector3(shiftX, 0f, shiftY), 0f));
 				}
 			}
 		}

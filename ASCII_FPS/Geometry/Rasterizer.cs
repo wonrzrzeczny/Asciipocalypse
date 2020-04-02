@@ -44,7 +44,7 @@ namespace ASCII_FPS
             //Tranform to camera space
             List<Triangle> triangles = new List<Triangle>();
             Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
-            foreach (MeshObject mesh in scene.meshes)
+            foreach (MeshObject mesh in scene.dynamicMeshes)
             {
                 Matrix meshToCameraMatrix = mesh.WorldSpaceMatrix * cameraSpaceMatrix;
                 foreach (Triangle triangle in mesh.triangles)

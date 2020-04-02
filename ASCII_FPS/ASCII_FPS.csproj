@@ -47,15 +47,18 @@
     <Compile Include="Console.cs" />
     <Compile Include="ASCII_FPS.cs" />
     <Compile Include="GameComponents\Projectile.cs" />
-    <Compile Include="MeshObject.cs" />
+    <Compile Include="Geometry\Portal.cs" />
+    <Compile Include="RectangleF.cs" />
+    <Compile Include="Geometry\Zone.cs" />
+    <Compile Include="Geometry\MeshObject.cs" />
     <Compile Include="PrimitiveMeshes.cs" />
     <Compile Include="Scenes\Scene1.cs" />
     <Compile Include="Mathg.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rasterizer.cs" />
-    <Compile Include="Scene.cs" />
-    <Compile Include="Triangle.cs" />
+    <Compile Include="Geometry\Rasterizer.cs" />
+    <Compile Include="Geometry\Scene.cs" />
+    <Compile Include="Geometry\Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
