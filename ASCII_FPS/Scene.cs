@@ -13,6 +13,7 @@ namespace ASCII_FPS
         public Scene()
         {
 			dynamicMeshes = new List<MeshObject>();
+			zones = new List<Zone>();
             walls = new List<Vector2[]>();
         }
 
