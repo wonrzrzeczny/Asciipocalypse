@@ -127,7 +127,7 @@ namespace ASCII_FPS
 				Vector3 translation = projectile.Position - position;
 				if (scene.CheckMovement(position, translation, 0f))
 					newProjectiles.Add(projectile);
-				else scene.dynamicMeshes.Remove(projectile.MeshObject);
+				else scene.RemoveDynamicMesh(projectile.MeshObject);
 			}
 			projectiles = newProjectiles;
 
@@ -150,7 +150,10 @@ namespace ASCII_FPS
 				timeElapsed = 0f;
 				frames = 0;
 			}
-			string debug = fps + " FPS\nNumber of triangles: " + triangleCount + "\nNumber of triangles after clipping: " + triangleCountClipped;
+			string debug = fps + " FPS\nTotal number of triangles: " + scene.TotalTriangles +
+								 "\nNumber of rendered triangles: " + triangleCount +
+								 "\nNumber of triangles after clipping: " + triangleCountClipped +
+								 "\nPosition: " + camera.CameraPos;
 
             GraphicsDevice.Clear(Color.Black);
 

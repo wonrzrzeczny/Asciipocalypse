@@ -21,5 +21,10 @@ namespace ASCII_FPS
 		{
 			return point.X >= X && point.X <= X + Width && point.Y >= Y && point.Y <= Y + Height;
 		}
+
+		public override string ToString()
+		{
+			return "(" + X + ", " + Y + ", " + Width + " x " + Height + ")";
+		}
 	}
 }

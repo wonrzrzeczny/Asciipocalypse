@@ -124,21 +124,32 @@ namespace ASCII_FPS.Scenes
 					zones[x, y] = new Zone(new RectangleF(left, top, tileSize, tileSize));
 					zones[x, y].AddMesh(MakeFloor(left, right, top, bottom, 4f));
 					zones[x, y].AddMesh(MakeRoomWalls(left, right, top, bottom, roomCorridors, 2f, 10f, 4f));
+					
+					scene.AddZone(zones[x, y]);
+				}
+			}
 
-					if (roomCorridors[0])
-						zones[x, y].AddPortal(new Portal(zones[x + 1, y], new Vector2(right, (top + bottom) / 2 - 10f), 
+			for (int x = 0; x < size; x++)
+			{
+				for (int y = 0; y < size; y++)
+				{
+					float left = x * tileSize - size * tileSize / 2;
+					float right = left + tileSize;
+					float top = y * tileSize - size * tileSize / 2;
+					float bottom = top + tileSize;
+
+					if (corridors[x, y, 0])
+						zones[x, y].AddPortal(new Portal(zones[x + 1, y], new Vector2(right, (top + bottom) / 2 - 10f),
 																		  new Vector2(right, (top + bottom) / 2 + 10f)));
-					if (roomCorridors[1])
+					if (corridors[x, y, 1])
 						zones[x, y].AddPortal(new Portal(zones[x, y + 1], new Vector2((left + right) / 2 + 10f, bottom),
 																		  new Vector2((left + right) / 2 - 10f, bottom)));
-					if (roomCorridors[2])
+					if (corridors[x, y, 2])
 						zones[x, y].AddPortal(new Portal(zones[x - 1, y], new Vector2(left, (top + bottom) / 2 + 10f),
 																		  new Vector2(left, (top + bottom) / 2 - 10f)));
-					if (roomCorridors[3])
+					if (corridors[x, y, 3])
 						zones[x, y].AddPortal(new Portal(zones[x, y - 1], new Vector2((left + right) / 2 - 10f, top),
 																		  new Vector2((left + right) / 2 + 10f, top)));
-
-					scene.AddZone(zones[x, y]);
 				}
 			}
 

@@ -16,8 +16,8 @@ namespace ASCII_FPS
 
         private readonly float nearScreenWidth;
         private readonly float nearScreenHeight;
-        public Vector4 LeftPlane { get; private set; }
-        public Vector4 RightPlane { get; private set; }
+        public Vector3 LeftPlane { get; private set; }
+        public Vector3 RightPlane { get; private set; }
 
 
         public Camera(float near, float far, float fov, float aspectRatio)
@@ -34,8 +34,8 @@ namespace ASCII_FPS
             nearScreenWidth = 2 * near * (float)Math.Tan(fov / 2);
             nearScreenHeight = nearScreenWidth / aspectRatio;
 
-            LeftPlane = new Vector4(FocalLength / (float)Math.Sqrt(FocalLength * FocalLength + 1), 0, -1 / (float)Math.Sqrt(FocalLength * FocalLength + 1), 0);
-            RightPlane = new Vector4(-FocalLength / (float)Math.Sqrt(FocalLength * FocalLength + 1), 0, -1 / (float)Math.Sqrt(FocalLength * FocalLength + 1), 0);
+            LeftPlane = new Vector3(FocalLength / (float)Math.Sqrt(FocalLength * FocalLength + 1), 0, -1 / (float)Math.Sqrt(FocalLength * FocalLength + 1));
+            RightPlane = new Vector3(-FocalLength / (float)Math.Sqrt(FocalLength * FocalLength + 1), 0, -1 / (float)Math.Sqrt(FocalLength * FocalLength + 1));
         }
 
 
