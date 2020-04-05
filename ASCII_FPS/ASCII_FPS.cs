@@ -33,7 +33,7 @@ namespace ASCII_FPS
 		
 		public static int triangleCount = 0;
 		public static int triangleCountClipped = 0;
-		public static string zonesRendered = "";
+		public static int zonesRendered = 0;
 		public static int frames = 0;
 		public static float timeElapsed = 0f;
 		public static float fps = 0f;

@@ -44,7 +44,7 @@ namespace ASCII_FPS
 			List<Triangle> triangles = new List<Triangle>();
 			ASCII_FPS.triangleCount = 0;
 			ASCII_FPS.triangleCountClipped = 0;
-			ASCII_FPS.zonesRendered = "";
+			ASCII_FPS.zonesRendered = 0;
 
 			// Extract dynamic meshes
 			Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
@@ -217,7 +217,7 @@ namespace ASCII_FPS
 		// Render given zone with given bounds and analyze portals leading out of it
 		private void ProcessZone(Camera camera, Zone zone, int boundsLeft, int boundsRight)
 		{
-			ASCII_FPS.zonesRendered += "(" + boundsLeft + ", " + boundsRight + ") ";
+			ASCII_FPS.zonesRendered++;
 			List<Triangle> triangles = new List<Triangle>();
 
 			// Extract meshes
