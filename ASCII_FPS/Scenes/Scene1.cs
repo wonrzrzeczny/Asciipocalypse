@@ -18,7 +18,7 @@ namespace ASCII_FPS.Scenes
 			return new List<Triangle>(new Triangle[] { triangle1, triangle2 });
 		}
 
-		private static MeshObject MakeFloor(float left, float right, float top, float bottom, float roomHeight)
+		private static MeshObject MakeFloor(float left, float right, float bottom, float top, float roomHeight)
 		{
 			Vector3 trl = new Vector3(right, -roomHeight, top);
 			Vector3 trh = new Vector3(right, roomHeight, top);
@@ -42,7 +42,7 @@ namespace ASCII_FPS.Scenes
 			return new MeshObject(triangles, Vector3.Zero, 0f);
 		}
 
-		public static MeshObject MakeRoomWalls(float left, float right, float top, float bottom,
+		public static MeshObject MakeRoomWalls(float left, float right, float bottom, float top,
 											   bool[] corridors, float wallThickness, float corridorWidth, float roomHeight)
 		{
 			List<Triangle> roomTriangles = new List<Triangle>();
@@ -51,10 +51,10 @@ namespace ASCII_FPS.Scenes
 			float shiftY = (top + bottom) / 2;
 
 			float x = (right - left) / 2;
-			float yc0 = -corridorWidth / 2;
-			float yc1 = corridorWidth / 2;
+			float yc0 = corridorWidth / 2;
+			float yc1 = -corridorWidth / 2;
+			float y0 = (top - bottom) / 2;
 			float y1 = (bottom - top) / 2;
-			float y0 = -y1;
 
 			Vector2 vecTop = new Vector2(x, y0);
 			Vector2 vecTopCorridor = new Vector2(x, yc0);
@@ -76,10 +76,10 @@ namespace ASCII_FPS.Scenes
 					//scene.AddWall(top.X + shiftX, top.Y + shiftY, bottom.X + shiftX, bottom.Y + shiftY);
 				}
 						
-				vecTop = new Vector2(vecTop.Y, -vecTop.X);
-				vecTopCorridor = new Vector2(vecTopCorridor.Y, -vecTopCorridor.X);
-				vecBottomCorridor = new Vector2(vecBottomCorridor.Y, -vecBottomCorridor.X);
-				vecBottom = new Vector2(vecBottom.Y, -vecBottom.X);
+				vecTop = new Vector2(-vecTop.Y, vecTop.X);
+				vecTopCorridor = new Vector2(-vecTopCorridor.Y, vecTopCorridor.X);
+				vecBottomCorridor = new Vector2(-vecBottomCorridor.Y, vecBottomCorridor.X);
+				vecBottom = new Vector2(-vecBottom.Y, vecBottom.X);
 			}
 
 			return new MeshObject(roomTriangles, new Vector3(shiftX, 0f, shiftY), 0f);
@@ -94,9 +94,9 @@ namespace ASCII_FPS.Scenes
 				for (int j = 0; j < sizeY - 1; j++)
 				{
 					ret[i, j, 0] = rand.Next(8) > 0; // Right
-					ret[i, j, 1] = rand.Next(8) > 0; // Down
+					ret[i, j, 1] = rand.Next(8) > 0; // Up
 					ret[i + 1, j, 2] = ret[i, j, 0]; // Left
-					ret[i, j + 1, 3] = ret[i, j, 1]; // Up
+					ret[i, j + 1, 3] = ret[i, j, 1]; // Down
 				}
 			}
 			return ret;
@@ -117,13 +117,13 @@ namespace ASCII_FPS.Scenes
 				{
 					float left = x * tileSize - size * tileSize / 2;
 					float right = left + tileSize;
-					float top = y * tileSize - size * tileSize / 2;
-					float bottom = top + tileSize;
+					float bottom = y * tileSize - size * tileSize / 2;
+					float top = bottom + tileSize;
 					bool[] roomCorridors = new bool[4] { corridors[x, y, 0], corridors[x, y, 1], corridors[x, y, 2], corridors[x, y, 3] };
 
-					zones[x, y] = new Zone(new RectangleF(left, top, tileSize, tileSize));
-					zones[x, y].AddMesh(MakeFloor(left, right, top, bottom, 4f));
-					zones[x, y].AddMesh(MakeRoomWalls(left, right, top, bottom, roomCorridors, 2f, 10f, 4f));
+					zones[x, y] = new Zone(new RectangleF(left, bottom, tileSize, tileSize));
+					zones[x, y].AddMesh(MakeFloor(left, right, bottom, top, 4f));
+					zones[x, y].AddMesh(MakeRoomWalls(left, right, bottom, top, roomCorridors, 2f, 10f, 4f));
 					
 					scene.AddZone(zones[x, y]);
 				}
@@ -135,21 +135,21 @@ namespace ASCII_FPS.Scenes
 				{
 					float left = x * tileSize - size * tileSize / 2;
 					float right = left + tileSize;
-					float top = y * tileSize - size * tileSize / 2;
-					float bottom = top + tileSize;
+					float bottom = y * tileSize - size * tileSize / 2;
+					float top = bottom + tileSize;
 
 					if (corridors[x, y, 0])
-						zones[x, y].AddPortal(new Portal(zones[x + 1, y], new Vector2(right, (top + bottom) / 2 - 10f),
-																		  new Vector2(right, (top + bottom) / 2 + 10f)));
+						zones[x, y].AddPortal(new Portal(zones[x + 1, y], new Vector2(right, (top + bottom) / 2 + 5f),
+																		  new Vector2(right, (top + bottom) / 2 - 5f)));
 					if (corridors[x, y, 1])
-						zones[x, y].AddPortal(new Portal(zones[x, y + 1], new Vector2((left + right) / 2 + 10f, bottom),
-																		  new Vector2((left + right) / 2 - 10f, bottom)));
+						zones[x, y].AddPortal(new Portal(zones[x, y + 1], new Vector2((left + right) / 2 - 5f, top),
+																		  new Vector2((left + right) / 2 + 5f, top)));
 					if (corridors[x, y, 2])
-						zones[x, y].AddPortal(new Portal(zones[x - 1, y], new Vector2(left, (top + bottom) / 2 + 10f),
-																		  new Vector2(left, (top + bottom) / 2 - 10f)));
+						zones[x, y].AddPortal(new Portal(zones[x - 1, y], new Vector2(left, (top + bottom) / 2 - 5f),
+																		  new Vector2(left, (top + bottom) / 2 + 5f)));
 					if (corridors[x, y, 3])
-						zones[x, y].AddPortal(new Portal(zones[x, y - 1], new Vector2((left + right) / 2 - 10f, top),
-																		  new Vector2((left + right) / 2 + 10f, top)));
+						zones[x, y].AddPortal(new Portal(zones[x, y - 1], new Vector2((left + right) / 2 + 5f, bottom),
+																		  new Vector2((left + right) / 2 - 5f, bottom)));
 				}
 			}
 

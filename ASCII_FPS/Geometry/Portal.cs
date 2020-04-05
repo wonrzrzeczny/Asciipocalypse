@@ -15,7 +15,7 @@ namespace ASCII_FPS
 			Start = start;
 			End = end;
 
-			Normal = Vector3.Cross(new Vector3(end.X, 0f, end.Y) - new Vector3(start.X, 0f, start.Y), Vector3.Up);
+			Normal = Vector3.Cross(new Vector3(start.X, 0f, start.Y) - new Vector3(end.X, 0f, end.Y), Vector3.Up);
 		}
 	}
 }

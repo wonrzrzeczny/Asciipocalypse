@@ -44,6 +44,7 @@ namespace ASCII_FPS
 			List<Triangle> triangles = new List<Triangle>();
 			ASCII_FPS.triangleCount = 0;
 			ASCII_FPS.triangleCountClipped = 0;
+			ASCII_FPS.zonesRendered = "";
 
 			// Extract dynamic meshes
 			Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
@@ -216,6 +217,7 @@ namespace ASCII_FPS
 		// Render given zone with given bounds and analyze portals leading out of it
 		private void ProcessZone(Camera camera, Zone zone, int boundsLeft, int boundsRight)
 		{
+			ASCII_FPS.zonesRendered += "(" + boundsLeft + ", " + boundsRight + ") ";
 			List<Triangle> triangles = new List<Triangle>();
 
 			// Extract meshes
@@ -250,8 +252,8 @@ namespace ASCII_FPS
 				Vector3 start = Vector3.Transform(new Vector3(portal.Start.X, 0f, portal.Start.Y), cameraSpaceMatrix);
 				Vector3 end = Vector3.Transform(new Vector3(portal.End.X, 0f, portal.End.Y), cameraSpaceMatrix);
 
-				// Portal is facing camera
-				if (Vector3.Dot(portal.Normal, camera.Forward) < 0f)
+				if (Vector3.Dot(portal.Normal, camera.Forward) < 0f // Portal is facing camera
+					&& (start.Z > 0f || end.Z > 0f)) // Portal is in front of the camera
 				{
 					int newBoundsLeft = boundsLeft;
 					int newBoundsRight = boundsRight;
