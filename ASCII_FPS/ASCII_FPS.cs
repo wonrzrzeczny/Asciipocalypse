@@ -33,6 +33,7 @@ namespace ASCII_FPS
 		
 		public static int triangleCount = 0;
 		public static int triangleCountClipped = 0;
+		public static int zonesRendered = 0;
 		public static int frames = 0;
 		public static float timeElapsed = 0f;
 		public static float fps = 0f;
@@ -116,7 +117,7 @@ namespace ASCII_FPS
 			{
 				MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
 				projectiles.Add(new Projectile(camera.Forward, 75f, projectileMesh));
-				scene.AddMesh(projectileMesh);
+				scene.AddDynamicMesh(projectileMesh);
 			}
 
 			List<Projectile> newProjectiles = new List<Projectile>();
@@ -127,7 +128,7 @@ namespace ASCII_FPS
 				Vector3 translation = projectile.Position - position;
 				if (scene.CheckMovement(position, translation, 0f))
 					newProjectiles.Add(projectile);
-				else scene.meshes.Remove(projectile.MeshObject);
+				else scene.RemoveDynamicMesh(projectile.MeshObject);
 			}
 			projectiles = newProjectiles;
 
@@ -150,7 +151,11 @@ namespace ASCII_FPS
 				timeElapsed = 0f;
 				frames = 0;
 			}
-			string debug = fps + " FPS\nNumber of triangles: " + triangleCount + "\nNumber of triangles after clipping: " + triangleCountClipped;
+			string debug = fps + " FPS\nTotal number of triangles: " + scene.TotalTriangles +
+								 "\nNumber of rendered triangles: " + triangleCount +
+								 "\nNumber of triangles after clipping: " + triangleCountClipped +
+								 "\nNumber of zones rendered: " + zonesRendered +
+								 "\nPosition: " + camera.CameraPos;
 
             GraphicsDevice.Clear(Color.Black);
 

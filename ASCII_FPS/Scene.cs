@@ -5,25 +5,40 @@ namespace ASCII_FPS
 {
     public class Scene
     {
-        public List<MeshObject> meshes;
+        public List<MeshObject> dynamicMeshes;
+		public List<Zone> zones;
+
+		public int TotalTriangles { get; private set; }
 
         private List<Vector2[]> walls;
 
         public Scene()
         {
-            meshes = new List<MeshObject>();
+			dynamicMeshes = new List<MeshObject>();
+			zones = new List<Zone>();
             walls = new List<Vector2[]>();
         }
 
-        public void AddMesh(MeshObject mesh)
+		public void AddZone(Zone zone)
+		{
+			zones.Add(zone);
+			foreach (MeshObject mesh in zone.meshes)
+			{
+				TotalTriangles += mesh.triangles.Count;
+			}
+		}
+
+        public void AddDynamicMesh(MeshObject mesh)
         {
-            meshes.Add(mesh);
+			dynamicMeshes.Add(mesh);
+			TotalTriangles += mesh.triangles.Count;
         }
 
-        public void AddTriangle(Triangle triangle)
-        {
-            meshes.Add(new MeshObject(new List<Triangle>(new Triangle[] { triangle })));
-        }
+		public void RemoveDynamicMesh(MeshObject mesh)
+		{
+			TotalTriangles -= mesh.triangles.Count;
+			dynamicMeshes.Remove(mesh);
+		}
 
         public void AddWall(float x0, float z0, float x1, float z1)
         {
