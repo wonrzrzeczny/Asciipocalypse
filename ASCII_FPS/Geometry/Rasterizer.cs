@@ -251,8 +251,9 @@ namespace ASCII_FPS
 				// Transform into camera space
 				Vector3 start = Vector3.Transform(new Vector3(portal.Start.X, 0f, portal.Start.Y), cameraSpaceMatrix);
 				Vector3 end = Vector3.Transform(new Vector3(portal.End.X, 0f, portal.End.Y), cameraSpaceMatrix);
+				Vector3 normal = Vector3.TransformNormal(portal.Normal, cameraSpaceMatrix);
 
-				if (Vector3.Dot(portal.Normal, camera.Forward) < 0f // Portal is facing camera
+				if (Vector3.Dot(normal, start) < 0f // Portal is facing camera
 					&& (start.Z > 0f || end.Z > 0f)) // Portal is in front of the camera
 				{
 					int newBoundsLeft = boundsLeft;
