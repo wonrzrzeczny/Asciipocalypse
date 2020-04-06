@@ -40,6 +40,11 @@ namespace ASCII_FPS
 			dynamicMeshes.Remove(mesh);
 		}
 
+		public void AddWall(Vector2 v0, Vector2 v1)
+		{
+			AddWall(v0.X, v0.Y, v1.X, v1.Y);
+		}
+
         public void AddWall(float x0, float z0, float x1, float z1)
         {
 			walls.Add(new Vector2[2] { new Vector2(x0, z0), new Vector2(x1, z1) });
