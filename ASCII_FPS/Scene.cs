@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace ASCII_FPS
@@ -7,6 +8,7 @@ namespace ASCII_FPS
     {
         public List<MeshObject> dynamicMeshes;
         public List<Zone> zones;
+        public List<GameObject> gameObjects;
 
         public int TotalTriangles { get; private set; }
 
@@ -17,6 +19,7 @@ namespace ASCII_FPS
             dynamicMeshes = new List<MeshObject>();
             zones = new List<Zone>();
             walls = new List<Vector2[]>();
+            gameObjects = new List<GameObject>();
         }
 
         public void AddZone(Zone zone)
@@ -122,6 +125,19 @@ namespace ASCII_FPS
             }
             
             return ret;
+        }
+
+
+        public void UpdateGameObjects(float deltaTime)
+        {
+            List<GameObject> newGameObjects = new List<GameObject>();
+            foreach (GameObject gameObject in gameObjects)
+            {
+                gameObject.Update(deltaTime);
+                if (!gameObject.Destroy)
+                    newGameObjects.Add(gameObject);
+            }
+            gameObjects = newGameObjects;
         }
     }
 }

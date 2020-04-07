@@ -41,15 +41,12 @@ namespace ASCII_FPS
         public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture;
         public static OBJFile barrelModel;
 
-        private List<GameObject> gameObjects;
-
         protected override void Initialize()
         {
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-            gameObjects = new List<GameObject>();
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -69,9 +66,6 @@ namespace ASCII_FPS
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
             scene = Scenes.Scenes.Level1();
-            MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(0f, -1f, 0f), 3f, monsterTexture);
-            gameObjects.Add(new Monster(scene, monster));
-            scene.AddDynamicMesh(monster);
         }
         
         protected override void UnloadContent()
@@ -120,19 +114,12 @@ namespace ASCII_FPS
             if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
             {
                 MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
-                gameObjects.Add(new Projectile(scene, camera.Forward, 75f, projectileMesh));
+                scene.gameObjects.Add(new Projectile(scene, camera.Forward, 75f, projectileMesh));
                 scene.AddDynamicMesh(projectileMesh);
             }
 
-            List<GameObject> newGameObjects = new List<GameObject>();
             float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
-            foreach (GameObject gameObject in gameObjects)
-            {
-                gameObject.Update(deltaTime);
-                if (!gameObject.Destroy)
-                    newGameObjects.Add(gameObject);
-            }
-            gameObjects = newGameObjects;
+            scene.UpdateGameObjects(deltaTime);
 
             keyboardPrev = keyboard;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -140,7 +141,11 @@ namespace ASCII_FPS.Scenes
 					{
 						scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
 					}
-				}
+
+                    MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 3f, ASCII_FPS.monsterTexture);
+                    scene.AddDynamicMesh(monster);
+                    scene.gameObjects.Add(new Monster(scene, monster, 3f));
+                }
 			}
 
 			for (int x = 0; x < size; x++)
