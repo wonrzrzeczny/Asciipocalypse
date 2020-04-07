@@ -41,7 +41,7 @@ namespace ASCII_FPS
         public static AsciiTexture texture1, texture2, barrelTexture;
         public static OBJFile barrelModel;
 
-        private List<Projectile> projectiles;
+        private List<GameObject> gameObjects;
 
         protected override void Initialize()
         {
@@ -49,7 +49,7 @@ namespace ASCII_FPS
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-            projectiles = new List<Projectile>();
+            gameObjects = new List<GameObject>();
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -116,21 +116,19 @@ namespace ASCII_FPS
             if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
             {
                 MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
-                projectiles.Add(new Projectile(camera.Forward, 75f, projectileMesh));
+                gameObjects.Add(new Projectile(scene, camera.Forward, 75f, projectileMesh));
                 scene.AddDynamicMesh(projectileMesh);
             }
 
-            List<Projectile> newProjectiles = new List<Projectile>();
-            foreach (Projectile projectile in projectiles)
+            List<GameObject> newGameObjects = new List<GameObject>();
+            float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+            foreach (GameObject gameObject in gameObjects)
             {
-                Vector3 position = projectile.Position;
-                projectile.Update(gameTime);
-                Vector3 translation = projectile.Position - position;
-                if (scene.CheckMovement(position, translation, 0f))
-                    newProjectiles.Add(projectile);
-                else scene.RemoveDynamicMesh(projectile.MeshObject);
+                gameObject.Update(deltaTime);
+                if (!gameObject.Destroy)
+                    newGameObjects.Add(gameObject);
             }
-            projectiles = newProjectiles;
+            gameObjects = newGameObjects;
 
             keyboardPrev = keyboard;
 
