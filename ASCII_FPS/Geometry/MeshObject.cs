@@ -58,7 +58,7 @@ namespace ASCII_FPS
         {
             get
             {
-                return Mathg.TranslationMatrix(Position) * Mathg.RotationMatrix(Rotation);
+                return Mathg.RotationMatrix(Rotation) * Mathg.TranslationMatrix(Position);
             }
         }
     }

@@ -69,6 +69,9 @@ namespace ASCII_FPS
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
             scene = Scenes.Scenes.Level1();
+            MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(0f, -1f, 0f), 3f, monsterTexture);
+            gameObjects.Add(new Monster(scene, monster));
+            scene.AddDynamicMesh(monster);
         }
         
         protected override void UnloadContent()
