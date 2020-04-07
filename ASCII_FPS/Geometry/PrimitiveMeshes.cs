@@ -32,5 +32,25 @@ namespace ASCII_FPS
 
             return new MeshObject(triangles, position, 0f);
         }
+
+        public static MeshObject Tetrahedron(Vector3 position, float radius, AsciiTexture texture)
+        {
+            List<Triangle> triangles = new List<Triangle>();
+
+            float sqrt2 = (float)Math.Sqrt(2);
+            float sqrt3 = (float)Math.Sqrt(3);
+
+            Vector3 up = radius * Vector3.Up;
+            Vector3 v0 = radius * new Vector3(0, -1f / 3f, 2f * sqrt2 / 3f);
+            Vector3 v1 = radius * new Vector3(-sqrt2 / sqrt3, -1f / 3f, 1 - sqrt2);
+            Vector3 v2 = radius * new Vector3(sqrt2 / sqrt3, -1f / 3f, 1 - sqrt2);
+
+            triangles.Add(new Triangle(v0, v1, v2, texture));
+            triangles.Add(new Triangle(up, v0, v2, texture));
+            triangles.Add(new Triangle(up, v1, v0, texture));
+            triangles.Add(new Triangle(up, v2, v1, texture));
+
+            return new MeshObject(triangles, position, 0f);
+        }
     }
 }

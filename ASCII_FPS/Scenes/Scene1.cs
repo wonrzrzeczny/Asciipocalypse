@@ -134,6 +134,7 @@ namespace ASCII_FPS.Scenes
 					}
 					MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
 					zones[x, y].AddMesh(wallObject);
+                    zones[x, y].AddMesh(PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 2.5f, ASCII_FPS.texture2));
 					
 					scene.AddZone(zones[x, y]);
 					foreach (Vector2[] wall in walls)
