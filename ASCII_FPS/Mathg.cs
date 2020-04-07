@@ -38,10 +38,10 @@ namespace ASCII_FPS
             return new Vector3(bar0, bar1, bar2);
         }
 
-		public static Vector3 OrthogonalComponent(Vector3 vector, Vector3 normal)
-		{
-			return 0.5f * (vector + Vector3.Reflect(vector, normal));
-		}
+        public static Vector3 OrthogonalComponent(Vector3 vector, Vector3 normal)
+        {
+            return 0.5f * (vector + Vector3.Reflect(vector, normal));
+        }
 
         public static float Cross2D(Vector2 a, Vector2 b)
         {

@@ -30,26 +30,26 @@ namespace ASCII_FPS
         Scene scene;
         Camera camera;
 
-		
-		public static int triangleCount = 0;
-		public static int triangleCountClipped = 0;
-		public static int zonesRendered = 0;
-		public static int frames = 0;
-		public static float timeElapsed = 0f;
-		public static float fps = 0f;
+        
+        public static int triangleCount = 0;
+        public static int triangleCountClipped = 0;
+        public static int zonesRendered = 0;
+        public static int frames = 0;
+        public static float timeElapsed = 0f;
+        public static float fps = 0f;
 
         public static AsciiTexture texture1, texture2, barrelTexture;
         public static OBJFile barrelModel;
 
-		private List<Projectile> projectiles;
+        private List<Projectile> projectiles;
 
-		protected override void Initialize()
+        protected override void Initialize()
         {
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
             camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-			projectiles = new List<Projectile>();
+            projectiles = new List<Projectile>();
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -64,7 +64,7 @@ namespace ASCII_FPS
             
             texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
             texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
-			barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
+            barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
             scene = Scenes.Scenes.Level1();
@@ -76,27 +76,27 @@ namespace ASCII_FPS
         }
 
 
-		KeyboardState keyboardPrev;
-		protected override void Update(GameTime gameTime)
+        KeyboardState keyboardPrev;
+        protected override void Update(GameTime gameTime)
         {
             KeyboardState keyboard = Keyboard.GetState();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-			float seconds = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+            float seconds = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
 
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keys.Up))
                 shift += 20f * seconds * camera.Forward;
             if (keyboard.IsKeyDown(Keys.Down))
                 shift -= 20f * seconds * camera.Forward;
-			if (keyboard.IsKeyDown(Keys.X))
-				shift += 10f * seconds * camera.Right;
-			if (keyboard.IsKeyDown(Keys.Z))
-				shift -= 10f * seconds * camera.Right;
+            if (keyboard.IsKeyDown(Keys.X))
+                shift += 10f * seconds * camera.Right;
+            if (keyboard.IsKeyDown(Keys.Z))
+                shift -= 10f * seconds * camera.Right;
 
-			float rotation = 0f;
+            float rotation = 0f;
             if (keyboard.IsKeyDown(Keys.Left))
                 rotation -= 0.5f * (float)Math.PI * seconds;
             if (keyboard.IsKeyDown(Keys.Right))
@@ -108,54 +108,54 @@ namespace ASCII_FPS
                 rotation *= 2.5f;
             }
 
-			Vector3 realShift = scene.SmoothMovement(camera.CameraPos, shift, 0.65f);
-			camera.CameraPos += realShift;
+            Vector3 realShift = scene.SmoothMovement(camera.CameraPos, shift, 0.65f);
+            camera.CameraPos += realShift;
 
-			camera.Rotation += rotation;
+            camera.Rotation += rotation;
 
-			if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
-			{
-				MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
-				projectiles.Add(new Projectile(camera.Forward, 75f, projectileMesh));
-				scene.AddDynamicMesh(projectileMesh);
-			}
+            if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
+            {
+                MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
+                projectiles.Add(new Projectile(camera.Forward, 75f, projectileMesh));
+                scene.AddDynamicMesh(projectileMesh);
+            }
 
-			List<Projectile> newProjectiles = new List<Projectile>();
-			foreach (Projectile projectile in projectiles)
-			{
-				Vector3 position = projectile.Position;
-				projectile.Update(gameTime);
-				Vector3 translation = projectile.Position - position;
-				if (scene.CheckMovement(position, translation, 0f))
-					newProjectiles.Add(projectile);
-				else scene.RemoveDynamicMesh(projectile.MeshObject);
-			}
-			projectiles = newProjectiles;
+            List<Projectile> newProjectiles = new List<Projectile>();
+            foreach (Projectile projectile in projectiles)
+            {
+                Vector3 position = projectile.Position;
+                projectile.Update(gameTime);
+                Vector3 translation = projectile.Position - position;
+                if (scene.CheckMovement(position, translation, 0f))
+                    newProjectiles.Add(projectile);
+                else scene.RemoveDynamicMesh(projectile.MeshObject);
+            }
+            projectiles = newProjectiles;
 
-			keyboardPrev = keyboard;
+            keyboardPrev = keyboard;
 
 
 
-			rasterizer.Raster(scene, camera);
+            rasterizer.Raster(scene, camera);
 
-			base.Update(gameTime);
+            base.Update(gameTime);
         }
         
         protected override void Draw(GameTime gameTime)
         {
-			frames += 1;
-			timeElapsed += gameTime.ElapsedGameTime.Milliseconds * 0.001f;
-			if (timeElapsed > 1f)
-			{
-				fps = frames / timeElapsed;
-				timeElapsed = 0f;
-				frames = 0;
-			}
-			string debug = fps + " FPS\nTotal number of triangles: " + scene.TotalTriangles +
-								 "\nNumber of rendered triangles: " + triangleCount +
-								 "\nNumber of triangles after clipping: " + triangleCountClipped +
-								 "\nNumber of zones rendered: " + zonesRendered +
-								 "\nPosition: " + camera.CameraPos;
+            frames += 1;
+            timeElapsed += gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+            if (timeElapsed > 1f)
+            {
+                fps = frames / timeElapsed;
+                timeElapsed = 0f;
+                frames = 0;
+            }
+            string debug = fps + " FPS\nTotal number of triangles: " + scene.TotalTriangles +
+                                 "\nNumber of rendered triangles: " + triangleCount +
+                                 "\nNumber of triangles after clipping: " + triangleCountClipped +
+                                 "\nNumber of zones rendered: " + zonesRendered +
+                                 "\nPosition: " + camera.CameraPos;
 
             GraphicsDevice.Clear(Color.Black);
 
