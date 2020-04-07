@@ -41,14 +41,21 @@ namespace ASCII_FPS
             float sqrt3 = (float)Math.Sqrt(3);
 
             Vector3 up = radius * Vector3.Up;
-            Vector3 v0 = radius * new Vector3(0, -1f / 3f, 2f * sqrt2 / 3f);
+            Vector3 v0 = radius * new Vector3(0f, -1f / 3f, 2f * sqrt2 / 3f);
             Vector3 v1 = radius * new Vector3(-sqrt2 / sqrt3, -1f / 3f, 1 - sqrt2);
             Vector3 v2 = radius * new Vector3(sqrt2 / sqrt3, -1f / 3f, 1 - sqrt2);
 
-            triangles.Add(new Triangle(v0, v1, v2, texture));
-            triangles.Add(new Triangle(up, v0, v2, texture));
-            triangles.Add(new Triangle(up, v1, v0, texture));
-            triangles.Add(new Triangle(up, v2, v1, texture));
+            Vector2 uv0 = new Vector2(0.5f, 0f);
+            Vector2 uv1 = new Vector2(0.25f, 0.25f * sqrt3);
+            Vector2 uv2 = new Vector2(0.75f, 0.25f * sqrt3);
+            Vector2 uvup0 = new Vector2(0.5f, 0.5f * sqrt3);
+            Vector2 uvup1 = new Vector2(1f, 0f);
+            Vector2 uvup2 = new Vector2(0f, 0f);
+
+            triangles.Add(new Triangle(v0, v1, v2, texture, uv0, uv1, uv2));
+            triangles.Add(new Triangle(up, v0, v2, texture, uvup1, uv0, uv2));
+            triangles.Add(new Triangle(up, v1, v0, texture, uvup2, uv1, uv0));
+            triangles.Add(new Triangle(up, v2, v1, texture, uvup0, uv2, uv1));
 
             return new MeshObject(triangles, position, 0f);
         }

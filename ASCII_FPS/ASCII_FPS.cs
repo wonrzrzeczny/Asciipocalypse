@@ -38,7 +38,7 @@ namespace ASCII_FPS
         public static float timeElapsed = 0f;
         public static float fps = 0f;
 
-        public static AsciiTexture texture1, texture2, barrelTexture;
+        public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture;
         public static OBJFile barrelModel;
 
         private List<GameObject> gameObjects;
@@ -65,6 +65,7 @@ namespace ASCII_FPS
             texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
             texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
             barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
+            monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
             scene = Scenes.Scenes.Level1();
