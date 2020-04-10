@@ -116,7 +116,7 @@ namespace ASCII_FPS
             if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
             {
                 MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
-                scene.gameObjects.Add(new Projectile(scene, projectileMesh, camera.Forward, 75f, 2f));
+                scene.AddGameObject(new Projectile(scene, projectileMesh, camera.Forward, 75f, 2f));
                 scene.AddDynamicMesh(projectileMesh);
             }
 

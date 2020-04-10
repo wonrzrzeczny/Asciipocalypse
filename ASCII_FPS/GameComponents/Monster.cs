@@ -15,6 +15,8 @@ namespace ASCII_FPS.GameComponents
         private BehaviourState behaviourState;
         private float behaviourCheckTime = 0.2f;
 
+        private float shootTime = 0.3f;
+
         public Vector3 Position
         {
             get { return meshObject.Position; }
@@ -51,16 +53,21 @@ namespace ASCII_FPS.GameComponents
                 behaviourState = StateCheck();
             }
 
-            switch (behaviourState)
+            Vector3 towardsPlayer = Vector3.Normalize(camera.CameraPos - Position);
+            if (behaviourState == BehaviourState.Chasing)
             {
-                case BehaviourState.Idle:
-                    break;
-                case BehaviourState.Chasing:
-                    Vector3 towardsPlayer = Vector3.Normalize(camera.CameraPos - Position);
-                    Position += scene.SmoothMovement(Position, towardsPlayer * deltaTime * speed, HitRadius);
-                    break;
-                case BehaviourState.Attacking:
-                    break;
+                Position += scene.SmoothMovement(Position, towardsPlayer * deltaTime * speed, HitRadius);
+            }
+            if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
+            {
+                shootTime -= deltaTime;
+                if (shootTime < 0f)
+                {
+                    shootTime = 0.3f;
+                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.monsterTexture);
+                    scene.AddDynamicMesh(projectileMesh);
+                    scene.AddGameObject(new EnemyProjectile(scene, camera, projectileMesh, towardsPlayer, 25f, 2f));
+                }
             }
         }
 

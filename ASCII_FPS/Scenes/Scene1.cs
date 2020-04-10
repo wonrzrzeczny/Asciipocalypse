@@ -144,11 +144,11 @@ namespace ASCII_FPS.Scenes
 					}
                     
 
-                    if (rand.Next(10) == 0)
+                    if (rand.Next(3) == 0)
                     {
                         MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 3f, ASCII_FPS.monsterTexture);
                         scene.AddDynamicMesh(monster);
-                        scene.gameObjects.Add(new Monster(scene, camera, monster, 3f, 10f));
+                        scene.AddGameObject(new Monster(scene, camera, monster, 3f, 10f));
                     }
                 }
 			}

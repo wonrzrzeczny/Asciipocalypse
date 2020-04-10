@@ -128,8 +128,12 @@ namespace ASCII_FPS
         }
 
 
+        private List<GameObject> gameObjectsToAdd;
+        private bool updating = false;
         public void UpdateGameObjects(float deltaTime)
         {
+            updating = true;
+            gameObjectsToAdd = new List<GameObject>();
             List<GameObject> newGameObjects = new List<GameObject>();
             foreach (GameObject gameObject in gameObjects)
             {
@@ -137,7 +141,24 @@ namespace ASCII_FPS
                 if (!gameObject.Destroy)
                     newGameObjects.Add(gameObject);
             }
+            foreach (GameObject gameObject in gameObjectsToAdd)
+            {
+                newGameObjects.Add(gameObject);
+            }
             gameObjects = newGameObjects;
+            updating = false;
+        }
+
+        public void AddGameObject(GameObject gameObject)
+        {
+            if (!updating)
+            {
+                gameObjects.Add(gameObject);
+            }
+            else
+            {
+                gameObjectsToAdd.Add(gameObject);
+            }
         }
     }
 }
