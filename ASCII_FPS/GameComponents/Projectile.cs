@@ -8,6 +8,7 @@ namespace ASCII_FPS.GameComponents
         private readonly Vector3 direction;
         private readonly float speed;
         private readonly MeshObject meshObject;
+        private readonly float damage;
 
         public Vector3 Position
         {
@@ -15,12 +16,13 @@ namespace ASCII_FPS.GameComponents
             set { meshObject.Position = value; }
         }
 
-        public Projectile(Scene scene, Vector3 direction, float speed, MeshObject meshObject)
+        public Projectile(Scene scene, MeshObject meshObject, Vector3 direction, float speed, float damage)
         {
             this.scene = scene;
             this.direction = Vector3.Normalize(direction);
             this.meshObject = meshObject;
             this.speed = speed;
+            this.damage = damage;
         }
 
         public override void Update(float deltaTime)
@@ -32,7 +34,9 @@ namespace ASCII_FPS.GameComponents
                 {
                     if (Vector3.Distance(Position, monster.Position) < monster.HitRadius)
                     {
-                        monster.DealDamage();
+                        monster.DealDamage(damage);
+                        Destroy = true;
+                        scene.RemoveDynamicMesh(meshObject);
                     }
                 }
             }

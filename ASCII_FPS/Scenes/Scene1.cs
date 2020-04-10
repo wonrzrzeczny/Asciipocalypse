@@ -104,9 +104,10 @@ namespace ASCII_FPS.Scenes
 			return ret;
 		}
 
-		public static Scene Level1()
-		{
-			Scene scene = new Scene();
+		public static Scene Level1(Camera camera)
+        {
+            Random rand = new Random();
+            Scene scene = new Scene();
 
 			int size = 5;
 			float tileSize = 100f;
@@ -141,10 +142,14 @@ namespace ASCII_FPS.Scenes
 					{
 						scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
 					}
+                    
 
-                    MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 3f, ASCII_FPS.monsterTexture);
-                    scene.AddDynamicMesh(monster);
-                    scene.gameObjects.Add(new Monster(scene, monster, 3f));
+                    if (rand.Next(10) == 0)
+                    {
+                        MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 3f, ASCII_FPS.monsterTexture);
+                        scene.AddDynamicMesh(monster);
+                        scene.gameObjects.Add(new Monster(scene, camera, monster, 3f, 10f));
+                    }
                 }
 			}
 
@@ -172,7 +177,7 @@ namespace ASCII_FPS.Scenes
 				}
 			}
 
-			return scene;
+            return scene;
 		}
 	}
 }

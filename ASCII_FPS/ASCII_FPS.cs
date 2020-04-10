@@ -37,6 +37,7 @@ namespace ASCII_FPS
         public static int frames = 0;
         public static float timeElapsed = 0f;
         public static float fps = 0f;
+        public static string additionalDebug = "";
 
         public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture;
         public static OBJFile barrelModel;
@@ -65,7 +66,7 @@ namespace ASCII_FPS
             monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
-            scene = Scenes.Scenes.Level1();
+            scene = Scenes.Scenes.Level1(camera);
         }
         
         protected override void UnloadContent()
@@ -77,6 +78,7 @@ namespace ASCII_FPS
         KeyboardState keyboardPrev;
         protected override void Update(GameTime gameTime)
         {
+            additionalDebug = "";
             KeyboardState keyboard = Keyboard.GetState();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -114,7 +116,7 @@ namespace ASCII_FPS
             if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
             {
                 MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
-                scene.gameObjects.Add(new Projectile(scene, camera.Forward, 75f, projectileMesh));
+                scene.gameObjects.Add(new Projectile(scene, projectileMesh, camera.Forward, 75f, 2f));
                 scene.AddDynamicMesh(projectileMesh);
             }
 
@@ -144,7 +146,8 @@ namespace ASCII_FPS
                                  "\nNumber of rendered triangles: " + triangleCount +
                                  "\nNumber of triangles after clipping: " + triangleCountClipped +
                                  "\nNumber of zones rendered: " + zonesRendered +
-                                 "\nPosition: " + camera.CameraPos;
+                                 "\nPosition: " + camera.CameraPos +
+                                 "\n" + additionalDebug;
 
             GraphicsDevice.Clear(Color.Black);
 
