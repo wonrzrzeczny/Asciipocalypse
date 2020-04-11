@@ -28,7 +28,6 @@ namespace ASCII_FPS
         Console console;
         Rasterizer rasterizer;
         Scene scene;
-        Camera camera;
 
         
         public static int triangleCount = 0;
@@ -47,7 +46,6 @@ namespace ASCII_FPS
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
-            camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -66,7 +64,8 @@ namespace ASCII_FPS
             monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
-            scene = Scenes.Scenes.Level1(camera);
+            scene = Scenes.Scenes.Level1();
+            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
         }
         
         protected override void UnloadContent()
@@ -88,13 +87,13 @@ namespace ASCII_FPS
 
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keys.Up))
-                shift += 20f * seconds * camera.Forward;
+                shift += 20f * seconds * scene.Camera.Forward;
             if (keyboard.IsKeyDown(Keys.Down))
-                shift -= 20f * seconds * camera.Forward;
+                shift -= 20f * seconds * scene.Camera.Forward;
             if (keyboard.IsKeyDown(Keys.X))
-                shift += 10f * seconds * camera.Right;
+                shift += 10f * seconds * scene.Camera.Right;
             if (keyboard.IsKeyDown(Keys.Z))
-                shift -= 10f * seconds * camera.Right;
+                shift -= 10f * seconds * scene.Camera.Right;
 
             float rotation = 0f;
             if (keyboard.IsKeyDown(Keys.Left))
@@ -108,15 +107,15 @@ namespace ASCII_FPS
                 rotation *= 2.5f;
             }
 
-            Vector3 realShift = scene.SmoothMovement(camera.CameraPos, shift, 0.65f);
-            camera.CameraPos += realShift;
+            Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, 0.65f);
+            scene.Camera.CameraPos += realShift;
 
-            camera.Rotation += rotation;
+            scene.Camera.Rotation += rotation;
 
             if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
             {
-                MeshObject projectileMesh = PrimitiveMeshes.Octahedron(camera.CameraPos + Vector3.Down, 0.4f, texture1);
-                scene.AddGameObject(new Projectile(scene, projectileMesh, camera.Forward, 75f, 2f));
+                MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, texture1);
+                scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
                 scene.AddDynamicMesh(projectileMesh);
             }
 
@@ -127,7 +126,7 @@ namespace ASCII_FPS
 
 
 
-            rasterizer.Raster(scene, camera);
+            rasterizer.Raster(scene, scene.Camera);
 
             base.Update(gameTime);
         }
@@ -146,7 +145,7 @@ namespace ASCII_FPS
                                  "\nNumber of rendered triangles: " + triangleCount +
                                  "\nNumber of triangles after clipping: " + triangleCountClipped +
                                  "\nNumber of zones rendered: " + zonesRendered +
-                                 "\nPosition: " + camera.CameraPos +
+                                 "\nPosition: " + scene.Camera.CameraPos +
                                  "\n" + additionalDebug;
 
             GraphicsDevice.Clear(Color.Black);

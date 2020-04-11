@@ -104,7 +104,7 @@ namespace ASCII_FPS.Scenes
 			return ret;
 		}
 
-		public static Scene Level1(Camera camera)
+		public static Scene Level1()
         {
             Random rand = new Random();
             Scene scene = new Scene();
@@ -148,7 +148,7 @@ namespace ASCII_FPS.Scenes
                     {
                         MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 3f, ASCII_FPS.monsterTexture);
                         scene.AddDynamicMesh(monster);
-                        scene.AddGameObject(new Monster(scene, camera, monster, 3f, 10f));
+                        scene.AddGameObject(new Monster(monster, 3f, 10f));
                     }
                 }
 			}

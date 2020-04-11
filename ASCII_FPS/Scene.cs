@@ -13,6 +13,7 @@ namespace ASCII_FPS
         public int TotalTriangles { get; private set; }
 
         private List<Vector2[]> walls;
+        public Camera Camera { get; set; }
 
         public Scene()
         {
@@ -151,6 +152,8 @@ namespace ASCII_FPS
 
         public void AddGameObject(GameObject gameObject)
         {
+            gameObject.Scene = this;
+
             if (!updating)
             {
                 gameObjects.Add(gameObject);

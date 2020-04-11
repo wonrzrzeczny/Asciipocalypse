@@ -4,23 +4,13 @@ namespace ASCII_FPS.GameComponents
 {
     public class Projectile : GameObject
     {
-        private readonly Scene scene;
         private readonly Vector3 direction;
         private readonly float speed;
-        private readonly MeshObject meshObject;
         private readonly float damage;
 
-        public Vector3 Position
+        public Projectile(MeshObject meshObject, Vector3 direction, float speed, float damage) : base(meshObject)
         {
-            get { return meshObject.Position; }
-            set { meshObject.Position = value; }
-        }
-
-        public Projectile(Scene scene, MeshObject meshObject, Vector3 direction, float speed, float damage)
-        {
-            this.scene = scene;
             this.direction = Vector3.Normalize(direction);
-            this.meshObject = meshObject;
             this.speed = speed;
             this.damage = damage;
         }
@@ -28,7 +18,7 @@ namespace ASCII_FPS.GameComponents
         public override void Update(float deltaTime)
         {
             // This is extremely inefficient, but let's hope that it's sufficient :p
-            foreach (GameObject gameObject in scene.gameObjects)
+            foreach (GameObject gameObject in Scene.gameObjects)
             {
                 if (gameObject is Monster monster)
                 {
@@ -36,19 +26,19 @@ namespace ASCII_FPS.GameComponents
                     {
                         monster.DealDamage(damage);
                         Destroy = true;
-                        scene.RemoveDynamicMesh(meshObject);
+                        Scene.RemoveDynamicMesh(MeshObject);
                     }
                 }
             }
 
-            if (scene.CheckMovement(Position, direction * speed * deltaTime, 0f))
+            if (Scene.CheckMovement(Position, direction * speed * deltaTime, 0f))
             {
                 Position += direction * speed * deltaTime;
             }
             else
             {
                 Destroy = true;
-                scene.RemoveDynamicMesh(meshObject);
+                Scene.RemoveDynamicMesh(MeshObject);
             }
         }
     }
