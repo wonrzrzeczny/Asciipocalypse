@@ -6,7 +6,6 @@ namespace ASCII_FPS
 {
     public class Scene
     {
-        public List<MeshObject> dynamicMeshes;
         public List<Zone> zones;
         public List<GameObject> gameObjects;
 
@@ -17,7 +16,6 @@ namespace ASCII_FPS
 
         public Scene()
         {
-            dynamicMeshes = new List<MeshObject>();
             zones = new List<Zone>();
             walls = new List<Vector2[]>();
             gameObjects = new List<GameObject>();
@@ -30,18 +28,6 @@ namespace ASCII_FPS
             {
                 TotalTriangles += mesh.triangles.Count;
             }
-        }
-
-        public void AddDynamicMesh(MeshObject mesh)
-        {
-            dynamicMeshes.Add(mesh);
-            TotalTriangles += mesh.triangles.Count;
-        }
-
-        public void RemoveDynamicMesh(MeshObject mesh)
-        {
-            TotalTriangles -= mesh.triangles.Count;
-            dynamicMeshes.Remove(mesh);
         }
 
         public void AddWall(Vector2 v0, Vector2 v1)

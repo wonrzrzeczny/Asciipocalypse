@@ -53,7 +53,6 @@ namespace ASCII_FPS.GameComponents
                 {
                     shootTime = 0.3f;
                     MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.monsterTexture);
-                    Scene.AddDynamicMesh(projectileMesh);
                     Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 25f, 2f));
                 }
             }
@@ -65,7 +64,6 @@ namespace ASCII_FPS.GameComponents
             if (health <= 0f)
             {
                 Destroy = true;
-                Scene.RemoveDynamicMesh(MeshObject);
             }
         }
 

@@ -26,7 +26,6 @@ namespace ASCII_FPS.GameComponents
                     {
                         monster.DealDamage(damage);
                         Destroy = true;
-                        Scene.RemoveDynamicMesh(MeshObject);
                     }
                 }
             }
@@ -38,7 +37,6 @@ namespace ASCII_FPS.GameComponents
             else
             {
                 Destroy = true;
-                Scene.RemoveDynamicMesh(MeshObject);
             }
         }
     }

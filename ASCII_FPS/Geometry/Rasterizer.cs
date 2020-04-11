@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -48,8 +49,9 @@ namespace ASCII_FPS
 
             // Extract dynamic meshes
             Matrix cameraSpaceMatrix = camera.CameraSpaceMatrix;
-            foreach (MeshObject mesh in scene.dynamicMeshes)
+            foreach (GameObject gameObject in scene.gameObjects)
             {
+                MeshObject mesh = gameObject.MeshObject;
                 ASCII_FPS.triangleCount += mesh.triangles.Count;
 
                 Matrix meshToCameraMatrix = mesh.WorldSpaceMatrix * cameraSpaceMatrix;

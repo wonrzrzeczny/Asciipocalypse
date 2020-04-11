@@ -116,7 +116,6 @@ namespace ASCII_FPS
             {
                 MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, texture1);
                 scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
-                scene.AddDynamicMesh(projectileMesh);
             }
 
             float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
@@ -141,7 +140,7 @@ namespace ASCII_FPS
                 timeElapsed = 0f;
                 frames = 0;
             }
-            string debug = fps + " FPS\nTotal number of triangles: " + scene.TotalTriangles +
+            string debug = fps + " FPS\nTotal number of static triangles: " + scene.TotalTriangles +
                                  "\nNumber of rendered triangles: " + triangleCount +
                                  "\nNumber of triangles after clipping: " + triangleCountClipped +
                                  "\nNumber of zones rendered: " + zonesRendered +

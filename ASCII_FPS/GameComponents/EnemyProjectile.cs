@@ -24,7 +24,6 @@ namespace ASCII_FPS.GameComponents
             {
                 //player.DealDamage()
                 Destroy = true;
-                Scene.RemoveDynamicMesh(MeshObject);
             }
 
             if (Scene.CheckMovement(Position, direction * speed * deltaTime, 0f))
@@ -34,7 +33,6 @@ namespace ASCII_FPS.GameComponents
             else
             {
                 Destroy = true;
-                Scene.RemoveDynamicMesh(MeshObject);
             }
         }
     }
