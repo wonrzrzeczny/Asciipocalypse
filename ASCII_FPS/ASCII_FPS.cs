@@ -23,6 +23,7 @@ namespace ASCII_FPS
         Random random;
         Console console;
         Rasterizer rasterizer;
+        HUD hud;
         Scene scene;
 
         
@@ -44,6 +45,7 @@ namespace ASCII_FPS
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
+            hud = new HUD(console);
 
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
@@ -51,6 +53,7 @@ namespace ASCII_FPS
             base.Initialize();
 
             playerStats.health = 100f;
+            playerStats.maxHealth = 100f;
         }
 
         protected override void LoadContent()
@@ -125,6 +128,7 @@ namespace ASCII_FPS
 
 
             rasterizer.Raster(scene, scene.Camera);
+            hud.Draw();
 
             base.Update(gameTime);
         }

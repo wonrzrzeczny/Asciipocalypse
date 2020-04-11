@@ -48,6 +48,7 @@
     <Compile Include="ASCII_FPS.cs" />
     <Compile Include="GameComponents\EnemyProjectile.cs" />
     <Compile Include="GameComponents\GameObject.cs" />
+    <Compile Include="GameComponents\HUD.cs" />
     <Compile Include="GameComponents\Monster.cs" />
     <Compile Include="GameComponents\PlayerStats.cs" />
     <Compile Include="GameComponents\Projectile.cs" />
