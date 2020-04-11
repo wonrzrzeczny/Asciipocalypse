@@ -4,13 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using OBJContentPipelineExtension;
 using System;
-using System.Collections.Generic;
 
 namespace ASCII_FPS
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class ASCII_FPS : Game
     {
         GraphicsDeviceManager graphics;
@@ -38,6 +34,8 @@ namespace ASCII_FPS
         public static float fps = 0f;
         public static string additionalDebug = "";
 
+        public static PlayerStats playerStats;
+
         public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture;
         public static OBJFile barrelModel;
 
@@ -51,6 +49,8 @@ namespace ASCII_FPS
             graphics.PreferredBackBufferHeight = 1080;
             graphics.ApplyChanges();
             base.Initialize();
+
+            playerStats.health = 100f;
         }
 
         protected override void LoadContent()
@@ -83,23 +83,23 @@ namespace ASCII_FPS
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            float seconds = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+            float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
 
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keys.Up))
-                shift += 20f * seconds * scene.Camera.Forward;
+                shift += 20f * deltaTime * scene.Camera.Forward;
             if (keyboard.IsKeyDown(Keys.Down))
-                shift -= 20f * seconds * scene.Camera.Forward;
+                shift -= 20f * deltaTime * scene.Camera.Forward;
             if (keyboard.IsKeyDown(Keys.X))
-                shift += 10f * seconds * scene.Camera.Right;
+                shift += 10f * deltaTime * scene.Camera.Right;
             if (keyboard.IsKeyDown(Keys.Z))
-                shift -= 10f * seconds * scene.Camera.Right;
+                shift -= 10f * deltaTime * scene.Camera.Right;
 
             float rotation = 0f;
             if (keyboard.IsKeyDown(Keys.Left))
-                rotation -= 0.5f * (float)Math.PI * seconds;
+                rotation -= 0.5f * (float)Math.PI * deltaTime;
             if (keyboard.IsKeyDown(Keys.Right))
-                rotation += 0.5f * (float)Math.PI * seconds;
+                rotation += 0.5f * (float)Math.PI * deltaTime;
 
             if (keyboard.IsKeyDown(Keys.LeftShift))
             {
@@ -118,7 +118,6 @@ namespace ASCII_FPS
                 scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
             }
 
-            float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
             scene.UpdateGameObjects(deltaTime);
 
             keyboardPrev = keyboard;
@@ -145,7 +144,8 @@ namespace ASCII_FPS
                                  "\nNumber of triangles after clipping: " + triangleCountClipped +
                                  "\nNumber of zones rendered: " + zonesRendered +
                                  "\nPosition: " + scene.Camera.CameraPos +
-                                 "\n" + additionalDebug;
+                                 "\n" + additionalDebug +
+                                 "\nHealth: " + (int)playerStats.health;
 
             GraphicsDevice.Clear(Color.Black);
 

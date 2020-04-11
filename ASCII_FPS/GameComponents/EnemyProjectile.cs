@@ -22,7 +22,7 @@ namespace ASCII_FPS.GameComponents
         {
             if (Vector3.Distance(Position, Camera.CameraPos) < playerRadius)
             {
-                //player.DealDamage()
+                ASCII_FPS.playerStats.DealDamage(damage);
                 Destroy = true;
             }
 

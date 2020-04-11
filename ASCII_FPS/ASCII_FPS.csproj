@@ -49,6 +49,7 @@
     <Compile Include="GameComponents\EnemyProjectile.cs" />
     <Compile Include="GameComponents\GameObject.cs" />
     <Compile Include="GameComponents\Monster.cs" />
+    <Compile Include="GameComponents\PlayerStats.cs" />
     <Compile Include="GameComponents\Projectile.cs" />
     <Compile Include="Geometry\Portal.cs" />
     <Compile Include="RectangleF.cs" />
