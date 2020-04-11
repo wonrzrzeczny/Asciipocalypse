@@ -54,6 +54,10 @@ namespace ASCII_FPS
 
             playerStats.health = 100f;
             playerStats.maxHealth = 100f;
+            playerStats.maxArmor = 100f;
+            playerStats.armor = 100f;
+            playerStats.armorProtection = 0.3f;
+            playerStats.dead = false;
         }
 
         protected override void LoadContent()

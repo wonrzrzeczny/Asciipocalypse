@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace ASCII_FPS.GameComponents
 {
@@ -10,6 +11,7 @@ namespace ASCII_FPS.GameComponents
         private readonly byte colorBlack = Mathg.ColorTo8Bit(Color.Black.ToVector3());
         private readonly byte colorGray = Mathg.ColorTo8Bit(Color.DarkGray.ToVector3());
         private readonly byte colorWhite = Mathg.ColorTo8Bit(Color.White.ToVector3());
+        private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
 
         public HUD(Console console)
         {
@@ -20,6 +22,10 @@ namespace ASCII_FPS.GameComponents
 
         private void LineHorizontal(int y, int left, int right, byte color, char data)
         {
+            if (left < 0) left += console.Width;
+            if (right < 0) right += console.Width;
+            if (y < 0) y += console.Height;
+
             for (int i = left; i <= right; i++)
             {
                 console.Data[i, y] = data;
@@ -29,6 +35,10 @@ namespace ASCII_FPS.GameComponents
 
         private void LineVertical(int x, int top, int bottom, byte color, char data)
         {
+            if (top < 0) top += console.Height;
+            if (bottom < 0) bottom += console.Height;
+            if (x < 0) x += console.Width;
+
             for (int i = top; i <= bottom; i++)
             {
                 console.Data[x, i] = data;
@@ -46,6 +56,11 @@ namespace ASCII_FPS.GameComponents
 
         private void Rectangle(int left, int top, int right, int bottom, byte color, char data)
         {
+            if (left < 0) left += console.Width;
+            if (right < 0) right += console.Width;
+            if (top < 0) top += console.Height;
+            if (bottom < 0) bottom += console.Height;
+
             for (int x = left; x <= right; x++)
             {
                 for (int y = top; y <= bottom; y++)
@@ -58,6 +73,9 @@ namespace ASCII_FPS.GameComponents
 
         private void Text(int x, int y, string text, byte color)
         {
+            if (x < 0) x += console.Width;
+            if (y < 0) y += console.Height;
+
             int start = x - text.Length / 2;
             for (int xx = start; xx < start + text.Length; xx++)
             {
@@ -72,13 +90,27 @@ namespace ASCII_FPS.GameComponents
 
         public void Draw()
         {
-            int width = (int)((console.Width - 3) * ASCII_FPS.playerStats.health / ASCII_FPS.playerStats.maxHealth);
+            // HP bar
+            Rectangle(0, -22, 21, -1, colorBlack, ' ');
+            Border(0, -22, 21, -1, colorGray, '@');
+            Text(11, -20, "Health", colorWhite);
+            Text(11, -18, (int)Math.Ceiling(ASCII_FPS.playerStats.health) 
+                + " / " + (int)Math.Ceiling(ASCII_FPS.playerStats.maxHealth), colorWhite);
+            LineHorizontal(-16, 0, 21, colorGray, '@');
+            int hpDots = (int)(20 * 14 * ASCII_FPS.playerStats.health / ASCII_FPS.playerStats.maxHealth);
+            if (hpDots >= 20) Rectangle(1, -1 - hpDots / 20, 20, -2, colorRed, '%');
+            if (hpDots % 20 > 0) Rectangle(1, -2 - hpDots / 20, 1 + hpDots % 20, -2 - hpDots / 20, colorRed, '%');
 
-            Rectangle(0, console.Height - 21, 20, console.Height - 1, colorBlack, ' ');
-            Border(0, console.Height - 21, 20, console.Height - 1, colorGray, '@');
-            Text(10, console.Height - 19, "Health", colorWhite);
-            Text(10, console.Height - 17, (int)ASCII_FPS.playerStats.health + " / " + (int)ASCII_FPS.playerStats.maxHealth, colorWhite);
-            LineHorizontal(console.Height - 15, 0, 20, colorGray, '@');
+            // Armor bar
+            Rectangle(-22, -22, -1, -1, colorBlack, ' ');
+            Border(-22, -22, -1, -1, colorGray, '@');
+            Text(-11, -20, "Armor", colorWhite);
+            Text(-11, -18, (int)Math.Ceiling(ASCII_FPS.playerStats.armor)
+                + " / " + (int)Math.Ceiling(ASCII_FPS.playerStats.maxArmor), colorWhite);
+            LineHorizontal(-16, -22, -1, colorGray, '@');
+            int armorDots = (int)(20 * 14 * ASCII_FPS.playerStats.armor / ASCII_FPS.playerStats.maxArmor);
+            if (armorDots >= 20) Rectangle(-21, -1 - armorDots / 20, -2, -2, colorForestGreen, '#');
+            if (armorDots % 20 > 0) Rectangle(-(1 + armorDots % 20), -2 - armorDots / 20, -2, -2 - armorDots / 20, colorForestGreen, '#');
         }
     }
 }
