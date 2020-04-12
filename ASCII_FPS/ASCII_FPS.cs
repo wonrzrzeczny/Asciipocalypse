@@ -51,7 +51,7 @@ namespace ASCII_FPS
             graphics.PreferredBackBufferHeight = 1080;
             graphics.ApplyChanges();
             base.Initialize();
-
+            
             playerStats.health = 100f;
             playerStats.maxHealth = 100f;
             playerStats.maxArmor = 100f;
@@ -130,6 +130,25 @@ namespace ASCII_FPS
             keyboardPrev = keyboard;
 
 
+            // Update effects
+            if (playerStats.dead)
+            {
+                console.Effect = Console.ColorEffect.Grayscale;
+            }
+            else if (playerStats.hit)
+            {
+                console.Effect = Console.ColorEffect.Red;
+                playerStats.hitTime -= deltaTime;
+                if (playerStats.hitTime < 0f)
+                {
+                    playerStats.hitTime = 0f;
+                    playerStats.hit = false;
+                }
+            }
+            else
+            {
+                console.Effect = Console.ColorEffect.None;
+            }
 
             rasterizer.Raster(scene, scene.Camera);
             hud.Draw();
@@ -162,7 +181,7 @@ namespace ASCII_FPS
             {
                 for (int j = 0; j < console.Height; j++)
                 {
-                    int color = console.Color[i, j];
+                    int color = console.GetColor(i, j);
                     int r = ((color & 0b111) * 0b1001001) >> 1;
                     int g = (((color >> 3) & 0b111) * 0b1001001) >> 1;
                     int b = ((color >> 6) & 0b11) * 0b1010101;

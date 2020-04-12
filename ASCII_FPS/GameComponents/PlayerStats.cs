@@ -12,6 +12,8 @@ namespace ASCII_FPS.GameComponents
         public float armorProtection;
 
         public bool dead;
+        public bool hit;
+        public float hitTime;
 
         public int floor;
         public int totalMonsters;
@@ -19,6 +21,8 @@ namespace ASCII_FPS.GameComponents
 
         public void DealDamage(float amount)
         {
+            hit = true;
+            hitTime = 0.1f;
             float blocked = Math.Min(amount, armor);
             float unblocked = amount - blocked;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ASCII_FPS
+﻿namespace ASCII_FPS
 {
     public class Console
     {
@@ -14,6 +8,9 @@ namespace ASCII_FPS
 
         public char[,] Data { get; set; }
         public byte[,] Color { get; set; }
+
+        public enum ColorEffect { None, Grayscale, Red }
+        public ColorEffect Effect { get; set; } = ColorEffect.None;
 
         public Console(int width, int height)
         {
@@ -29,6 +26,25 @@ namespace ASCII_FPS
                     Color[i, j] = 0;
                 }
             }
+        }
+
+        public byte GetColor(int x, int y)
+        {
+            byte color = Color[x, y];
+            switch (Effect)
+            {
+                case ColorEffect.Grayscale:
+                    int sum = (color & 0b111) + ((color >> 3) & 0b111) + ((color >> 5) & 0b110);
+                    sum /= 3;
+                    color = (byte)(sum + (sum << 3) + ((sum & 0b110) << 5));
+                    break;
+                case ColorEffect.Red:
+                    sum = (color & 0b111) + ((color >> 3) & 0b111) + ((color >> 5) & 0b110);
+                    color = (byte)(sum >> 1);
+                    break;
+            }
+
+            return color;
         }
     }
 }
