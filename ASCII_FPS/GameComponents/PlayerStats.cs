@@ -13,6 +13,10 @@ namespace ASCII_FPS.GameComponents
 
         public bool dead;
 
+        public int floor;
+        public int totalMonsters;
+        public int monsters;
+
         public void DealDamage(float amount)
         {
             float blocked = Math.Min(amount, armor);

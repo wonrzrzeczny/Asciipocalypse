@@ -111,6 +111,12 @@ namespace ASCII_FPS.GameComponents
             int armorDots = (int)(20 * 14 * ASCII_FPS.playerStats.armor / ASCII_FPS.playerStats.maxArmor);
             if (armorDots >= 20) Rectangle(-21, -1 - armorDots / 20, -2, -2, colorForestGreen, '#');
             if (armorDots % 20 > 0) Rectangle(-(1 + armorDots % 20), -2 - armorDots / 20, -2, -2 - armorDots / 20, colorForestGreen, '#');
+
+            // Floor + killed monsters
+            Rectangle(console.Width / 2 - 15, -7, console.Width / 2 + 14, -1, colorBlack, ' ');
+            Border(console.Width / 2 - 15, -7, console.Width / 2 + 14, -1, colorGray, '@');
+            Text(console.Width / 2, -5, "Floor " + ASCII_FPS.playerStats.floor, colorWhite);
+            Text(console.Width / 2, -3, "Monsters: " + ASCII_FPS.playerStats.monsters + " / " + ASCII_FPS.playerStats.totalMonsters, colorWhite);
         }
     }
 }

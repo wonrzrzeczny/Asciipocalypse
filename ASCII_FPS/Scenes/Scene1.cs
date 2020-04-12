@@ -91,21 +91,40 @@ namespace ASCII_FPS.Scenes
 		{
 			Random rand = new Random();
 			bool[,,] ret = new bool[sizeX, sizeY, 4];
-			for (int i = 0; i < sizeX - 1; i++)
-			{
-				for (int j = 0; j < sizeY - 1; j++)
-				{
-					ret[i, j, 0] = rand.Next(8) > 0; // Right
-					ret[i, j, 1] = rand.Next(8) > 0; // Up
-					ret[i + 1, j, 2] = ret[i, j, 0]; // Left
-					ret[i, j + 1, 3] = ret[i, j, 1]; // Down
-				}
-			}
+            bool[,] vis = new bool[sizeX, sizeY];
+            Queue<Point> BFSqueue = new Queue<Point>();
+            BFSqueue.Enqueue(new Point(0, 0));
+            while (BFSqueue.Count > 0)
+            {
+                Point p = BFSqueue.Dequeue();
+                int[] dir = new int[4] { 0, 1, 2, 3 };
+                Point[] shift = new Point[4] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
+                for (int i = 0; i < 4; i++)
+                {
+                    int j = rand.Next(4);
+                    int t = dir[i];
+                    dir[i] = dir[j];
+                    dir[j] = t;
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Point q = p + shift[dir[i]];
+                    if (q.X >= 0 && q.X < sizeX && q.Y >= 0 && q.Y < sizeY && !vis[q.X, q.Y])
+                    {
+                        vis[q.X, q.Y] = true;
+                        ret[p.X, p.Y, dir[i]] = true;
+                        ret[q.X, q.Y, (dir[i] + 2) % 4] = true;
+                        BFSqueue.Enqueue(q);
+                    }
+                }
+            }
 			return ret;
 		}
 
 		public static Scene Level1()
         {
+            ASCII_FPS.playerStats.totalMonsters = 0;
             Random rand = new Random();
             Scene scene = new Scene();
 
@@ -144,10 +163,24 @@ namespace ASCII_FPS.Scenes
 					}
                     
 
-                    if (rand.Next(3) == 0)
+                    if (x != size / 2 || y != size / 2)
                     {
-                        MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(roomCenter.X, -1f, roomCenter.Y), 3f, ASCII_FPS.monsterTexture);
-                        scene.AddGameObject(new Monster(monster, 3f, 10f));
+                        int cnt = rand.Next(1, 5);
+                        ASCII_FPS.playerStats.totalMonsters += cnt;
+                        Vector2 shift = cnt == 1 ? Vector2.Zero : new Vector2(30f, 0f);
+                        for (int i = 0; i < cnt; i++)
+                        {
+                            Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(i * (float)Math.PI * 2f / cnt));
+                            MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
+                            scene.AddGameObject(new Monster(monster, 3f, 10f));
+                        }
+
+                        if (cnt != 1 && rand.Next(3) == 0)
+                        {
+                            MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, ASCII_FPS.barrelTexture, 
+                                new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                            zones[x, y].AddMesh(barrel);
+                        }
                     }
                 }
 			}

@@ -13,6 +13,15 @@ namespace ASCII_FPS
                               0,                       0,  0,                        1);
         }
 
+        public static Matrix RotationMatrix2D(float angle)
+        {
+            return new Matrix((float)Math.Cos(angle),  -(float)Math.Sin(angle), 0,  0,
+                              (float)Math.Sin(angle),  (float)Math.Cos(angle),  0,  0,
+                              0,                       0,                       0,  0,
+                              0,                       0,                       0,  0);
+
+        }
+
         public static Matrix TranslationMatrix(Vector3 translation)
         {
             return new Matrix(1,              0,              0,              0,

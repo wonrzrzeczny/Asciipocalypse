@@ -53,7 +53,7 @@ namespace ASCII_FPS.GameComponents
                 {
                     shootTime = 0.3f;
                     MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.monsterTexture);
-                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, 2f));
+                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, 5f));
                 }
             }
         }
@@ -63,6 +63,7 @@ namespace ASCII_FPS.GameComponents
             health -= amount;
             if (health <= 0f)
             {
+                ASCII_FPS.playerStats.monsters++;
                 Destroy = true;
             }
         }
