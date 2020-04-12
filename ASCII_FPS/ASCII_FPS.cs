@@ -37,8 +37,8 @@ namespace ASCII_FPS
 
         public static PlayerStats playerStats;
 
-        public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture, projectileTexture;
-        public static OBJFile barrelModel;
+        public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture, projectileTexture, exitTexture;
+        public static OBJFile barrelModel, exitModel;
 
         protected override void Initialize()
         {
@@ -70,8 +70,10 @@ namespace ASCII_FPS
             barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
             monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
+            exitTexture = new AsciiTexture(Content.Load<Texture2D>("textures/exit"));
 
             barrelModel = Content.Load<OBJFile>("models/barrel");
+            exitModel = Content.Load<OBJFile>("models/exit");
 
             scene = Scenes.Scenes.Level1();
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);

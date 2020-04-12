@@ -133,6 +133,14 @@ namespace ASCII_FPS.Scenes
 			bool[,,] corridors = GenerateCorridors(size, size);
 			Zone[,] zones = new Zone[size, size];
 
+            int exitX = rand.Next(size);
+            int exitY = rand.Next(size);
+            while (exitX == size / 2 && exitY == size / 2)
+            {
+                exitX = rand.Next(size);
+                exitY = rand.Next(size);
+            }
+
 			for (int x = 0; x < size; x++)
 			{
 				for (int y = 0; y < size; y++)
@@ -161,9 +169,15 @@ namespace ASCII_FPS.Scenes
 					{
 						scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
 					}
-                    
 
-                    if (x != size / 2 || y != size / 2)
+
+                    if (x == exitX && y == exitY)
+                    {
+                        MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
+                            new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                        zones[x, y].AddMesh(exit);
+                    }
+                    else if (x != size / 2 || y != size / 2)
                     {
                         int cnt = rand.Next(1, 5);
                         ASCII_FPS.playerStats.totalMonsters += cnt;
@@ -178,7 +192,7 @@ namespace ASCII_FPS.Scenes
                         if (cnt != 1 && rand.Next(3) == 0)
                         {
                             MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, ASCII_FPS.barrelTexture, 
-                                new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                                new Vector3(roomCenter.X, -3f, roomCenter.Y));
                             zones[x, y].AddMesh(barrel);
                         }
                     }
