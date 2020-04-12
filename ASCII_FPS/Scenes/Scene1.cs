@@ -37,7 +37,7 @@ namespace ASCII_FPS.Scenes
 			{
 				new Triangle(tll, trl, brl, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
 				new Triangle(tlh, trh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY),
-				new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
+				new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.One),
 				new Triangle(tlh, brh, blh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY)
 			};
 			return new MeshObject(triangles, Vector3.Zero, 0f);

@@ -16,8 +16,8 @@ namespace ASCII_FPS.GameComponents
 
         public float HitRadius { get; }
 
-        private const float alertDistance = 50f;
-        private const float attackDistance = 20f;
+        private const float alertDistance = 70f;
+        private const float attackDistance = 30f;
         private const float speed = 6f;
 
 
@@ -52,7 +52,7 @@ namespace ASCII_FPS.GameComponents
                 if (shootTime < 0f)
                 {
                     shootTime = 0.3f;
-                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.monsterTexture);
+                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
                     Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, 5f));
                 }
             }

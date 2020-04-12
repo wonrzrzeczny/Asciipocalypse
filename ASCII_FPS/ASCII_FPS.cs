@@ -37,7 +37,7 @@ namespace ASCII_FPS
 
         public static PlayerStats playerStats;
 
-        public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture;
+        public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture, projectileTexture;
         public static OBJFile barrelModel;
 
         protected override void Initialize()
@@ -69,6 +69,8 @@ namespace ASCII_FPS
             texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
             barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
             monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
+            projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
+
             barrelModel = Content.Load<OBJFile>("models/barrel");
 
             scene = Scenes.Scenes.Level1();
@@ -121,7 +123,7 @@ namespace ASCII_FPS
 
             if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
             {
-                MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, texture1);
+                MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
                 scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
             }
 
