@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace ASCII_FPS
+namespace ASCII_FPS.Scenes
 {
     public class Scene
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.Scenes;
+using Microsoft.Xna.Framework;
 using System;
 
 namespace ASCII_FPS.GameComponents
@@ -10,14 +11,21 @@ namespace ASCII_FPS.GameComponents
         private readonly byte colorRed = Mathg.ColorTo8Bit(Color.Red.ToVector3());
         private readonly byte colorBlack = Mathg.ColorTo8Bit(Color.Black.ToVector3());
         private readonly byte colorGray = Mathg.ColorTo8Bit(Color.DarkGray.ToVector3());
+        private readonly byte colorLightGray = Mathg.ColorTo8Bit(Color.LightGray.ToVector3());
         private readonly byte colorWhite = Mathg.ColorTo8Bit(Color.White.ToVector3());
         private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
+        private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
         public HUD(Console console)
         {
             this.console = console;
         }
 
+        public static Scene scene;
+        public static bool[,,] corridorLayout;
+        public static bool[,] visited;
+        public static Point exitRoom;
+        
 
 
         private void LineHorizontal(int y, int left, int right, byte color, char data)
@@ -117,6 +125,48 @@ namespace ASCII_FPS.GameComponents
             Border(console.Width / 2 - 15, -7, console.Width / 2 + 14, -1, colorGray, '@');
             Text(console.Width / 2, -5, "Floor " + ASCII_FPS.playerStats.floor, colorWhite);
             Text(console.Width / 2, -3, "Monsters: " + ASCII_FPS.playerStats.monsters + " / " + ASCII_FPS.playerStats.totalMonsters, colorWhite);
+
+            // Minimap
+            Rectangle(-13, 0, -1, 12, colorLightGray, ' ');
+            Border(-13, 0, -1, 12, colorGray, '@');
+
+            int playerRoomX = (int)(scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            int playerRoomY = (int)(scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    int xx = console.Width - 11 + x;
+                    int yy = 10 - y;
+
+                    if (x % 2 == 0 && y % 2 == 0)
+                    {
+                        if (visited[x / 2, y / 2])
+                        {
+                            if (playerRoomX == x / 2 && playerRoomY == y / 2)
+                            {
+                                console.Color[xx, yy] = colorLightBlue;
+                                float rotation = scene.Camera.Rotation * 4f / (float)Math.PI;
+                                int direction = (int)Math.Floor(rotation) % 8;
+                                if (direction < 0) direction += 8;
+                                console.Data[xx, yy] = "^>>vv<<^"[direction];
+                            }
+                            else if (exitRoom.X == x / 2 && exitRoom.Y == y / 2)
+                            {
+                                console.Data[xx, yy] = 'E';
+                            }
+                            else
+                            {
+                                console.Data[xx, yy] = 'o';
+                            }
+                        }
+                    }
+                    else if (x % 2 == 0 && corridorLayout[x / 2, y / 2, 1] && (visited[x / 2, y / 2] || visited[x / 2, y / 2 + 1]))
+                        console.Data[xx, yy] = '|';
+                    else if (y % 2 == 0 && corridorLayout[x / 2, y / 2, 0] && (visited[x / 2, y / 2] || visited[x / 2 + 1, y / 2]))
+                        console.Data[xx, yy] = '-';
+                }
+            }
         }
     }
 }

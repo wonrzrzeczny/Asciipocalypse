@@ -1,4 +1,5 @@
 ﻿using ASCII_FPS.GameComponents;
+using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

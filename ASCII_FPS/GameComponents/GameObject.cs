@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.Scenes;
+using Microsoft.Xna.Framework;
 
 namespace ASCII_FPS.GameComponents
 {

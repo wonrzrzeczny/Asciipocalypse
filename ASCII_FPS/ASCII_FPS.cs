@@ -1,4 +1,5 @@
 ﻿using ASCII_FPS.GameComponents;
+using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -77,8 +78,11 @@ namespace ASCII_FPS
             barrelModel = Content.Load<OBJFile>("models/barrel");
             exitModel = Content.Load<OBJFile>("models/exit");
 
-            scene = Scenes.Scenes.Generate(10f, 5f, 4);
+            scene = SceneGenerator.Generate(10f, 5f, 4);
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+            HUD.scene = scene;
+            HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
+            HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
         }
         
         protected override void UnloadContent()
@@ -141,8 +145,11 @@ namespace ASCII_FPS
                     float monsterHealth = 8f + playerStats.floor * 2f;
                     float monsterDamage = 4f + playerStats.floor;
                     int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
-                    scene = Scenes.Scenes.Generate(monsterHealth, monsterDamage, maxMonsters);
+                    scene = SceneGenerator.Generate(monsterHealth, monsterDamage, maxMonsters);
                     scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+                    HUD.scene = scene;
+                    HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
+                    HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
                 }
                 else
                 {
@@ -157,6 +164,10 @@ namespace ASCII_FPS
             }
 
             scene.UpdateGameObjects(deltaTime);
+
+            int playerRoomX = (int)(scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            int playerRoomY = (int)(scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            HUD.visited[playerRoomX, playerRoomY] = true;
 
             keyboardPrev = keyboard;
 

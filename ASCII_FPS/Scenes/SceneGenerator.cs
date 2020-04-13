@@ -5,9 +5,13 @@ using System.Collections.Generic;
 
 namespace ASCII_FPS.Scenes
 {
-	public static partial class Scenes
+	public static class SceneGenerator
 	{
-		private static List<Triangle> MakeWall(float x0, float z0, float x1, float z1, float h, AsciiTexture texture)
+        public const int size = 5;
+        public const float tileSize = 100f;
+
+
+        private static List<Triangle> MakeWall(float x0, float z0, float x1, float z1, float h, AsciiTexture texture)
 		{
 			float ratio = (new Vector2(x0, z0) - new Vector2(x1, z1)).Length() / h;
 
@@ -129,13 +133,13 @@ namespace ASCII_FPS.Scenes
             Random rand = new Random();
             Scene scene = new Scene();
 
-			int size = 5;
-			float tileSize = 100f;
 			bool[,,] corridors = GenerateCorridors(size, size);
+            HUD.corridorLayout = corridors;
 			Zone[,] zones = new Zone[size, size];
 
             int exitX = rand.Next(size);
             int exitY = rand.Next(size);
+            HUD.exitRoom = new Point(exitX, exitY);
             while (exitX == size / 2 && exitY == size / 2)
             {
                 exitX = rand.Next(size);
