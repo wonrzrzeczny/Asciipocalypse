@@ -14,6 +14,11 @@ namespace ASCII_FPS.GameComponents
         public float armor;
         public float armorProtection;
 
+        public int skillPoints;
+        public int skillMaxHealth;
+        public int skillMaxArmor;
+        public int skillArmorProtection;
+
         public bool dead;
         public bool hit;
         public float hitTime;

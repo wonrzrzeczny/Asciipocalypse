@@ -38,7 +38,7 @@ namespace ASCII_FPS
 
         public static PlayerStats playerStats;
 
-        public static AsciiTexture texture1, texture2, barrelTexture, monsterTexture, projectileTexture, exitTexture;
+        public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, monsterTexture, projectileTexture, exitTexture;
         public static OBJFile barrelModel, exitModel;
 
         protected override void Initialize()
@@ -70,7 +70,9 @@ namespace ASCII_FPS
             
             texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
             texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
-            barrelTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel"));
+            barrelRedTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_red"));
+            barrelGreenTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_green"));
+            barrelBlueTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_blue"));
             monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
             exitTexture = new AsciiTexture(Content.Load<Texture2D>("textures/exit"));
@@ -160,6 +162,37 @@ namespace ASCII_FPS
                             collectible.PickUp();
                         }
                     }
+                }
+            }
+
+            if (playerStats.skillPoints > 0 && keyboard.IsKeyDown(Keys.P) && !keyboardPrev.IsKeyDown(Keys.P))
+            {
+                HUD.skillPointMenu = !HUD.skillPointMenu;
+            }
+            if (playerStats.skillPoints == 0)
+            {
+                HUD.skillPointMenu = false;
+            }
+            if (HUD.skillPointMenu)
+            {
+                if (keyboard.IsKeyDown(Keys.D1) && !keyboardPrev.IsKeyDown(Keys.D1))
+                {
+                    playerStats.skillPoints--;
+                    playerStats.skillMaxHealth++;
+                    playerStats.maxHealth += 20f;
+                    playerStats.AddHealth(20f);
+                }
+                if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
+                {
+                    playerStats.skillPoints--;
+                    playerStats.skillMaxArmor++;
+                    playerStats.maxArmor += 20f;
+                    playerStats.AddArmor(20f);
+                }
+                if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
+                {
+                    playerStats.skillPoints--;
+                    playerStats.armorProtection += 0.02f;
                 }
             }
 

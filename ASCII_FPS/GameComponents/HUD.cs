@@ -25,7 +25,8 @@ namespace ASCII_FPS.GameComponents
         public static bool[,,] corridorLayout;
         public static bool[,] visited;
         public static Point exitRoom;
-        
+
+        public static bool skillPointMenu;
 
 
         private void LineHorizontal(int y, int left, int right, byte color, char data)
@@ -120,11 +121,25 @@ namespace ASCII_FPS.GameComponents
             if (armorDots >= 20) Rectangle(-21, -1 - armorDots / 20, -2, -2, colorForestGreen, '#');
             if (armorDots % 20 > 0) Rectangle(-(1 + armorDots % 20), -2 - armorDots / 20, -2, -2 - armorDots / 20, colorForestGreen, '#');
 
-            // Floor + killed monsters
-            Rectangle(console.Width / 2 - 15, -7, console.Width / 2 + 14, -1, colorBlack, ' ');
-            Border(console.Width / 2 - 15, -7, console.Width / 2 + 14, -1, colorGray, '@');
-            Text(console.Width / 2, -5, "Floor " + ASCII_FPS.playerStats.floor, colorWhite);
-            Text(console.Width / 2, -3, "Monsters: " + ASCII_FPS.playerStats.monsters + " / " + ASCII_FPS.playerStats.totalMonsters, colorWhite);
+            // Floor + killed monsters + skill points
+            int offset = ASCII_FPS.playerStats.skillPoints == 0 ? 0 : skillPointMenu ? 10 : 2;
+            Rectangle(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorBlack, ' ');
+            Border(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorGray, '@');
+            Text(console.Width / 2, -5 - offset, "Floor " + ASCII_FPS.playerStats.floor, colorWhite);
+            Text(console.Width / 2, -3 - offset,
+                 "Monsters: " + ASCII_FPS.playerStats.monsters + " / " + ASCII_FPS.playerStats.totalMonsters, colorWhite);
+            if (ASCII_FPS.playerStats.skillPoints > 0)
+            {
+                Text(console.Width / 2, -1 - offset, "(P) Skill points left: " + ASCII_FPS.playerStats.skillPoints, colorWhite);
+                if (skillPointMenu)
+                {
+                    Rectangle(console.Width / 2 - 30, -9, console.Width / 2 + 30, -1, colorBlack, ' ');
+                    Border(console.Width / 2 - 30, -9, console.Width / 2 + 30, -1, colorGray, '@');
+                    Text(console.Width / 2, -7, "(1) Max health lvl. " + ASCII_FPS.playerStats.skillMaxHealth, colorWhite);
+                    Text(console.Width / 2, -5, "(2) Max armor lvl. " + ASCII_FPS.playerStats.skillMaxArmor, colorWhite);
+                    Text(console.Width / 2, -3, "(3) Armor protection lvl. " + ASCII_FPS.playerStats.skillArmorProtection, colorWhite);
+                }
+            }
 
             // Minimap
             Rectangle(-13, 0, -1, 12, colorLightGray, ' ');
