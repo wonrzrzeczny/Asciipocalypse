@@ -144,6 +144,16 @@ namespace ASCII_FPS
                     scene = Scenes.Scenes.Generate(monsterHealth, monsterDamage, maxMonsters);
                     scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                 }
+                else
+                {
+                    foreach (GameObject gameObject in scene.gameObjects)
+                    {
+                        if (gameObject is Collectible collectible && Vector3.Distance(scene.Camera.CameraPos, collectible.Position) < 7f)
+                        {
+                            collectible.PickUp();
+                        }
+                    }
+                }
             }
 
             scene.UpdateGameObjects(deltaTime);

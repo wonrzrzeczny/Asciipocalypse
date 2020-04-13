@@ -39,5 +39,25 @@ namespace ASCII_FPS.GameComponents
                 dead = true;
             }
         }
+
+        public void AddHealth(float amount)
+        {
+            if (!dead)
+            {
+                health += amount;
+                if (health > maxHealth)
+                    health = maxHealth;
+            }
+        }
+
+        public void AddArmor(float amount)
+        {
+            if (!dead)
+            {
+                armor += amount;
+                if (armor > maxArmor)
+                    armor = maxArmor;
+            }
+        }
     }
 }

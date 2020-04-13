@@ -46,6 +46,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="ASCII_FPS.cs" />
+    <Compile Include="GameComponents\Collectible.cs" />
     <Compile Include="GameComponents\EnemyProjectile.cs" />
     <Compile Include="GameComponents\GameObject.cs" />
     <Compile Include="GameComponents\HUD.cs" />

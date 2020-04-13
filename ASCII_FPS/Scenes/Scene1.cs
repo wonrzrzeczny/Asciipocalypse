@@ -191,11 +191,12 @@ namespace ASCII_FPS.Scenes
                             scene.AddGameObject(new Monster(monster, 3f, monsterHealth, monsterDamage));
                         }
 
-                        if (cnt != 1 && rand.Next(3) == 0)
+                        if (cnt != 1 && rand.Next(6) == 0)
                         {
                             MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, ASCII_FPS.barrelTexture, 
                                 new Vector3(roomCenter.X, -3f, roomCenter.Y));
-                            zones[x, y].AddMesh(barrel);
+                            Collectible.Type type = rand.Next(3) == 0 ? Collectible.Type.Health : Collectible.Type.Armor;
+                            scene.AddGameObject(new Collectible(barrel, type));
                         }
                     }
                 }
