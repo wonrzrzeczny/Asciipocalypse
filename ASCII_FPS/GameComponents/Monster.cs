@@ -7,7 +7,8 @@ namespace ASCII_FPS.GameComponents
     {
         private readonly Random random;
         private float health;
-        
+        private readonly float damage;
+
         private enum BehaviourState { Idle, Chasing, Attacking }
         private BehaviourState behaviourState;
         private float behaviourCheckTime = 0.2f;
@@ -21,11 +22,12 @@ namespace ASCII_FPS.GameComponents
         private const float speed = 6f;
 
 
-        public Monster(MeshObject meshObject, float hitRadius, float health) : base(meshObject)
+        public Monster(MeshObject meshObject, float hitRadius, float health, float damage) : base(meshObject)
         {
             random = new Random();
             HitRadius = hitRadius;
             this.health = health;
+            this.damage = damage;
 
             behaviourState = BehaviourState.Idle;
         }
@@ -53,7 +55,7 @@ namespace ASCII_FPS.GameComponents
                 {
                     shootTime = 0.3f;
                     MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
-                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, 5f));
+                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, damage));
                 }
             }
         }

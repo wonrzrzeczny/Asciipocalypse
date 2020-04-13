@@ -36,8 +36,8 @@ namespace ASCII_FPS.Scenes
 			List<Triangle> triangles = new List<Triangle>
 			{
 				new Triangle(tll, trl, brl, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
-				new Triangle(tlh, trh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY),
-				new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.One),
+				new Triangle(tlh, trh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
+				new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY),
 				new Triangle(tlh, brh, blh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY)
 			};
 			return new MeshObject(triangles, Vector3.Zero, 0f);
@@ -122,9 +122,10 @@ namespace ASCII_FPS.Scenes
 			return ret;
 		}
 
-		public static Scene Level1()
+		public static Scene Generate(float monsterHealth, float monsterDamage, int maxMonsters)
         {
             ASCII_FPS.playerStats.totalMonsters = 0;
+            ASCII_FPS.playerStats.monsters = 0;
             Random rand = new Random();
             Scene scene = new Scene();
 
@@ -176,17 +177,18 @@ namespace ASCII_FPS.Scenes
                         MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
                             new Vector3(roomCenter.X, -2f, roomCenter.Y));
                         zones[x, y].AddMesh(exit);
+                        ASCII_FPS.playerStats.exitPosition = roomCenter;
                     }
                     else if (x != size / 2 || y != size / 2)
                     {
-                        int cnt = rand.Next(1, 5);
+                        int cnt = rand.Next(1, maxMonsters + 1);
                         ASCII_FPS.playerStats.totalMonsters += cnt;
                         Vector2 shift = cnt == 1 ? Vector2.Zero : new Vector2(30f, 0f);
                         for (int i = 0; i < cnt; i++)
                         {
                             Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(i * (float)Math.PI * 2f / cnt));
                             MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
-                            scene.AddGameObject(new Monster(monster, 3f, 10f));
+                            scene.AddGameObject(new Monster(monster, 3f, monsterHealth, monsterDamage));
                         }
 
                         if (cnt != 1 && rand.Next(3) == 0)

@@ -8,8 +8,6 @@ namespace ASCII_FPS.GameComponents
         private readonly float speed;
         private readonly float damage;
 
-        private const float playerRadius = 0.65f;
-
 
         public EnemyProjectile(MeshObject meshObject, Vector3 direction, float speed, float damage) : base(meshObject)
         {
@@ -20,7 +18,7 @@ namespace ASCII_FPS.GameComponents
 
         public override void Update(float deltaTime)
         {
-            if (Vector3.Distance(Position, Camera.CameraPos) < playerRadius)
+            if (Vector3.Distance(Position, Camera.CameraPos) < PlayerStats.thickness)
             {
                 ASCII_FPS.playerStats.DealDamage(damage);
                 Destroy = true;

@@ -58,6 +58,8 @@ namespace ASCII_FPS
             playerStats.armor = 100f;
             playerStats.armorProtection = 0.3f;
             playerStats.dead = false;
+            playerStats.hit = false;
+            playerStats.floor = 1;
         }
 
         protected override void LoadContent()
@@ -75,7 +77,7 @@ namespace ASCII_FPS
             barrelModel = Content.Load<OBJFile>("models/barrel");
             exitModel = Content.Load<OBJFile>("models/exit");
 
-            scene = Scenes.Scenes.Level1();
+            scene = Scenes.Scenes.Generate(10f, 5f, 4);
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
         }
         
@@ -118,7 +120,7 @@ namespace ASCII_FPS
                 rotation *= 2.5f;
             }
 
-            Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, 0.65f);
+            Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
             scene.Camera.CameraPos += realShift;
 
             scene.Camera.Rotation += rotation;
@@ -127,6 +129,21 @@ namespace ASCII_FPS
             {
                 MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
                 scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
+            }
+
+            if (keyboard.IsKeyDown(Keys.Enter) && keyboardPrev.IsKeyUp(Keys.Enter))
+            {
+                if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f 
+                    && 2 * playerStats.monsters >= playerStats.totalMonsters)
+                {
+                    playerStats.floor++;
+
+                    float monsterHealth = 8f + playerStats.floor * 2f;
+                    float monsterDamage = 4f + playerStats.floor;
+                    int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
+                    scene = Scenes.Scenes.Generate(monsterHealth, monsterDamage, maxMonsters);
+                    scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+                }
             }
 
             scene.UpdateGameObjects(deltaTime);

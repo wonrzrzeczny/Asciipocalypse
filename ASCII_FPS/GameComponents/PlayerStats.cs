@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace ASCII_FPS.GameComponents
 {
     public struct PlayerStats
     {
+        public const float thickness = 1f;
+
         public float maxHealth;
         public float health;
 
@@ -18,6 +21,7 @@ namespace ASCII_FPS.GameComponents
         public int floor;
         public int totalMonsters;
         public int monsters;
+        public Vector2 exitPosition;
 
         public void DealDamage(float amount)
         {
