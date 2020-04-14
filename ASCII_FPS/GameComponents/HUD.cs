@@ -184,5 +184,47 @@ namespace ASCII_FPS.GameComponents
                 }
             }
         }
+
+        public int option = 0;
+        public void MainMenu()
+        {
+            Rectangle(0, 0, -1, -1, colorBlack, ' ');
+            Text(console.Width / 2,  6, @"_______                                        ___                    ", colorWhite);
+            Text(console.Width / 2,  7, @"|     |______________________________________  | |__ _________________", colorWhite);
+            Text(console.Width / 2,  8, @"| ___ |   |   ||_||_||     |     |   ||     |  | | | | |     |   |   |", colorWhite);
+            Text(console.Width / 2,  9, @"| |_| | __| __|______| ___ | ___ | __|| ___ |  | | | | | ___ | __| __|", colorWhite);
+            Text(console.Width / 2, 10, @"|     |   | |  | || || | | | | | | |  | | | |  | | | | | | | |   |  | ", colorWhite);
+            Text(console.Width / 2, 11, @"| ___ |__ | |__| || || |_| | |_| | |__| |_| |__| | |_| | |_| |__ | _|_", colorWhite);
+            Text(console.Width / 2, 12, @"| | | |   |   || || ||     |     |   ||       || |     |     |   |   |", colorWhite);
+            Text(console.Width / 2, 13, @"|_| |_|___|___||_||_|| ____|_____|___||_______||_|____ | ____|___|___|", colorWhite);
+            Text(console.Width / 2, 14, @"                     | |                             | | |            ", colorWhite);
+            Text(console.Width / 2, 15, @"                     | |                             | | |            ", colorWhite);
+            Text(console.Width / 2, 16, @"                     |_|                             |_|_|            ", colorWhite);
+
+            Text(console.Width / 2, 30, "Play game", option == 0 ? colorLightBlue : colorGray);
+            Text(console.Width / 2, 32, "Options", option == 1 ? colorLightBlue : colorGray);
+            Text(console.Width / 2, 34, "Exit", option == 2 ? colorLightBlue : colorGray);
+        }
+
+        public void Tutorial()
+        {
+            Rectangle(0, 0, -1, -1, colorBlack, ' ');
+            Text(console.Width / 2, 12, "Controls", colorWhite);
+
+            Text(console.Width / 2, 16, "Walk forward / backwards - up arrow / down arrow", colorWhite);
+            Text(console.Width / 2, 18, "Turn left / right - left arrow / right arrow", colorWhite);
+            Text(console.Width / 2, 20, "Strafe left / right - Z / X", colorWhite);
+            Text(console.Width / 2, 22, "Hold shift - faster movement", colorWhite);
+            Text(console.Width / 2, 24, "Hold space - shoot", colorWhite);
+            Text(console.Width / 2, 26, "Enter - use barrel / ladder", colorWhite);
+            Text(console.Width / 2, 28, "P - skill menu", colorWhite);
+            Text(console.Width / 2, 30, "1/2/3/4 - upgrade skill", colorWhite);
+            Text(console.Width / 2, 32, "Escape - exit game", colorWhite);
+
+            Text(console.Width / 2, 36, "To progress you must kill at least half of the monsters on the floor", colorWhite);
+
+            Text(console.Width / 2, 40, "Press enter to start the game", colorWhite);
+
+        }
     }
 }
