@@ -40,6 +40,7 @@ namespace ASCII_FPS
         public static float timeElapsed = 0f;
         public static float fps = 0f;
         public static string additionalDebug = "";
+        public static bool enableDebug = false;
 
         public static PlayerStats playerStats;
 
@@ -52,6 +53,8 @@ namespace ASCII_FPS
 
         protected override void Initialize()
         {
+            Window.Title = "Asciipocalypse";
+
             resolutions = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
                 .Where((DisplayMode dm) => dm.Width >= 1000 && dm.Height >= 400).ToArray();
 
@@ -154,6 +157,9 @@ namespace ASCII_FPS
 
             if (gameState == GameState.Game)
             {
+                if (keyboard.IsKeyDown(Keys.OemOpenBrackets) && keyboard.IsKeyDown(Keys.OemCloseBrackets) && keyboard.IsKeyDown(Keys.LeftShift))
+                    enableDebug = !enableDebug;
+
                 if (keyboard.IsKeyDown(Keys.Escape))
                     gameState = GameState.MainMenu;
 
@@ -383,22 +389,6 @@ namespace ASCII_FPS
         
         protected override void Draw(GameTime gameTime)
         {
-            frames += 1;
-            timeElapsed += gameTime.ElapsedGameTime.Milliseconds * 0.001f;
-            if (timeElapsed > 1f)
-            {
-                fps = frames / timeElapsed;
-                timeElapsed = 0f;
-                frames = 0;
-            }
-            string debug = fps + " FPS\nTotal number of static triangles: " + scene.TotalTriangles +
-                                 "\nNumber of rendered triangles: " + triangleCount +
-                                 "\nNumber of triangles after clipping: " + triangleCountClipped +
-                                 "\nNumber of zones rendered: " + zonesRendered +
-                                 "\nPosition: " + scene.Camera.CameraPos +
-                                 "\n" + additionalDebug +
-                                 "\nHealth: " + (int)playerStats.health;
-
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
@@ -413,7 +403,28 @@ namespace ASCII_FPS
                     spriteBatch.DrawString(font, console.Data[i, j].ToString(), new Vector2(i, j) * Console.FONT_SIZE, new Color(r, g, b));
                 }
             }
-            spriteBatch.DrawString(font, debug, Vector2.Zero, Color.White);
+
+            if (enableDebug)
+            {
+                frames += 1;
+                timeElapsed += gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+                if (timeElapsed > 1f)
+                {
+                    fps = frames / timeElapsed;
+                    timeElapsed = 0f;
+                    frames = 0;
+                }
+                string debug = fps + " FPS\nTotal number of static triangles: " + scene.TotalTriangles +
+                                     "\nNumber of rendered triangles: " + triangleCount +
+                                     "\nNumber of triangles after clipping: " + triangleCountClipped +
+                                     "\nNumber of zones rendered: " + zonesRendered +
+                                     "\nPosition: " + scene.Camera.CameraPos +
+                                     "\n" + additionalDebug +
+                                     "\nHealth: " + (int)playerStats.health;
+
+                spriteBatch.DrawString(font, debug, Vector2.Zero, Color.White);
+            }
+
             spriteBatch.End();
             
             base.Draw(gameTime);
