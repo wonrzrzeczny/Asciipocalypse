@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using OBJContentPipelineExtension;
 using System;
+using System.Linq;
 
 namespace ASCII_FPS
 {
@@ -19,6 +20,9 @@ namespace ASCII_FPS
             Content.RootDirectory = "Content";
         }
 
+
+
+        public static DisplayMode[] resolutions;
 
         SpriteFont font;
         Random random;
@@ -46,6 +50,9 @@ namespace ASCII_FPS
 
         protected override void Initialize()
         {
+            resolutions = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
+                .Where((DisplayMode dm) => dm.Width >= 1000 && dm.Height >= 400).ToArray();
+
             random = new Random();
             console = new Console(160, 90);
             rasterizer = new Rasterizer(console);
@@ -95,6 +102,25 @@ namespace ASCII_FPS
             Content.Unload();
         }
 
+        private void ChangeResolution(int resX, int resY)
+        {
+            int charsX = (int)Math.Floor((double)resX / Console.FONT_SIZE);
+            int charsY = (int)Math.Floor((double)resY / Console.FONT_SIZE);
+            console = new Console(charsX, charsY);
+            rasterizer = new Rasterizer(console);
+            int opt = hud.option;
+            hud = new HUD(console);
+            hud.option = opt;
+            graphics.PreferredBackBufferWidth = resX;
+            graphics.PreferredBackBufferHeight = resY;
+            graphics.ApplyChanges();
+        }
+
+        private void ChangeFullScreen()
+        {
+            graphics.IsFullScreen = !graphics.IsFullScreen;
+            graphics.ApplyChanges();
+        }
 
         KeyboardState keyboardPrev;
         protected override void Update(GameTime gameTime)
@@ -102,13 +128,13 @@ namespace ASCII_FPS
             additionalDebug = "";
             KeyboardState keyboard = Keyboard.GetState();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
 
             if (gameState == GameState.Game)
             {
+                if (keyboard.IsKeyDown(Keys.Escape))
+                    gameState = GameState.MainMenu;
+
                 Vector3 shift = Vector3.Zero;
                 if (keyboard.IsKeyDown(Keys.Up))
                     shift += 20f * deltaTime * scene.Camera.Forward;
@@ -241,6 +267,8 @@ namespace ASCII_FPS
                         gameState = GameState.Options;
                     else if (hud.option == 2)
                         Exit();
+
+                    hud.option = 0;
                 }
             }
             else if (gameState == GameState.Tutorial)
@@ -248,6 +276,32 @@ namespace ASCII_FPS
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
                 {
                     gameState = GameState.Game;
+                }
+            }
+            else if (gameState == GameState.Options)
+            {
+                if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+                {
+                    hud.option = (hud.option + 1) % (resolutions.Length + 2);
+                }
+                if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+                {
+                    hud.option = (hud.option + resolutions.Length + 1) % (resolutions.Length + 2);
+                }
+                if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+                {
+                    if (hud.option == 0)
+                    {
+                        gameState = GameState.MainMenu;
+                    }
+                    else if (hud.option == 1)
+                    {
+                        ChangeFullScreen();
+                    }
+                    else
+                    {
+                        ChangeResolution(resolutions[hud.option - 2].Width, resolutions[hud.option - 2].Height);
+                    }
                 }
             }
 
@@ -288,6 +342,10 @@ namespace ASCII_FPS
             else if (gameState == GameState.Tutorial)
             {
                 hud.Tutorial();
+            }
+            else if (gameState == GameState.Options)
+            {
+                hud.Options();
             }
 
             base.Update(gameTime);

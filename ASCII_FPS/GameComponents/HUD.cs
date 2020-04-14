@@ -185,6 +185,7 @@ namespace ASCII_FPS.GameComponents
             }
         }
 
+
         public int option = 0;
         public void MainMenu()
         {
@@ -225,6 +226,27 @@ namespace ASCII_FPS.GameComponents
 
             Text(console.Width / 2, 40, "Press enter to start the game", colorWhite);
 
+        }
+        
+        public void Options()
+        {
+            Rectangle(0, 0, -1, -1, colorBlack, ' ');
+            Text(console.Width / 2, 12, "Back to main menu", option == 0 ? colorLightBlue : colorGray);
+            Text(console.Width / 2, 16, "Fullscreen", option == 1 ? colorLightBlue : colorGray);
+            Text(console.Width / 2, 20, "Resolution", colorWhite);
+
+            int maxLines = (console.Height - 24) / 2;
+            int startLine = option < 2 ? 0 : Math.Max(0, option - maxLines / 2 - 1);
+            int endLine = Math.Min(startLine + maxLines, ASCII_FPS.resolutions.Length);
+
+            for (int i = startLine; i < endLine; i++)
+            {
+                int resX = ASCII_FPS.resolutions[i].Width;
+                int resY = ASCII_FPS.resolutions[i].Height;
+                string line = resX + " x " + resY;
+                if (resX == 1920 && resY == 1080) line += " (recommended)";
+                Text(console.Width / 2, 22 + 2 * (i - startLine), line, i + 2 == option ? colorLightBlue : colorGray);
+            }
         }
     }
 }
