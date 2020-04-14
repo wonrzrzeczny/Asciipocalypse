@@ -131,10 +131,20 @@ namespace ASCII_FPS
 
             scene.Camera.Rotation += rotation;
 
-            if (keyboard.IsKeyDown(Keys.Space) && keyboardPrev.IsKeyUp(Keys.Space))
+            if (playerStats.shootTime > 0f)
             {
-                MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
-                scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
+                playerStats.shootTime -= deltaTime;
+            }
+
+            if (keyboard.IsKeyDown(Keys.Space))
+            {
+                if (playerStats.shootTime <= 0f)
+                {
+                    playerStats.shootTime = 1f / (3f + playerStats.skillShootingSpeed * 0.5f);
+
+                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
+                    scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
+                }
             }
 
             if (keyboard.IsKeyDown(Keys.Enter) && keyboardPrev.IsKeyUp(Keys.Enter))
@@ -182,17 +192,23 @@ namespace ASCII_FPS
                     playerStats.maxHealth += 20f;
                     playerStats.AddHealth(20f);
                 }
-                if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
+                else if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillMaxArmor++;
                     playerStats.maxArmor += 20f;
                     playerStats.AddArmor(20f);
                 }
-                if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
+                else if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
                 {
                     playerStats.skillPoints--;
+                    playerStats.skillArmorProtection++;
                     playerStats.armorProtection += 0.02f;
+                }
+                else if (keyboard.IsKeyDown(Keys.D4) && !keyboardPrev.IsKeyDown(Keys.D4))
+                {
+                    playerStats.skillPoints--;
+                    playerStats.skillShootingSpeed++;
                 }
             }
 

@@ -79,8 +79,9 @@ namespace ASCII_FPS.Scenes
                 Vector2 normal2 = Vector2.Normalize(new Vector2((v1 - v0).Y, -(v1 - v0).X));
                 if (Mathg.Cross2D(v1 - v0, from2 - v0) > 0)
                     normal2 *= -1;
-                v0 += normal2 * radius;
-                v1 += normal2 * radius;
+                Vector2 orth = new Vector2(normal2.Y, -normal2.X);
+                v0 += (normal2 + orth) * radius;
+                v1 += (normal2 - orth) * radius;
 
                 if (Mathg.Cross2D(v1 - v0, from2 - v0) * Mathg.Cross2D(v1 - v0, to2 - v0) < 0 &&
                     Mathg.Cross2D(to2 - from2, v0 - from2) * Mathg.Cross2D(to2 - from2, v1 - from2) < 0)

@@ -97,7 +97,10 @@ namespace ASCII_FPS.Scenes
             bool[,,] ret = new bool[sizeX, sizeY, 4];
             bool[,] vis = new bool[sizeX, sizeY];
             Queue<Point> BFSqueue = new Queue<Point>();
-            BFSqueue.Enqueue(new Point(0, 0));
+            int startX = rand.Next(size);
+            int startY = rand.Next(size);
+            BFSqueue.Enqueue(new Point(startX, startY));
+            vis[startX, startY] = true;
             while (BFSqueue.Count > 0)
             {
                 Point p = BFSqueue.Dequeue();
@@ -188,9 +191,10 @@ namespace ASCII_FPS.Scenes
                         int cnt = rand.Next(1, maxMonsters + 1);
                         ASCII_FPS.playerStats.totalMonsters += cnt;
                         Vector2 shift = cnt == 1 ? Vector2.Zero : new Vector2(30f, 0f);
+                        float offset = (float)(rand.NextDouble() * Math.PI * 2f);
                         for (int i = 0; i < cnt; i++)
                         {
-                            Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(i * (float)Math.PI * 2f / cnt));
+                            Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(offset + i * (float)Math.PI * 2f / cnt));
                             MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
                             scene.AddGameObject(new Monster(monster, 3f, monsterHealth, monsterDamage));
                         }

@@ -18,10 +18,13 @@ namespace ASCII_FPS.GameComponents
         public int skillMaxHealth;
         public int skillMaxArmor;
         public int skillArmorProtection;
+        public int skillShootingSpeed;
 
         public bool dead;
         public bool hit;
         public float hitTime;
+
+        public float shootTime;
 
         public int floor;
         public int totalMonsters;

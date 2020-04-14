@@ -122,7 +122,7 @@ namespace ASCII_FPS.GameComponents
             if (armorDots % 20 > 0) Rectangle(-(1 + armorDots % 20), -2 - armorDots / 20, -2, -2 - armorDots / 20, colorForestGreen, '#');
 
             // Floor + killed monsters + skill points
-            int offset = ASCII_FPS.playerStats.skillPoints == 0 ? 0 : skillPointMenu ? 10 : 2;
+            int offset = ASCII_FPS.playerStats.skillPoints == 0 ? 0 : skillPointMenu ? 12 : 2;
             Rectangle(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorBlack, ' ');
             Border(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorGray, '@');
             Text(console.Width / 2, -5 - offset, "Floor " + ASCII_FPS.playerStats.floor, colorWhite);
@@ -133,11 +133,12 @@ namespace ASCII_FPS.GameComponents
                 Text(console.Width / 2, -1 - offset, "(P) Skill points left: " + ASCII_FPS.playerStats.skillPoints, colorWhite);
                 if (skillPointMenu)
                 {
-                    Rectangle(console.Width / 2 - 30, -9, console.Width / 2 + 30, -1, colorBlack, ' ');
-                    Border(console.Width / 2 - 30, -9, console.Width / 2 + 30, -1, colorGray, '@');
-                    Text(console.Width / 2, -7, "(1) Max health lvl. " + ASCII_FPS.playerStats.skillMaxHealth, colorWhite);
-                    Text(console.Width / 2, -5, "(2) Max armor lvl. " + ASCII_FPS.playerStats.skillMaxArmor, colorWhite);
-                    Text(console.Width / 2, -3, "(3) Armor protection lvl. " + ASCII_FPS.playerStats.skillArmorProtection, colorWhite);
+                    Rectangle(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorBlack, ' ');
+                    Border(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorGray, '@');
+                    Text(console.Width / 2, -9, "(1) Max health lvl. " + ASCII_FPS.playerStats.skillMaxHealth, colorWhite);
+                    Text(console.Width / 2, -7, "(2) Max armor lvl. " + ASCII_FPS.playerStats.skillMaxArmor, colorWhite);
+                    Text(console.Width / 2, -5, "(3) Armor protection lvl. " + ASCII_FPS.playerStats.skillArmorProtection, colorWhite);
+                    Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + ASCII_FPS.playerStats.skillShootingSpeed, colorWhite);
                 }
             }
 
