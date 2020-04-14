@@ -53,6 +53,7 @@ namespace ASCII_FPS.GameComponents
                 shootTime -= deltaTime;
                 if (shootTime < 0f && !ASCII_FPS.playerStats.dead)
                 {
+                    ASCII_FPS.tsch.Play();
                     shootTime = 0.3f;
                     MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
                     Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, damage));
@@ -62,6 +63,7 @@ namespace ASCII_FPS.GameComponents
 
         public void DealDamage(float amount)
         {
+            ASCII_FPS.oof.Play();
             health -= amount;
             if (health <= 0f)
             {

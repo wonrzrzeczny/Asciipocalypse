@@ -3,6 +3,7 @@ using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 using OBJContentPipelineExtension;
 using System;
 using System.Linq;
@@ -47,6 +48,7 @@ namespace ASCII_FPS
 
         public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, monsterTexture, projectileTexture, exitTexture;
         public static OBJFile barrelModel, exitModel;
+        public static SoundEffect tsch, oof, ouch, theme;
 
         protected override void Initialize()
         {
@@ -80,6 +82,12 @@ namespace ASCII_FPS
 
             barrelModel = Content.Load<OBJFile>("models/barrel");
             exitModel = Content.Load<OBJFile>("models/exit");
+
+            tsch = Content.Load<SoundEffect>("audio/tsch");
+            oof = Content.Load<SoundEffect>("audio/oof");
+            ouch = Content.Load<SoundEffect>("audio/ouch");
+            theme = Content.Load<SoundEffect>("audio/theme");
+            theme.Play();
 
             ResetGame();
         }
@@ -188,6 +196,7 @@ namespace ASCII_FPS
                         if (playerStats.shootTime <= 0f)
                         {
                             playerStats.shootTime = 1f / (3f + playerStats.skillShootingSpeed * 0.5f);
+                            tsch.Play();
 
                             MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
                             scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
@@ -199,6 +208,7 @@ namespace ASCII_FPS
                         if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
                             && 2 * playerStats.monsters >= playerStats.totalMonsters)
                         {
+                            theme.Play();
                             playerStats.floor++;
 
                             float monsterHealth = 8f + playerStats.floor * 2f;

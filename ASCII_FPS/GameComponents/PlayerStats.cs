@@ -33,6 +33,8 @@ namespace ASCII_FPS.GameComponents
 
         public void DealDamage(float amount)
         {
+            ASCII_FPS.ouch.Play();
+
             hit = true;
             hitTime = 0.1f;
             float blocked = Math.Min(amount, armor);
