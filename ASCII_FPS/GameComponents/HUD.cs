@@ -204,7 +204,7 @@ namespace ASCII_FPS.GameComponents
 
             Text(console.Width / 2, 30, "Play game", option == 0 ? colorLightBlue : colorGray);
             Text(console.Width / 2, 32, "Options", option == 1 ? colorLightBlue : colorGray);
-            Text(console.Width / 2, 34, "Exit", option == 2 ? colorLightBlue : colorGray);
+            Text(console.Width / 2, 34, "Quit (your progress will not be saved)", option == 2 ? colorLightBlue : colorGray);
         }
 
         public void Tutorial()
@@ -220,7 +220,7 @@ namespace ASCII_FPS.GameComponents
             Text(console.Width / 2, 26, "Enter - use barrel / ladder", colorWhite);
             Text(console.Width / 2, 28, "P - skill menu", colorWhite);
             Text(console.Width / 2, 30, "1/2/3/4 - upgrade skill", colorWhite);
-            Text(console.Width / 2, 32, "Escape - exit game", colorWhite);
+            Text(console.Width / 2, 32, "Escape - pause game", colorWhite);
 
             Text(console.Width / 2, 36, "To progress you must kill at least half of the monsters on the floor", colorWhite);
 

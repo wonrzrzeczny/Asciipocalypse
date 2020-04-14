@@ -62,15 +62,6 @@ namespace ASCII_FPS
             graphics.PreferredBackBufferHeight = 1080;
             graphics.ApplyChanges();
             base.Initialize();
-            
-            playerStats.health = 100f;
-            playerStats.maxHealth = 100f;
-            playerStats.maxArmor = 100f;
-            playerStats.armor = 100f;
-            playerStats.armorProtection = 0.3f;
-            playerStats.dead = false;
-            playerStats.hit = false;
-            playerStats.floor = 1;
         }
 
         protected override void LoadContent()
@@ -90,11 +81,7 @@ namespace ASCII_FPS
             barrelModel = Content.Load<OBJFile>("models/barrel");
             exitModel = Content.Load<OBJFile>("models/exit");
 
-            scene = SceneGenerator.Generate(10f, 5f, 4);
-            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-            HUD.scene = scene;
-            HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
-            HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+            ResetGame();
         }
         
         protected override void UnloadContent()
@@ -122,6 +109,33 @@ namespace ASCII_FPS
             graphics.ApplyChanges();
         }
 
+        private void ResetGame()
+        {
+            playerStats = new PlayerStats
+            {
+                health = 100f,
+                maxHealth = 100f,
+                maxArmor = 100f,
+                armor = 100f,
+                armorProtection = 0.3f,
+                dead = false,
+                hit = false,
+                floor = 1,
+                skillPoints = 0,
+                skillMaxHealth = 0,
+                skillMaxArmor = 0,
+                skillArmorProtection = 0,
+                skillShootingSpeed = 0
+            };
+
+            scene = SceneGenerator.Generate(10f, 5f, 4);
+            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+            HUD.scene = scene;
+            HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
+            HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+        }
+
+
         KeyboardState keyboardPrev;
         protected override void Update(GameTime gameTime)
         {
@@ -135,111 +149,114 @@ namespace ASCII_FPS
                 if (keyboard.IsKeyDown(Keys.Escape))
                     gameState = GameState.MainMenu;
 
-                Vector3 shift = Vector3.Zero;
-                if (keyboard.IsKeyDown(Keys.Up))
-                    shift += 20f * deltaTime * scene.Camera.Forward;
-                if (keyboard.IsKeyDown(Keys.Down))
-                    shift -= 20f * deltaTime * scene.Camera.Forward;
-                if (keyboard.IsKeyDown(Keys.X))
-                    shift += 10f * deltaTime * scene.Camera.Right;
-                if (keyboard.IsKeyDown(Keys.Z))
-                    shift -= 10f * deltaTime * scene.Camera.Right;
-
-                float rotation = 0f;
-                if (keyboard.IsKeyDown(Keys.Left))
-                    rotation -= 0.5f * (float)Math.PI * deltaTime;
-                if (keyboard.IsKeyDown(Keys.Right))
-                    rotation += 0.5f * (float)Math.PI * deltaTime;
-
-                if (keyboard.IsKeyDown(Keys.LeftShift))
+                if (!playerStats.dead)
                 {
-                    shift *= 2.5f;
-                    rotation *= 2.5f;
-                }
+                    Vector3 shift = Vector3.Zero;
+                    if (keyboard.IsKeyDown(Keys.Up))
+                        shift += 20f * deltaTime * scene.Camera.Forward;
+                    if (keyboard.IsKeyDown(Keys.Down))
+                        shift -= 20f * deltaTime * scene.Camera.Forward;
+                    if (keyboard.IsKeyDown(Keys.X))
+                        shift += 10f * deltaTime * scene.Camera.Right;
+                    if (keyboard.IsKeyDown(Keys.Z))
+                        shift -= 10f * deltaTime * scene.Camera.Right;
 
-                Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
-                scene.Camera.CameraPos += realShift;
+                    float rotation = 0f;
+                    if (keyboard.IsKeyDown(Keys.Left))
+                        rotation -= 0.5f * (float)Math.PI * deltaTime;
+                    if (keyboard.IsKeyDown(Keys.Right))
+                        rotation += 0.5f * (float)Math.PI * deltaTime;
 
-                scene.Camera.Rotation += rotation;
-
-                if (playerStats.shootTime > 0f)
-                {
-                    playerStats.shootTime -= deltaTime;
-                }
-
-                if (keyboard.IsKeyDown(Keys.Space))
-                {
-                    if (playerStats.shootTime <= 0f)
+                    if (keyboard.IsKeyDown(Keys.LeftShift))
                     {
-                        playerStats.shootTime = 1f / (3f + playerStats.skillShootingSpeed * 0.5f);
-
-                        MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
-                        scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
+                        shift *= 2.5f;
+                        rotation *= 2.5f;
                     }
-                }
 
-                if (keyboard.IsKeyDown(Keys.Enter) && keyboardPrev.IsKeyUp(Keys.Enter))
-                {
-                    if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
-                        && 2 * playerStats.monsters >= playerStats.totalMonsters)
+                    Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
+                    scene.Camera.CameraPos += realShift;
+
+                    scene.Camera.Rotation += rotation;
+
+                    if (playerStats.shootTime > 0f)
                     {
-                        playerStats.floor++;
-
-                        float monsterHealth = 8f + playerStats.floor * 2f;
-                        float monsterDamage = 4f + playerStats.floor;
-                        int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
-                        scene = SceneGenerator.Generate(monsterHealth, monsterDamage, maxMonsters);
-                        scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-                        HUD.scene = scene;
-                        HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
-                        HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+                        playerStats.shootTime -= deltaTime;
                     }
-                    else
+
+                    if (keyboard.IsKeyDown(Keys.Space))
                     {
-                        foreach (GameObject gameObject in scene.gameObjects)
+                        if (playerStats.shootTime <= 0f)
                         {
-                            if (gameObject is Collectible collectible && Vector3.Distance(scene.Camera.CameraPos, collectible.Position) < 7f)
+                            playerStats.shootTime = 1f / (3f + playerStats.skillShootingSpeed * 0.5f);
+
+                            MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, projectileTexture);
+                            scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
+                        }
+                    }
+
+                    if (keyboard.IsKeyDown(Keys.Enter) && keyboardPrev.IsKeyUp(Keys.Enter))
+                    {
+                        if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
+                            && 2 * playerStats.monsters >= playerStats.totalMonsters)
+                        {
+                            playerStats.floor++;
+
+                            float monsterHealth = 8f + playerStats.floor * 2f;
+                            float monsterDamage = 4f + playerStats.floor;
+                            int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
+                            scene = SceneGenerator.Generate(monsterHealth, monsterDamage, maxMonsters);
+                            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+                            HUD.scene = scene;
+                            HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
+                            HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+                        }
+                        else
+                        {
+                            foreach (GameObject gameObject in scene.gameObjects)
                             {
-                                collectible.PickUp();
+                                if (gameObject is Collectible collectible && Vector3.Distance(scene.Camera.CameraPos, collectible.Position) < 7f)
+                                {
+                                    collectible.PickUp();
+                                }
                             }
                         }
                     }
-                }
 
-                if (playerStats.skillPoints > 0 && keyboard.IsKeyDown(Keys.P) && !keyboardPrev.IsKeyDown(Keys.P))
-                {
-                    HUD.skillPointMenu = !HUD.skillPointMenu;
-                }
-                if (playerStats.skillPoints == 0)
-                {
-                    HUD.skillPointMenu = false;
-                }
-                if (HUD.skillPointMenu)
-                {
-                    if (keyboard.IsKeyDown(Keys.D1) && !keyboardPrev.IsKeyDown(Keys.D1))
+                    if (playerStats.skillPoints > 0 && keyboard.IsKeyDown(Keys.P) && !keyboardPrev.IsKeyDown(Keys.P))
                     {
-                        playerStats.skillPoints--;
-                        playerStats.skillMaxHealth++;
-                        playerStats.maxHealth += 20f;
-                        playerStats.AddHealth(20f);
+                        HUD.skillPointMenu = !HUD.skillPointMenu;
                     }
-                    else if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
+                    if (playerStats.skillPoints == 0)
                     {
-                        playerStats.skillPoints--;
-                        playerStats.skillMaxArmor++;
-                        playerStats.maxArmor += 20f;
-                        playerStats.AddArmor(20f);
+                        HUD.skillPointMenu = false;
                     }
-                    else if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
+                    if (HUD.skillPointMenu)
                     {
-                        playerStats.skillPoints--;
-                        playerStats.skillArmorProtection++;
-                        playerStats.armorProtection += 0.02f;
-                    }
-                    else if (keyboard.IsKeyDown(Keys.D4) && !keyboardPrev.IsKeyDown(Keys.D4))
-                    {
-                        playerStats.skillPoints--;
-                        playerStats.skillShootingSpeed++;
+                        if (keyboard.IsKeyDown(Keys.D1) && !keyboardPrev.IsKeyDown(Keys.D1))
+                        {
+                            playerStats.skillPoints--;
+                            playerStats.skillMaxHealth++;
+                            playerStats.maxHealth += 20f;
+                            playerStats.AddHealth(20f);
+                        }
+                        else if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
+                        {
+                            playerStats.skillPoints--;
+                            playerStats.skillMaxArmor++;
+                            playerStats.maxArmor += 20f;
+                            playerStats.AddArmor(20f);
+                        }
+                        else if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
+                        {
+                            playerStats.skillPoints--;
+                            playerStats.skillArmorProtection++;
+                            playerStats.armorProtection += 0.02f;
+                        }
+                        else if (keyboard.IsKeyDown(Keys.D4) && !keyboardPrev.IsKeyDown(Keys.D4))
+                        {
+                            playerStats.skillPoints--;
+                            playerStats.skillShootingSpeed++;
+                        }
                     }
                 }
 
@@ -275,6 +292,9 @@ namespace ASCII_FPS
             {
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
                 {
+                    if (playerStats.dead)
+                        ResetGame();
+                    
                     gameState = GameState.Game;
                 }
             }

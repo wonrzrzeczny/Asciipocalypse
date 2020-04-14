@@ -51,7 +51,7 @@ namespace ASCII_FPS.GameComponents
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
             {
                 shootTime -= deltaTime;
-                if (shootTime < 0f)
+                if (shootTime < 0f && !ASCII_FPS.playerStats.dead)
                 {
                     shootTime = 0.3f;
                     MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
