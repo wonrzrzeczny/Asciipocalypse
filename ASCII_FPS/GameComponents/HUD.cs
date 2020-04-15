@@ -205,6 +205,9 @@ namespace ASCII_FPS.GameComponents
             Text(console.Width / 2, 30, "Play game", option == 0 ? colorLightBlue : colorGray);
             Text(console.Width / 2, 32, "Options", option == 1 ? colorLightBlue : colorGray);
             Text(console.Width / 2, 34, "Exit (your progress won't be saved)", option == 2 ? colorLightBlue : colorGray);
+
+            Text(3, -2, "v1.0", colorWhite);
+            Text(-9, -2, "by wonrzrzeczny", colorWhite);
         }
 
         public void Tutorial()

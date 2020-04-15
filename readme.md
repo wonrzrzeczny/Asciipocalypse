@@ -2,7 +2,7 @@
 
 # Asciipocalypse
 
-**3d first person shooter drawn using nothing more, but ascii characters!**
+**3d first person shooter drawn using nothing but ascii characters!**
 
 Delve deep into the dark dungeon full of terrifying ascii monsters in this roguelike first person shooter game. Level up your character (no pun intended) and make your way down through the floors, that become progressively harder and harder.
 
