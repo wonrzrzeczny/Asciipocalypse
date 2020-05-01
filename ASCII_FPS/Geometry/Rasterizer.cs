@@ -98,6 +98,7 @@ namespace ASCII_FPS
             List<Triangle> trianglesOut = new List<Triangle>();
 
             foreach (Triangle triangle in triangles)
+                if (Vector3.Dot(triangle.V0, triangle.Normal) < 0f) // backface culling 
             {
                 bool s0 = triangle.V0.Z > camera.Near;
                 bool s1 = triangle.V1.Z > camera.Near;

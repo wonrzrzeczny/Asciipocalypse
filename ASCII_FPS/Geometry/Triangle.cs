@@ -14,6 +14,8 @@ namespace ASCII_FPS
 
         public AsciiTexture Texture { get; set; }
 
+        public Vector3 Normal { get; }
+
         public Triangle(Vector3 v0, Vector3 v1, Vector3 v2, AsciiTexture texture, Vector2 uv0, Vector2 uv1, Vector2 uv2)
         {
             V0 = v0;
@@ -23,6 +25,7 @@ namespace ASCII_FPS
             UV1 = uv1;
             UV2 = uv2;
             Texture = texture;
+            Normal = Vector3.Cross(v1 - v0, v2 - v0);
         }
 
         public Triangle(Vector3 v0, Vector3 v1, Vector3 v2, AsciiTexture texture) : this(v0, v1, v2, texture, Vector2.Zero, Vector2.Zero, Vector2.Zero) { }

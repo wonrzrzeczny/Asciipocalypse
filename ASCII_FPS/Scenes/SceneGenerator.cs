@@ -40,9 +40,9 @@ namespace ASCII_FPS.Scenes
             List<Triangle> triangles = new List<Triangle>
             {
                 new Triangle(tll, trl, brl, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
-                new Triangle(tlh, trh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
+                new Triangle(tlh, brh, trh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitX),
                 new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY),
-                new Triangle(tlh, brh, blh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY)
+                new Triangle(tlh, blh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitY, Vector2.One)
             };
             return new MeshObject(triangles, Vector3.Zero, 0f);
         }
