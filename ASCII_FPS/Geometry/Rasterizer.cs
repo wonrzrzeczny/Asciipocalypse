@@ -9,8 +9,11 @@ namespace ASCII_FPS
     public class Rasterizer
     {
         private Console console;
+        private float[,] offset; // depth offset
+
         private float[,] zBuffer;
-        private float[,] offset;
+        private Triangle[,] tBuffer; // triangle to be rendered at pixel
+        private Vector3[,] bBuffer; // perspective correct barycentric coordinates for triangle verticex attribute interpolation
         private Random rand;
 
         private const string fogString = "@&#8x*,:. ";
@@ -20,6 +23,8 @@ namespace ASCII_FPS
             rand = new Random();
             this.console = console;
             zBuffer = new float[console.Width, console.Height];
+            tBuffer = new Triangle[console.Width, console.Height];
+            bBuffer = new Vector3[console.Width, console.Height];
             offset = new float[console.Width, console.Height];
             for (int i = 0; i < console.Width; i++)
             {
@@ -40,6 +45,8 @@ namespace ASCII_FPS
                     console.Data[i, j] = ' ';
                     console.Color[i, j] = 255;
                     zBuffer[i, j] = 1;
+                    bBuffer[i, j] = Vector3.Zero;
+                    tBuffer[i, j] = null;
                 }
             }
 
@@ -87,6 +94,29 @@ namespace ASCII_FPS
             if (firstZone != null)
             {
                 ProcessZone(camera, firstZone, 0, console.Width);
+            }
+
+
+            // Shading
+            for (int i = 0; i < console.Width; i++)
+            {
+                for (int j = 0; j < console.Height; j++)
+                {
+                    Triangle triangle = tBuffer[i, j];
+
+                    if (triangle != null)
+                    {
+                        float z = zBuffer[i, j];
+                        Vector3 bar = bBuffer[i, j];
+
+                        int fogId = (z < 0) ? 0 : Math.Min((int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]), fogString.Length - 1);
+                        console.Data[i, j] = fogString[fogId];
+
+                        // Sample from texture
+                        Vector2 uv = bar.X * triangle.UV0 + bar.Y * triangle.UV1 + bar.Z * triangle.UV2;
+                        console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv));
+                    }
+                }
             }
         }
 
@@ -203,14 +233,9 @@ namespace ASCII_FPS
                             if (z > -1 && z < 1 && z < zBuffer[i, j])
                             {
                                 zBuffer[i, j] = z;
-
-                                int fogId = (z < 0) ? 0 : Math.Min((int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]), fogString.Length - 1);
-                                console.Data[i, j] = fogString[fogId];
-
-                                // Sample from texture
-                                Vector2 uv = bar.X * triangle.UV0 / v0.W + bar.Y * triangle.UV1 / v1.W + bar.Z * triangle.UV2 / v2.W;
-                                uv /= bar.X / v0.W + bar.Y / v1.W + bar.Z / v2.W;
-                                console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv));
+                                tBuffer[i, j] = triangle;
+                                bBuffer[i, j] = new Vector3(bar.X / v0.W, bar.Y / v1.W, bar.Z / v2.W) 
+                                    / (bar.X / v0.W + bar.Y / v1.W + bar.Z / v2.W);
                             }
                         }
                     }
