@@ -68,6 +68,7 @@ namespace ASCII_FPS.GameComponents
             if (health <= 0f)
             {
                 ASCII_FPS.playerStats.monsters++;
+                ASCII_FPS.playerStats.totalMonstersKilled++;
                 Destroy = true;
             }
         }

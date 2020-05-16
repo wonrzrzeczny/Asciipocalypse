@@ -93,6 +93,7 @@ namespace ASCII_FPS
             theme.Play();
 
             ResetGame();
+            playerStats.dead = true;
         }
         
         protected override void UnloadContent()
@@ -136,7 +137,8 @@ namespace ASCII_FPS
                 skillMaxHealth = 0,
                 skillMaxArmor = 0,
                 skillArmorProtection = 0,
-                skillShootingSpeed = 0
+                skillShootingSpeed = 0,
+                totalMonstersKilled = 0
             };
 
             scene = SceneGenerator.Generate(10f, 5f, 4);
@@ -286,19 +288,25 @@ namespace ASCII_FPS
             {
                 if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
                 {
-                    hud.option = (hud.option + 1) % 3;
+                    hud.option = (hud.option + 1) % 4;
+                    if (playerStats.dead && hud.option == 1)
+                        hud.option++;
                 }
                 if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
                 {
-                    hud.option = (hud.option + 2) % 3;
+                    hud.option = (hud.option + 3) % 4;
+                    if (playerStats.dead && hud.option == 1)
+                        hud.option--;
                 }
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
                 {
                     if (hud.option == 0)
                         gameState = GameState.Tutorial;
                     else if (hud.option == 1)
-                        gameState = GameState.Options;
+                        gameState = GameState.Game;
                     else if (hud.option == 2)
+                        gameState = GameState.Options;
+                    else if (hud.option == 3)
                         Exit();
 
                     hud.option = 0;
@@ -308,10 +316,13 @@ namespace ASCII_FPS
             {
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
                 {
-                    if (playerStats.dead)
-                        ResetGame();
+                    ResetGame();
                     
                     gameState = GameState.Game;
+                }
+                else if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
+                {
+                    gameState = GameState.MainMenu;
                 }
             }
             else if (gameState == GameState.Options)
@@ -338,6 +349,11 @@ namespace ASCII_FPS
                     {
                         ChangeResolution(resolutions[hud.option - 2].Width, resolutions[hud.option - 2].Height);
                     }
+                }
+                if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
+                {
+                    gameState = GameState.MainMenu;
+                    hud.option = 0;
                 }
             }
 

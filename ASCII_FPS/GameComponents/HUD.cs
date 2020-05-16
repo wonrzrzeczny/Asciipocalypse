@@ -183,6 +183,18 @@ namespace ASCII_FPS.GameComponents
                         console.Data[xx, yy] = '-';
                 }
             }
+
+            // Game Over
+            if (ASCII_FPS.playerStats.dead)
+            {
+                Rectangle(console.Width / 2 - 16, console.Height / 2 - 9, console.Width / 2 + 15, console.Height / 2 + 8, colorBlack, ' ');
+                Border(console.Width / 2 - 16, console.Height / 2 - 9, console.Width / 2 + 15, console.Height / 2 + 8, colorWhite, '@');
+                Text(console.Width / 2, console.Height / 2 - 6, "GAME OVER", colorWhite);
+                Text(console.Width / 2, console.Height / 2 - 2, "Floor reached: " + ASCII_FPS.playerStats.floor, colorWhite);
+                Text(console.Width / 2, console.Height / 2, "Monsters killed: " + ASCII_FPS.playerStats.totalMonstersKilled, colorWhite);
+                Text(console.Width / 2, console.Height / 2 + 4, "Press Esc to return", colorWhite);
+                Text(console.Width / 2, console.Height / 2 + 5, "to the main menu", colorWhite);
+            }
         }
 
 
@@ -202,9 +214,18 @@ namespace ASCII_FPS.GameComponents
             Text(console.Width / 2, 15, @"                     | |                             | | |            ", colorWhite);
             Text(console.Width / 2, 16, @"                     |_|                             |_|_|            ", colorWhite);
 
-            Text(console.Width / 2, 30, "Play game", option == 0 ? colorLightBlue : colorGray);
-            Text(console.Width / 2, 32, "Options", option == 1 ? colorLightBlue : colorGray);
-            Text(console.Width / 2, 34, "Exit (your progress won't be saved)", option == 2 ? colorLightBlue : colorGray);
+            Text(console.Width / 2, 30, "New game", option == 0 ? colorLightBlue : colorGray);
+            if (ASCII_FPS.playerStats.dead)
+            {
+                Text(console.Width / 2, 32, "Options", option == 2 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 34, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);
+            }
+            else
+            {
+                Text(console.Width / 2, 32, "Continue", option == 1 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 34, "Options", option == 2 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 36, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);
+            }
 
             Text(3, -2, "v1.0", colorWhite);
             Text(-9, -2, "by wonrzrzeczny", colorWhite);

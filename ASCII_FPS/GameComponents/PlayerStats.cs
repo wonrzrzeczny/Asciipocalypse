@@ -29,6 +29,7 @@ namespace ASCII_FPS.GameComponents
         public int floor;
         public int totalMonsters;
         public int monsters;
+        public int totalMonstersKilled;
         public Vector2 exitPosition;
 
         public void DealDamage(float amount)
