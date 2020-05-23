@@ -125,53 +125,67 @@ namespace ASCII_FPS
         // Clipping triangles with near plane - warning, very ugly code ahead
         public List<Triangle> ClipTriangles(List<Triangle> triangles, Camera camera)
         {
-            List<Triangle> trianglesOut = new List<Triangle>();
+            Vector3[] planeNormals = new Vector3[] { camera.LeftPlane, -Vector3.Forward, camera.RightPlane };
+            Vector3[] planeOffsets = new Vector3[] { Vector3.Zero, -camera.Near * Vector3.Forward, Vector3.Zero };
 
-            foreach (Triangle triangle in triangles)
-                if (Vector3.Dot(triangle.V0, triangle.Normal) < 0f) // backface culling 
+            List<Triangle> trianglesIn = new List<Triangle>(triangles);
+            for (int i = 0; i < planeNormals.Length; i++)
             {
-                bool s0 = triangle.V0.Z > camera.Near;
-                bool s1 = triangle.V1.Z > camera.Near;
-                bool s2 = triangle.V2.Z > camera.Near;
+                Vector3 normal = planeNormals[i];
+                Vector3 offset = planeOffsets[i];
 
-                float t0 = (camera.Near - triangle.V2.Z) / (triangle.V1.Z - triangle.V2.Z);
-                float t1 = (camera.Near - triangle.V0.Z) / (triangle.V2.Z - triangle.V0.Z);
-                float t2 = (camera.Near - triangle.V1.Z) / (triangle.V0.Z - triangle.V1.Z);
+                List<Triangle> trianglesOut = new List<Triangle>();
 
-                Vector3 v0 = t0 * triangle.V1 + (1 - t0) * triangle.V2; // near plane intersection with v1--v2
-                Vector3 v1 = t1 * triangle.V2 + (1 - t1) * triangle.V0; // near plane intersection with v2--v0
-                Vector3 v2 = t2 * triangle.V0 + (1 - t2) * triangle.V1; // near plane intersection with v0--v1
-
-                Vector2 uv0 = t0 * triangle.UV1 + (1 - t0) * triangle.UV2; // uv corresponding to v0
-                Vector2 uv1 = t1 * triangle.UV2 + (1 - t1) * triangle.UV0; // uv corresponding to v1
-                Vector2 uv2 = t2 * triangle.UV0 + (1 - t2) * triangle.UV1; // uv corresponding to v2
-
-                if (s0 && s1 && s2) // fully beyond
-                    trianglesOut.Add(triangle);
-                else if (s0 && !s1 && !s2) // one vertex beyond
-                    trianglesOut.Add(new Triangle(triangle.V0, v2, v1, triangle.Texture, triangle.UV0, uv2, uv1));
-                else if (s1 && !s2 && !s0)
-                    trianglesOut.Add(new Triangle(triangle.V1, v0, v2, triangle.Texture, triangle.UV1, uv0, uv2));
-                else if (s2 && !s0 && !s1)
-                    trianglesOut.Add(new Triangle(triangle.V2, v1, v0, triangle.Texture, triangle.UV2, uv1, uv0));
-                else if (!s0 && s1 && s2) // two vertices beyond
+                foreach (Triangle triangle in trianglesIn)
                 {
-                    trianglesOut.Add(new Triangle(triangle.V2, v1, triangle.V1, triangle.Texture, triangle.UV2, uv1, triangle.UV1));
-                    trianglesOut.Add(new Triangle(v1, v2, triangle.V1, triangle.Texture, uv1, uv2, triangle.UV1));
+                    if (Vector3.Dot(triangle.V0, triangle.Normal) < 0f) // backface culling 
+                    {
+                        bool s0 = Vector3.Dot(triangle.V0 - offset, normal) > 0;
+                        bool s1 = Vector3.Dot(triangle.V1 - offset, normal) > 0;
+                        bool s2 = Vector3.Dot(triangle.V2 - offset, normal) > 0;
+
+                        float t0 = Vector3.Dot(offset - triangle.V2, normal) / Vector3.Dot(triangle.V1 - triangle.V2, normal);
+                        float t1 = Vector3.Dot(offset - triangle.V0, normal) / Vector3.Dot(triangle.V2 - triangle.V0, normal);
+                        float t2 = Vector3.Dot(offset - triangle.V1, normal) / Vector3.Dot(triangle.V0 - triangle.V1, normal);
+
+                        Vector3 v0 = t0 * triangle.V1 + (1 - t0) * triangle.V2; // intersection with v1--v2
+                        Vector3 v1 = t1 * triangle.V2 + (1 - t1) * triangle.V0; // intersection with v2--v0
+                        Vector3 v2 = t2 * triangle.V0 + (1 - t2) * triangle.V1; // intersection with v0--v1
+
+                        Vector2 uv0 = t0 * triangle.UV1 + (1 - t0) * triangle.UV2; // uv corresponding to v0
+                        Vector2 uv1 = t1 * triangle.UV2 + (1 - t1) * triangle.UV0; // uv corresponding to v1
+                        Vector2 uv2 = t2 * triangle.UV0 + (1 - t2) * triangle.UV1; // uv corresponding to v2
+
+                        if (s0 && s1 && s2) // fully beyond
+                            trianglesOut.Add(triangle);
+                        else if (s0 && !s1 && !s2) // one vertex beyond
+                            trianglesOut.Add(new Triangle(triangle.V0, v2, v1, triangle.Texture, triangle.UV0, uv2, uv1));
+                        else if (s1 && !s2 && !s0)
+                            trianglesOut.Add(new Triangle(triangle.V1, v0, v2, triangle.Texture, triangle.UV1, uv0, uv2));
+                        else if (s2 && !s0 && !s1)
+                            trianglesOut.Add(new Triangle(triangle.V2, v1, v0, triangle.Texture, triangle.UV2, uv1, uv0));
+                        else if (!s0 && s1 && s2) // two vertices beyond
+                        {
+                            trianglesOut.Add(new Triangle(triangle.V2, v1, triangle.V1, triangle.Texture, triangle.UV2, uv1, triangle.UV1));
+                            trianglesOut.Add(new Triangle(v1, v2, triangle.V1, triangle.Texture, uv1, uv2, triangle.UV1));
+                        }
+                        else if (!s1 && s2 && s0)
+                        {
+                            trianglesOut.Add(new Triangle(triangle.V0, v2, triangle.V2, triangle.Texture, triangle.UV0, uv2, triangle.UV2));
+                            trianglesOut.Add(new Triangle(v2, v0, triangle.V2, triangle.Texture, uv2, uv0, triangle.UV2));
+                        }
+                        else if (!s2 && s0 && s1)
+                        {
+                            trianglesOut.Add(new Triangle(triangle.V1, v0, triangle.V0, triangle.Texture, triangle.UV1, uv0, triangle.UV0));
+                            trianglesOut.Add(new Triangle(v0, v1, triangle.V0, triangle.Texture, uv0, uv1, triangle.UV0));
+                        }
+                    }
                 }
-                else if (!s1 && s2 && s0)
-                {
-                    trianglesOut.Add(new Triangle(triangle.V0, v2, triangle.V2, triangle.Texture, triangle.UV0, uv2, triangle.UV2));
-                    trianglesOut.Add(new Triangle(v2, v0, triangle.V2, triangle.Texture, uv2, uv0, triangle.UV2));
-                }
-                else if (!s2 && s0 && s1)
-                {
-                    trianglesOut.Add(new Triangle(triangle.V1, v0, triangle.V0, triangle.Texture, triangle.UV1, uv0, triangle.UV0));
-                    trianglesOut.Add(new Triangle(v0, v1, triangle.V0, triangle.Texture, uv0, uv1, triangle.UV0));
-                }
+
+                trianglesIn = trianglesOut;
             }
 
-            return trianglesOut;
+            return trianglesIn;
         }
 
         // Render triangles, only for pixels with x in [boundsLeft, boundsRight)
@@ -226,7 +240,7 @@ namespace ASCII_FPS
                         float t2 = (float)(j - minJ) / (maxJ - minJ);
                         Vector3 bar = barTop * (1 - t2) + barBottom * t2;
 
-                        if (bar.X >= 0 && bar.Y >= 0 && bar.Z >= 0)
+                        if (bar.X >= -0.01f && bar.Y >= -0.01f && bar.Z >= -0.01f)
                         {
                             float z = z0 * bar.X + z1 * bar.Y + z2 * bar.Z;
 
