@@ -130,7 +130,7 @@ namespace ASCII_FPS.GameComponents
                  "Monsters: " + ASCII_FPS.playerStats.monsters + " / " + ASCII_FPS.playerStats.totalMonsters, colorWhite);
             if (ASCII_FPS.playerStats.skillPoints > 0)
             {
-                Text(console.Width / 2, -1 - offset, "(P) Skill points left: " + ASCII_FPS.playerStats.skillPoints, colorWhite);
+                Text(console.Width / 2, -1 - offset, "(" + Keybinds.skills + ") Skill points left: " + ASCII_FPS.playerStats.skillPoints, colorWhite);
                 if (skillPointMenu)
                 {
                     Rectangle(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorBlack, ' ');
@@ -141,7 +141,7 @@ namespace ASCII_FPS.GameComponents
                     Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + ASCII_FPS.playerStats.skillShootingSpeed, colorWhite);
                 }
             }
-
+        
             // Minimap
             Rectangle(-13, 0, -1, 12, colorLightGray, ' ');
             Border(-13, 0, -1, 12, colorGray, '@');
@@ -199,6 +199,8 @@ namespace ASCII_FPS.GameComponents
 
 
         public int option = 0;
+        public int submenu = 0;
+        public int selected = 0;
         public void MainMenu()
         {
             Rectangle(0, 0, -1, -1, colorBlack, ' ');
@@ -236,13 +238,13 @@ namespace ASCII_FPS.GameComponents
             Rectangle(0, 0, -1, -1, colorBlack, ' ');
             Text(console.Width / 2, 12, "Controls", colorWhite);
 
-            Text(console.Width / 2, 16, "Walk forward / backwards - up arrow / down arrow", colorWhite);
-            Text(console.Width / 2, 18, "Turn left / right - left arrow / right arrow", colorWhite);
-            Text(console.Width / 2, 20, "Strafe left / right - Z / X", colorWhite);
-            Text(console.Width / 2, 22, "Hold shift - faster movement", colorWhite);
-            Text(console.Width / 2, 24, "Hold space - shoot", colorWhite);
-            Text(console.Width / 2, 26, "Enter - use barrel / ladder", colorWhite);
-            Text(console.Width / 2, 28, "P - skill menu", colorWhite);
+            Text(console.Width / 2, 16, "Walk forward / backwards - " + Keybinds.forward + " / " + Keybinds.backwards, colorWhite);
+            Text(console.Width / 2, 18, "Turn left / right - " + Keybinds.turnLeft + " / " + Keybinds.turnRight, colorWhite);
+            Text(console.Width / 2, 20, "Strafe left / right - " + Keybinds.strafeLeft + " / " + Keybinds.strafeRight, colorWhite);
+            Text(console.Width / 2, 22, "Hold " + Keybinds.sprint + " - faster movement", colorWhite);
+            Text(console.Width / 2, 24, "Hold " + Keybinds.fire + " - shoot", colorWhite);
+            Text(console.Width / 2, 26, Keybinds.action + " - use barrel / ladder", colorWhite);
+            Text(console.Width / 2, 28, Keybinds.skills + " - skill menu", colorWhite);
             Text(console.Width / 2, 30, "1/2/3/4 - upgrade skill", colorWhite);
             Text(console.Width / 2, 32, "Escape - pause game", colorWhite);
 
@@ -255,21 +257,50 @@ namespace ASCII_FPS.GameComponents
         public void Options()
         {
             Rectangle(0, 0, -1, -1, colorBlack, ' ');
-            Text(console.Width / 2, 12, "Back to main menu", option == 0 ? colorLightBlue : colorGray);
-            Text(console.Width / 2, 16, "Fullscreen", option == 1 ? colorLightBlue : colorGray);
-            Text(console.Width / 2, 20, "Resolution", colorWhite);
 
-            int maxLines = (console.Height - 24) / 2;
-            int startLine = option < 2 ? 0 : Math.Max(0, option - maxLines / 2 - 1);
-            int endLine = Math.Min(startLine + maxLines, ASCII_FPS.resolutions.Length);
-
-            for (int i = startLine; i < endLine; i++)
+            if (submenu == 0)
             {
-                int resX = ASCII_FPS.resolutions[i].Width;
-                int resY = ASCII_FPS.resolutions[i].Height;
-                string line = resX + " x " + resY;
-                if (resX == 1920 && resY == 1080) line += " (recommended)";
-                Text(console.Width / 2, 22 + 2 * (i - startLine), line, i + 2 == option ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 12, "Back to main menu", option == 0 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 16, "Keybinds", option == 1 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 18, "Fullscreen", option == 2 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 22, "Resolution", colorWhite);
+
+                int maxLines = (console.Height - 26) / 2;
+                int startLine = option < 2 ? 0 : Math.Max(0, option - maxLines / 2 - 1);
+                int endLine = Math.Min(startLine + maxLines, ASCII_FPS.resolutions.Length);
+
+                for (int i = startLine; i < endLine; i++)
+                {
+                    int resX = ASCII_FPS.resolutions[i].Width;
+                    int resY = ASCII_FPS.resolutions[i].Height;
+                    string line = resX + " x " + resY;
+                    if (resX == 1920 && resY == 1080) line += " (recommended)";
+                    Text(console.Width / 2, 24 + 2 * (i - startLine), line, i + 3 == option ? colorLightBlue : colorGray);
+                }
+            }
+            else
+            {
+                Text(console.Width / 2, 12, "Back", option == 0 ? colorLightBlue : colorGray);
+
+                string[] descriptions = new string[]
+                {
+                    "Walk forward", "Walk backwards", "Turn left", "Turn right",
+                    "Strafe left", "Strafe right", "Sprint", "Fire",
+                    "Action", "Skill menu"
+                };
+                string[] currentBinds = new string[]
+                {
+                    Keybinds.forward.ToString(), Keybinds.backwards.ToString(), Keybinds.turnLeft.ToString(), Keybinds.turnRight.ToString(),
+                    Keybinds.strafeLeft.ToString(), Keybinds.strafeRight.ToString(), Keybinds.sprint.ToString(), Keybinds.fire.ToString(),
+                    Keybinds.action.ToString(), Keybinds.skills.ToString()
+                };
+
+                for (int i = 0; i < descriptions.Length; i++)
+                {
+                    string text = descriptions[i] + " - " + (selected == i + 1 ? "< Press key >" : currentBinds[i]);
+                    byte color = option == i + 1 ? colorLightBlue : colorGray;
+                    Text(console.Width / 2, 16 + 2 * i, text, color);
+                }
             }
         }
     }

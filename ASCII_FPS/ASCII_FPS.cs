@@ -168,22 +168,22 @@ namespace ASCII_FPS
                 if (!playerStats.dead)
                 {
                     Vector3 shift = Vector3.Zero;
-                    if (keyboard.IsKeyDown(Keys.Up))
+                    if (keyboard.IsKeyDown(Keybinds.forward))
                         shift += 20f * deltaTime * scene.Camera.Forward;
-                    if (keyboard.IsKeyDown(Keys.Down))
+                    if (keyboard.IsKeyDown(Keybinds.backwards))
                         shift -= 20f * deltaTime * scene.Camera.Forward;
-                    if (keyboard.IsKeyDown(Keys.X))
+                    if (keyboard.IsKeyDown(Keybinds.strafeRight))
                         shift += 10f * deltaTime * scene.Camera.Right;
-                    if (keyboard.IsKeyDown(Keys.Z))
+                    if (keyboard.IsKeyDown(Keybinds.strafeLeft))
                         shift -= 10f * deltaTime * scene.Camera.Right;
 
                     float rotation = 0f;
-                    if (keyboard.IsKeyDown(Keys.Left))
+                    if (keyboard.IsKeyDown(Keybinds.turnLeft))
                         rotation -= 0.5f * (float)Math.PI * deltaTime;
-                    if (keyboard.IsKeyDown(Keys.Right))
+                    if (keyboard.IsKeyDown(Keybinds.turnRight))
                         rotation += 0.5f * (float)Math.PI * deltaTime;
 
-                    if (keyboard.IsKeyDown(Keys.LeftShift))
+                    if (keyboard.IsKeyDown(Keybinds.sprint))
                     {
                         shift *= 2.5f;
                         rotation *= 2.5f;
@@ -199,7 +199,7 @@ namespace ASCII_FPS
                         playerStats.shootTime -= deltaTime;
                     }
 
-                    if (keyboard.IsKeyDown(Keys.Space))
+                    if (keyboard.IsKeyDown(Keybinds.fire))
                     {
                         if (playerStats.shootTime <= 0f)
                         {
@@ -211,7 +211,7 @@ namespace ASCII_FPS
                         }
                     }
 
-                    if (keyboard.IsKeyDown(Keys.Enter) && keyboardPrev.IsKeyUp(Keys.Enter))
+                    if (keyboard.IsKeyDown(Keybinds.action) && keyboardPrev.IsKeyUp(Keybinds.action))
                     {
                         if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
                             && 2 * playerStats.monsters >= playerStats.totalMonsters)
@@ -240,7 +240,7 @@ namespace ASCII_FPS
                         }
                     }
 
-                    if (playerStats.skillPoints > 0 && keyboard.IsKeyDown(Keys.P) && !keyboardPrev.IsKeyDown(Keys.P))
+                    if (playerStats.skillPoints > 0 && keyboard.IsKeyDown(Keybinds.skills) && !keyboardPrev.IsKeyDown(Keybinds.skills))
                     {
                         HUD.skillPointMenu = !HUD.skillPointMenu;
                     }
@@ -310,6 +310,7 @@ namespace ASCII_FPS
                         Exit();
 
                     hud.option = 0;
+                    hud.submenu = 0;
                 }
             }
             else if (gameState == GameState.Tutorial)
@@ -327,33 +328,90 @@ namespace ASCII_FPS
             }
             else if (gameState == GameState.Options)
             {
-                if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+                if (hud.submenu == 0)
                 {
-                    hud.option = (hud.option + 1) % (resolutions.Length + 2);
-                }
-                if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
-                {
-                    hud.option = (hud.option + resolutions.Length + 1) % (resolutions.Length + 2);
-                }
-                if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
-                {
-                    if (hud.option == 0)
+                    if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+                    {
+                        hud.option = (hud.option + 1) % (resolutions.Length + 3);
+                    }
+                    if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+                    {
+                        hud.option = (hud.option + resolutions.Length + 2) % (resolutions.Length + 3);
+                    }
+                    if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+                    {
+                        if (hud.option == 0)
+                        {
+                            gameState = GameState.MainMenu;
+                        }
+                        else if (hud.option == 1)
+                        {
+                            hud.submenu = 1;
+                            hud.option = 0;
+                        }
+                        else if (hud.option == 2)
+                        {
+                            ChangeFullScreen();
+                        }
+                        else
+                        {
+                            ChangeResolution(resolutions[hud.option - 3].Width, resolutions[hud.option - 3].Height);
+                        }
+                    }
+                    if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
                     {
                         gameState = GameState.MainMenu;
+                        hud.option = 0;
                     }
-                    else if (hud.option == 1)
+                }
+                else
+                {
+                    if (hud.selected == 0)
                     {
-                        ChangeFullScreen();
+                        if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+                        {
+                            hud.option = (hud.option + 1) % 11;
+                        }
+                        if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+                        {
+                            hud.option = (hud.option + 10) % 11;
+                        }
+                        if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+                        {
+                            if (hud.option == 0)
+                            {
+                                hud.submenu = 0;
+                            }
+                            else
+                            {
+                                hud.selected = hud.option;
+                            }
+                        }
+                        if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
+                        {
+                            hud.option = 0;
+                            hud.submenu = 0;
+                        }
                     }
                     else
                     {
-                        ChangeResolution(resolutions[hud.option - 2].Width, resolutions[hud.option - 2].Height);
+                        Keys[] keys = keyboard.GetPressedKeys();
+                        if (keys.Length > 0 && !keyboardPrev.IsKeyDown(keys[0]))
+                        {
+                            if (hud.selected == 1) Keybinds.forward = keys[0];
+                            else if (hud.selected == 2) Keybinds.backwards = keys[0];
+                            else if (hud.selected == 3) Keybinds.turnLeft = keys[0];
+                            else if (hud.selected == 4) Keybinds.turnRight = keys[0];
+                            else if (hud.selected == 5) Keybinds.strafeLeft = keys[0];
+                            else if (hud.selected == 6) Keybinds.strafeRight = keys[0];
+                            else if (hud.selected == 7) Keybinds.sprint = keys[0];
+                            else if (hud.selected == 8) Keybinds.fire = keys[0];
+                            else if (hud.selected == 9) Keybinds.action = keys[0];
+                            else if (hud.selected == 10) Keybinds.skills = keys[0];
+
+                            hud.selected = 0;
+                        }
                     }
-                }
-                if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
-                {
-                    gameState = GameState.MainMenu;
-                    hud.option = 0;
                 }
             }
 
