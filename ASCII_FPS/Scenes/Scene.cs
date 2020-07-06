@@ -1,6 +1,8 @@
 ﻿using ASCII_FPS.GameComponents;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ASCII_FPS.Scenes
 {
@@ -148,6 +150,30 @@ namespace ASCII_FPS.Scenes
             {
                 gameObjectsToAdd.Add(gameObject);
             }
+        }
+
+
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write(gameObjects.Count);
+            foreach (GameObject gameObject in gameObjects)
+            {
+                gameObject.Save(writer);
+            }
+        }
+
+        public static Scene Load(BinaryReader reader)
+        {
+            Scene scene = new Scene();
+
+            int gameObjectsCount = reader.ReadInt32();
+            for (int i = 0; i < gameObjectsCount; i++)
+            {
+                scene.AddGameObject(GameObject.Load(reader));
+            }
+
+            return scene;
         }
     }
 }

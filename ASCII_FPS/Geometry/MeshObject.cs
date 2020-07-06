@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using OBJContentPipelineExtension;
 using System.Collections.Generic;
+using System.IO;
+using System;
 
 namespace ASCII_FPS
 {
@@ -60,6 +62,33 @@ namespace ASCII_FPS
             {
                 return Mathg.RotationMatrix(Rotation) * Mathg.TranslationMatrix(Position);
             }
+        }
+
+
+
+        public void Save(BinaryWriter writer)
+        {
+            GameSave.WriteVector3(writer, Position);
+            writer.Write(Rotation);
+            writer.Write(triangles.Count);
+            foreach (Triangle triangle in triangles)
+            {
+                triangle.Save(writer);
+            }
+        }
+
+        public static MeshObject Load(BinaryReader reader)
+        {
+            Vector3 position = GameSave.ReadVector3(reader);
+            float rotation = reader.ReadSingle();
+            int triangleCount = reader.ReadInt32();
+            List<Triangle> triangles = new List<Triangle>(triangleCount);
+            for (int i = 0; i < triangleCount; i++)
+            {
+                triangles.Add(Triangle.Load(reader));
+            }
+
+            return new MeshObject(triangles, position, rotation);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 
 namespace ASCII_FPS.GameComponents
 {
@@ -38,6 +39,16 @@ namespace ASCII_FPS.GameComponents
             {
                 Destroy = true;
             }
+        }
+
+        public override void Save(BinaryWriter writer)
+        {
+            writer.Write(typeof(Loaders.ProjectileLoader).FullName);
+
+            MeshObject.Save(writer);
+            GameSave.WriteVector3(writer, direction);
+            writer.Write(speed);
+            writer.Write(damage);
         }
     }
 }

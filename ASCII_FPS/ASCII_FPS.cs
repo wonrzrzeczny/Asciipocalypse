@@ -141,7 +141,9 @@ namespace ASCII_FPS
                 totalMonstersKilled = 0
             };
 
-            scene = SceneGenerator.Generate(10f, 5f, 4);
+            SceneGenerator.Generate(4, 4, 4);
+            scene = GameSave.LoadGame();
+            //scene = SceneGenerator.Generate(10f, 5f, 4);
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             HUD.scene = scene;
             HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
@@ -163,7 +165,10 @@ namespace ASCII_FPS
                     enableDebug = !enableDebug;
 
                 if (keyboard.IsKeyDown(Keys.Escape))
+                {
                     gameState = GameState.MainMenu;
+                    GameSave.SaveGame(scene);
+                }
 
                 if (!playerStats.dead)
                 {

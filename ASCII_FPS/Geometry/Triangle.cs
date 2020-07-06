@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.IO;
 
 namespace ASCII_FPS
 {
@@ -29,5 +30,35 @@ namespace ASCII_FPS
         }
 
         public Triangle(Vector3 v0, Vector3 v1, Vector3 v2, AsciiTexture texture) : this(v0, v1, v2, texture, Vector2.Zero, Vector2.Zero, Vector2.Zero) { }
+
+
+
+        public void Save(BinaryWriter writer)
+        {
+            GameSave.WriteVector3(writer, V0);
+            GameSave.WriteVector3(writer, V1);
+            GameSave.WriteVector3(writer, V2);
+
+            GameSave.WriteVector2(writer, UV0);
+            GameSave.WriteVector2(writer, UV1);
+            GameSave.WriteVector2(writer, UV2);
+
+            GameSave.WriteVector3(writer, Normal);
+        }
+
+        public static Triangle Load(BinaryReader reader)
+        {
+            Vector3 v0 = GameSave.ReadVector3(reader);
+            Vector3 v1 = GameSave.ReadVector3(reader);
+            Vector3 v2 = GameSave.ReadVector3(reader);
+
+            Vector2 uv0 = GameSave.ReadVector2(reader);
+            Vector2 uv1 = GameSave.ReadVector2(reader);
+            Vector2 uv2 = GameSave.ReadVector2(reader);
+            
+            Vector3 normal = GameSave.ReadVector3(reader);
+
+            return new Triangle(v0, v1, v2, ASCII_FPS.texture1, uv0, uv1, uv2);
+        }
     }
 }
