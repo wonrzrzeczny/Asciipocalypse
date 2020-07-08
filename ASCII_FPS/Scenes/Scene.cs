@@ -156,10 +156,26 @@ namespace ASCII_FPS.Scenes
 
         public void Save(BinaryWriter writer)
         {
+            GameSave.WriteVector3(writer, Camera.CameraPos);
+            writer.Write(Camera.Rotation);
+
+            writer.Write(zones.Count);
+            foreach (Zone zone in zones)
+            {
+                zone.Save(writer);
+            }
+
             writer.Write(gameObjects.Count);
             foreach (GameObject gameObject in gameObjects)
             {
                 gameObject.Save(writer);
+            }
+
+            writer.Write(walls.Count);
+            foreach (Vector2[] wall in walls)
+            {
+                GameSave.WriteVector2(writer, wall[0]);
+                GameSave.WriteVector2(writer, wall[1]);
             }
         }
 
@@ -167,10 +183,28 @@ namespace ASCII_FPS.Scenes
         {
             Scene scene = new Scene();
 
+            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f)
+            {
+                CameraPos = GameSave.ReadVector3(reader),
+                Rotation = reader.ReadSingle()
+            };
+
+            int zoneCount = reader.ReadInt32();
+            for (int i = 0; i < zoneCount; i++)
+            {
+                scene.AddZone(Zone.Load(reader));
+            }
+
             int gameObjectsCount = reader.ReadInt32();
             for (int i = 0; i < gameObjectsCount; i++)
             {
                 scene.AddGameObject(GameObject.Load(reader));
+            }
+
+            int wallCount = reader.ReadInt32();
+            for (int i = 0; i < wallCount; i++)
+            {
+                scene.AddWall(GameSave.ReadVector2(reader), GameSave.ReadVector2(reader));
             }
 
             return scene;

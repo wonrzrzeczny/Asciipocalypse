@@ -40,20 +40,33 @@ namespace ASCII_FPS
 
         public static void SaveGame(Scene scene)
         {
-            using (BinaryWriter writer = new BinaryWriter(File.Open("./save.dat", FileMode.Create)))
+            using (BinaryWriter writer = new BinaryWriter(File.Open("./scene.sav", FileMode.Create)))
             {
                 scene.Save(writer);
             }
+
+            using (BinaryWriter writer = new BinaryWriter(File.Open("./player.sav", FileMode.Create)))
+            {
+                ASCII_FPS.playerStats.Save(writer);
+            }
         }
 
-        public static Scene LoadGame()
+        public static Scene LoadGameScene()
         {
             Scene scene;
-            using (BinaryReader reader = new BinaryReader(File.Open("./save.dat", FileMode.Open)))
+            using (BinaryReader reader = new BinaryReader(File.Open("./scene.sav", FileMode.Open)))
             {
                 scene = Scene.Load(reader);
             }
             return scene;
+        }
+
+        public static void LoadGameStats()
+        {
+            using (BinaryReader reader = new BinaryReader(File.Open("./player.sav", FileMode.Open)))
+            {
+                ASCII_FPS.playerStats.Load(reader);
+            }
         }
     }
 }

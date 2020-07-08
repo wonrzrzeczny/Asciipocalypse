@@ -140,11 +140,11 @@ namespace ASCII_FPS
                 skillShootingSpeed = 0,
                 totalMonstersKilled = 0
             };
-
-            SceneGenerator.Generate(4, 4, 4);
-            scene = GameSave.LoadGame();
-            //scene = SceneGenerator.Generate(10f, 5f, 4);
+            
+            scene = SceneGenerator.Generate(10f, 5f, 4);
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+            //scene = GameSave.LoadGameScene();
+            //GameSave.LoadGameStats();
             HUD.scene = scene;
             HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
             HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
