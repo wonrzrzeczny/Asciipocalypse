@@ -44,6 +44,8 @@ namespace ASCII_FPS
             GameSave.WriteVector2(writer, UV2);
 
             GameSave.WriteVector3(writer, Normal);
+
+            writer.Write(Texture.ID);
         }
 
         public static Triangle Load(BinaryReader reader)
@@ -58,7 +60,9 @@ namespace ASCII_FPS
             
             Vector3 normal = GameSave.ReadVector3(reader);
 
-            return new Triangle(v0, v1, v2, ASCII_FPS.texture1, uv0, uv1, uv2);
+            int id = reader.ReadInt32();
+
+            return new Triangle(v0, v1, v2, AsciiTexture.GetByID(id), uv0, uv1, uv2);
         }
     }
 }

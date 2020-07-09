@@ -1,12 +1,7 @@
 ﻿using ASCII_FPS.GameComponents;
 using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ASCII_FPS
 {
@@ -37,6 +32,20 @@ namespace ASCII_FPS
         }
 
 
+        public static void WriteRectangleF(BinaryWriter writer, RectangleF rectangleF)
+        {
+            writer.Write(rectangleF.X);
+            writer.Write(rectangleF.Y);
+            writer.Write(rectangleF.Width);
+            writer.Write(rectangleF.Height);
+        }
+
+        public static RectangleF ReadRectangleF(BinaryReader reader)
+        {
+            return new RectangleF(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+        }
+
+
 
         public static void SaveGame(Scene scene)
         {
@@ -63,6 +72,7 @@ namespace ASCII_FPS
 
         public static void LoadGameStats()
         {
+            ASCII_FPS.playerStats = new PlayerStats();
             using (BinaryReader reader = new BinaryReader(File.Open("./player.sav", FileMode.Open)))
             {
                 ASCII_FPS.playerStats.Load(reader);

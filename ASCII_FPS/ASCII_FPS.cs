@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Audio;
 using OBJContentPipelineExtension;
 using System;
 using System.Linq;
+using System.IO;
 
 namespace ASCII_FPS
 {
@@ -31,6 +32,8 @@ namespace ASCII_FPS
         Rasterizer rasterizer;
         HUD hud;
         Scene scene;
+
+        public static bool saveExists = false;
 
         
         public static int triangleCount = 0;
@@ -94,6 +97,7 @@ namespace ASCII_FPS
 
             ResetGame();
             playerStats.dead = true;
+            saveExists = File.Exists("./scene.sav");
         }
         
         protected override void UnloadContent()
@@ -140,14 +144,19 @@ namespace ASCII_FPS
                 skillShootingSpeed = 0,
                 totalMonstersKilled = 0
             };
-            
+
             scene = SceneGenerator.Generate(10f, 5f, 4);
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-            //scene = GameSave.LoadGameScene();
-            //GameSave.LoadGameStats();
-            HUD.scene = scene;
             HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
             HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+            HUD.scene = scene;
+        }
+
+        private void LoadGame()
+        {
+            scene = GameSave.LoadGameScene();
+            GameSave.LoadGameStats();
+            HUD.scene = scene;
         }
 
 
@@ -167,7 +176,17 @@ namespace ASCII_FPS
                 if (keyboard.IsKeyDown(Keys.Escape))
                 {
                     gameState = GameState.MainMenu;
-                    GameSave.SaveGame(scene);
+                    if (playerStats.dead)
+                    {
+                        File.Delete("./player.sav");
+                        File.Delete("./scene.sav");
+                        saveExists = false;
+                    }
+                    else
+                    {
+                        GameSave.SaveGame(scene);
+                        saveExists = true;
+                    }
                 }
 
                 if (!playerStats.dead)
@@ -232,6 +251,7 @@ namespace ASCII_FPS
                             HUD.scene = scene;
                             HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
                             HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+                            GameSave.SaveGame(scene);
                         }
                         else
                         {
@@ -294,13 +314,13 @@ namespace ASCII_FPS
                 if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
                 {
                     hud.option = (hud.option + 1) % 4;
-                    if (playerStats.dead && hud.option == 1)
+                    if (!saveExists && hud.option == 1)
                         hud.option++;
                 }
                 if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
                 {
                     hud.option = (hud.option + 3) % 4;
-                    if (playerStats.dead && hud.option == 1)
+                    if (!saveExists && hud.option == 1)
                         hud.option--;
                 }
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
@@ -308,7 +328,10 @@ namespace ASCII_FPS
                     if (hud.option == 0)
                         gameState = GameState.Tutorial;
                     else if (hud.option == 1)
+                    {
+                        LoadGame();
                         gameState = GameState.Game;
+                    }
                     else if (hud.option == 2)
                         gameState = GameState.Options;
                     else if (hud.option == 3)
@@ -421,7 +444,7 @@ namespace ASCII_FPS
             }
 
             keyboardPrev = keyboard;
-
+        
             
             // Update effects
             if (playerStats.dead && gameState == GameState.Game)

@@ -159,6 +159,24 @@ namespace ASCII_FPS.Scenes
             GameSave.WriteVector3(writer, Camera.CameraPos);
             writer.Write(Camera.Rotation);
 
+            writer.Write(HUD.exitRoom.X);
+            writer.Write(HUD.exitRoom.Y);
+            int xsize = HUD.visited.GetLength(0);
+            int ysize = HUD.visited.GetLength(1);
+            writer.Write(xsize);
+            writer.Write(ysize);
+            for (int i = 0; i < xsize; i++)
+            {
+                for (int j = 0; j < ysize; j++)
+                {
+                    writer.Write(HUD.visited[i, j]);
+                    for (int k = 0; k < 4; k++)
+                    {
+                        writer.Write(HUD.corridorLayout[i, j, k]);
+                    }
+                }
+            }
+
             writer.Write(zones.Count);
             foreach (Zone zone in zones)
             {
@@ -189,10 +207,27 @@ namespace ASCII_FPS.Scenes
                 Rotation = reader.ReadSingle()
             };
 
-            int zoneCount = reader.ReadInt32();
-            for (int i = 0; i < zoneCount; i++)
+            HUD.exitRoom = new Point(reader.ReadInt32(), reader.ReadInt32());
+            int xsize = reader.ReadInt32();
+            int ysize = reader.ReadInt32();
+            HUD.visited = new bool[xsize, ysize];
+            HUD.corridorLayout = new bool[xsize, ysize, 4];
+            for (int i = 0; i < xsize; i++)
             {
-                scene.AddZone(Zone.Load(reader));
+                for (int j = 0; j < ysize; j++)
+                {
+                    HUD.visited[i, j] = reader.ReadBoolean();
+                    for (int k = 0; k < 4; k++)
+                    {
+                        HUD.corridorLayout[i, j, k] = reader.ReadBoolean();
+                    }
+                }
+            }
+
+            Zone[] zones = Zone.LoadAll(reader);
+            foreach (Zone zone in zones)
+            {
+                scene.AddZone(zone);
             }
 
             int gameObjectsCount = reader.ReadInt32();

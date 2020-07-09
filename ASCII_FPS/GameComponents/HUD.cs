@@ -217,7 +217,7 @@ namespace ASCII_FPS.GameComponents
             Text(console.Width / 2, 16, @"                     |_|                             |_|_|            ", colorWhite);
 
             Text(console.Width / 2, 30, "New game", option == 0 ? colorLightBlue : colorGray);
-            if (ASCII_FPS.playerStats.dead)
+            if (!ASCII_FPS.saveExists)
             {
                 Text(console.Width / 2, 32, "Options", option == 2 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 34, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);

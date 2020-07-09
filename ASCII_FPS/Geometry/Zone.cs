@@ -52,25 +52,60 @@ namespace ASCII_FPS
                 mesh.Save(writer);
             }
 
-            /*writer.Write(portals.Count);
+            writer.Write(portals.Count);
             foreach (Portal portal in portals)
             {
-                //writer.Write(portal.)
-            }*/
+                GameSave.WriteVector2(writer, portal.Start);
+                GameSave.WriteVector2(writer, portal.End);
+                GameSave.WriteRectangleF(writer, portal.Zone.Bounds);
+            }
         }
 
-        public static Zone Load(BinaryReader reader)
+        // This one needs to be rewritten :/
+        public static Zone[] LoadAll(BinaryReader reader)
         {
-            RectangleF bounds = new RectangleF(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            Zone zone = new Zone(bounds);
+            int count = reader.ReadInt32();
+            Zone[] zones = new Zone[count];
+            List<RectangleF>[] portals = new List<RectangleF>[count];
 
-            int meshCount = reader.ReadInt32();
-            for (int i = 0; i < meshCount; i++)
+            for (int i = 0; i < count; i++)
             {
-                zone.AddMesh(MeshObject.Load(reader));
+                RectangleF bounds = new RectangleF(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Zone zone = new Zone(bounds);
+
+                int meshCount = reader.ReadInt32();
+                for (int j = 0; j < meshCount; j++)
+                {
+                    zone.AddMesh(MeshObject.Load(reader));
+                }
+
+                int portalCount = reader.ReadInt32();
+                portals[i] = new List<RectangleF>();
+                for (int j = 0; j < portalCount; j++)
+                {
+                    Vector2 start = GameSave.ReadVector2(reader);
+                    Vector2 end = GameSave.ReadVector2(reader);
+                    zone.AddPortal(new Portal(null, start, end));
+                    portals[i].Add(GameSave.ReadRectangleF(reader));
+                }
+
+                zones[i] = zone;
+            }
+            
+            for (int i = 0; i < count; i++)
+            {
+                int portalCount = zones[i].portals.Count;
+                for (int j = 0; j < portalCount; j++)
+                {
+                    RectangleF bounds = portals[i][j];
+                    Zone zone = zones.Where((Zone z) => { return z.Bounds.Equals(bounds); }).First();
+                    Vector2 start = zones[i].portals[j].Start;
+                    Vector2 end = zones[i].portals[j].End;
+                    zones[i].portals[j] = new Portal(zone, start, end);
+                }
             }
 
-            return zone;
+            return zones;
         }
     }
 }
