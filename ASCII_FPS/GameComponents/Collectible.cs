@@ -1,4 +1,6 @@
-﻿namespace ASCII_FPS.GameComponents
+﻿using System.IO;
+
+namespace ASCII_FPS.GameComponents
 {
     public class Collectible : GameObject
     {
@@ -27,6 +29,14 @@
                     ASCII_FPS.playerStats.skillPoints++;
                     break;
             }
+        }
+
+        public override void Save(BinaryWriter writer)
+        {
+            writer.Write(typeof(Loaders.CollectibleLoader).FullName);
+
+            MeshObject.Save(writer);
+            writer.Write((int)type);
         }
     }
 }

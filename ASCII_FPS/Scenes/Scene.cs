@@ -1,6 +1,8 @@
 ﻿using ASCII_FPS.GameComponents;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ASCII_FPS.Scenes
 {
@@ -148,6 +150,99 @@ namespace ASCII_FPS.Scenes
             {
                 gameObjectsToAdd.Add(gameObject);
             }
+        }
+
+
+
+        public void Save(BinaryWriter writer)
+        {
+            GameSave.WriteVector3(writer, Camera.CameraPos);
+            writer.Write(Camera.Rotation);
+
+            writer.Write(HUD.exitRoom.X);
+            writer.Write(HUD.exitRoom.Y);
+            int xsize = HUD.visited.GetLength(0);
+            int ysize = HUD.visited.GetLength(1);
+            writer.Write(xsize);
+            writer.Write(ysize);
+            for (int i = 0; i < xsize; i++)
+            {
+                for (int j = 0; j < ysize; j++)
+                {
+                    writer.Write(HUD.visited[i, j]);
+                    for (int k = 0; k < 4; k++)
+                    {
+                        writer.Write(HUD.corridorLayout[i, j, k]);
+                    }
+                }
+            }
+
+            writer.Write(zones.Count);
+            foreach (Zone zone in zones)
+            {
+                zone.Save(writer);
+            }
+
+            writer.Write(gameObjects.Count);
+            foreach (GameObject gameObject in gameObjects)
+            {
+                gameObject.Save(writer);
+            }
+
+            writer.Write(walls.Count);
+            foreach (Vector2[] wall in walls)
+            {
+                GameSave.WriteVector2(writer, wall[0]);
+                GameSave.WriteVector2(writer, wall[1]);
+            }
+        }
+
+        public static Scene Load(BinaryReader reader)
+        {
+            Scene scene = new Scene();
+
+            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f)
+            {
+                CameraPos = GameSave.ReadVector3(reader),
+                Rotation = reader.ReadSingle()
+            };
+
+            HUD.exitRoom = new Point(reader.ReadInt32(), reader.ReadInt32());
+            int xsize = reader.ReadInt32();
+            int ysize = reader.ReadInt32();
+            HUD.visited = new bool[xsize, ysize];
+            HUD.corridorLayout = new bool[xsize, ysize, 4];
+            for (int i = 0; i < xsize; i++)
+            {
+                for (int j = 0; j < ysize; j++)
+                {
+                    HUD.visited[i, j] = reader.ReadBoolean();
+                    for (int k = 0; k < 4; k++)
+                    {
+                        HUD.corridorLayout[i, j, k] = reader.ReadBoolean();
+                    }
+                }
+            }
+
+            Zone[] zones = Zone.LoadAll(reader);
+            foreach (Zone zone in zones)
+            {
+                scene.AddZone(zone);
+            }
+
+            int gameObjectsCount = reader.ReadInt32();
+            for (int i = 0; i < gameObjectsCount; i++)
+            {
+                scene.AddGameObject(GameObject.Load(reader));
+            }
+
+            int wallCount = reader.ReadInt32();
+            for (int i = 0; i < wallCount; i++)
+            {
+                scene.AddWall(GameSave.ReadVector2(reader), GameSave.ReadVector2(reader));
+            }
+
+            return scene;
         }
     }
 }

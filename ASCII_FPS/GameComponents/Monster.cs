@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 
 namespace ASCII_FPS.GameComponents
 {
@@ -71,6 +72,16 @@ namespace ASCII_FPS.GameComponents
                 ASCII_FPS.playerStats.totalMonstersKilled++;
                 Destroy = true;
             }
+        }
+
+        public override void Save(BinaryWriter writer)
+        {
+            writer.Write(typeof(Loaders.MonsterLoader).FullName);
+
+            MeshObject.Save(writer);
+            writer.Write(health);
+            writer.Write(damage);
+            writer.Write(HitRadius);
         }
 
 
