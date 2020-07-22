@@ -61,14 +61,19 @@ namespace ASCII_FPS
             resolutions = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
                 .Where((DisplayMode dm) => dm.Width >= 1000 && dm.Height >= 400).ToArray();
 
+            if (!GameSave.LoadOptions(graphics))
+            {
+                graphics.PreferredBackBufferWidth = 1920;
+                graphics.PreferredBackBufferHeight = 1080;
+                graphics.ApplyChanges();
+            }
+
             random = new Random();
-            console = new Console(160, 90);
+            int charsX = (int)Math.Floor((double)graphics.PreferredBackBufferWidth / Console.FONT_SIZE);
+            int charsY = (int)Math.Floor((double)graphics.PreferredBackBufferHeight / Console.FONT_SIZE);
+            console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
             hud = new HUD(console);
-
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            graphics.ApplyChanges();
             base.Initialize();
         }
 
@@ -370,6 +375,7 @@ namespace ASCII_FPS
                     {
                         if (hud.option == 0)
                         {
+                            GameSave.SaveOptions(graphics);
                             gameState = GameState.MainMenu;
                         }
                         else if (hud.option == 1)
