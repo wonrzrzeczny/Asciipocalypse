@@ -216,20 +216,21 @@ namespace ASCII_FPS.GameComponents
             Text(console.Width / 2, 15, @"                     | |                             | | |            ", colorWhite);
             Text(console.Width / 2, 16, @"                     |_|                             |_|_|            ", colorWhite);
 
-            Text(console.Width / 2, 30, "New game", option == 0 ? colorLightBlue : colorGray);
             if (!ASCII_FPS.saveExists)
             {
+                Text(console.Width / 2, 30, "New game", option == 1 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 32, "Options", option == 2 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 34, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);
             }
             else
             {
-                Text(console.Width / 2, 32, "Continue", option == 1 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 30, "Continue", option == 0 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 32, "New game", option == 1 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 34, "Options", option == 2 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 36, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);
             }
 
-            Text(3, -2, "v1.0", colorWhite);
+            Text(4, -2, "v1.0.1", colorWhite);
             Text(-9, -2, "by wonrzrzeczny", colorWhite);
         }
 

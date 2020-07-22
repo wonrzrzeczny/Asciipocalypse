@@ -103,6 +103,7 @@ namespace ASCII_FPS
             ResetGame();
             playerStats.dead = true;
             saveExists = File.Exists("./scene.sav");
+            hud.option = saveExists ? 0 : 1;
         }
         
         protected override void UnloadContent()
@@ -319,24 +320,24 @@ namespace ASCII_FPS
                 if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
                 {
                     hud.option = (hud.option + 1) % 4;
-                    if (!saveExists && hud.option == 1)
-                        hud.option++;
+                    if (!saveExists && hud.option == 0)
+                        hud.option = 1;
                 }
                 if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
                 {
                     hud.option = (hud.option + 3) % 4;
-                    if (!saveExists && hud.option == 1)
-                        hud.option--;
+                    if (!saveExists && hud.option == 0)
+                        hud.option = 3;
                 }
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
                 {
                     if (hud.option == 0)
-                        gameState = GameState.Tutorial;
-                    else if (hud.option == 1)
                     {
                         LoadGame();
                         gameState = GameState.Game;
                     }
+                    else if (hud.option == 1)
+                        gameState = GameState.Tutorial;
                     else if (hud.option == 2)
                         gameState = GameState.Options;
                     else if (hud.option == 3)
@@ -377,6 +378,7 @@ namespace ASCII_FPS
                         {
                             GameSave.SaveOptions(graphics);
                             gameState = GameState.MainMenu;
+                            hud.option = saveExists ? 0 : 1;
                         }
                         else if (hud.option == 1)
                         {
@@ -395,7 +397,7 @@ namespace ASCII_FPS
                     if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
                     {
                         gameState = GameState.MainMenu;
-                        hud.option = 0;
+                        hud.option = saveExists ? 0 : 1;
                     }
                 }
                 else
