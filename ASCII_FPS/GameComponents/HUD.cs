@@ -220,14 +220,14 @@ namespace ASCII_FPS.GameComponents
             {
                 Text(console.Width / 2, 30, "New game", option == 1 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 32, "Options", option == 2 ? colorLightBlue : colorGray);
-                Text(console.Width / 2, 34, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 34, "Exit", option == 3 ? colorLightBlue : colorGray);
             }
             else
             {
                 Text(console.Width / 2, 30, "Continue", option == 0 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 32, "New game", option == 1 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 34, "Options", option == 2 ? colorLightBlue : colorGray);
-                Text(console.Width / 2, 36, "Exit (your progress won't be saved)", option == 3 ? colorLightBlue : colorGray);
+                Text(console.Width / 2, 36, "Exit", option == 3 ? colorLightBlue : colorGray);
             }
 
             Text(4, -2, "v1.0.1", colorWhite);
