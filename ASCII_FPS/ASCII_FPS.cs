@@ -181,7 +181,6 @@ namespace ASCII_FPS
 
                 if (keyboard.IsKeyDown(Keys.Escape))
                 {
-                    gameState = GameState.MainMenu;
                     if (playerStats.dead)
                     {
                         File.Delete("./player.sav");
@@ -193,6 +192,8 @@ namespace ASCII_FPS
                         GameSave.SaveGame(scene);
                         saveExists = true;
                     }
+                    hud.option = saveExists ? 0 : 1;
+                    gameState = GameState.MainMenu;
                 }
 
                 if (!playerStats.dead)
@@ -396,6 +397,7 @@ namespace ASCII_FPS
                     }
                     if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
                     {
+                        GameSave.SaveOptions(graphics);
                         gameState = GameState.MainMenu;
                         hud.option = saveExists ? 0 : 1;
                     }
