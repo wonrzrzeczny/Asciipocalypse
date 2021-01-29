@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ASCII_FPS.GameComponents
 {
-    public struct PlayerStats
+    public class PlayerStats
     {
         public const float thickness = 1f;
 

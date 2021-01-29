@@ -122,7 +122,7 @@ namespace ASCII_FPS
 
 
 
-        // Clipping triangles with near plane - warning, very ugly code ahead
+        // Clipping triangles with near, left and right plane - warning, very ugly code ahead
         public List<Triangle> ClipTriangles(List<Triangle> triangles, Camera camera)
         {
             Vector3[] planeNormals = new Vector3[] { camera.LeftPlane, -Vector3.Forward, camera.RightPlane };
@@ -288,7 +288,6 @@ namespace ASCII_FPS
 
 
             // Check for zones connected with portals
-            Matrix projectionMatrix = camera.ProjectionMatrix;
             foreach (Portal portal in zone.portals)
             {
                 // Transform into camera space
