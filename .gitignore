@@ -7,3 +7,4 @@ OBJContentPipelineExtension/obj/**
 packages/**
 OBJContentPipelineExtension/bin/**
 **.asd
+*.user
