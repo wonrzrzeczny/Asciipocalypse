@@ -10,17 +10,18 @@ namespace ASCII_FPS.GameComponents
         private float health;
         private readonly float damage;
 
-        private enum BehaviourState { Idle, Chasing, Attacking }
+        private enum BehaviourState { Idle, Chasing, Attacking, Searching }
         private BehaviourState behaviourState;
         private float behaviourCheckTime = 0.2f;
+        private Vector3 targetPosition;
 
         private float shootTime = 0.3f;
 
         public float HitRadius { get; }
 
-        private const float alertDistance = 70f;
-        private const float attackDistance = 30f;
-        private const float speed = 6f;
+        public float AlertDistance { get; set; } = 70f;
+        public float AttackDistance { get; set; } = 30f;
+        public float Speed { get; set; } = 12f;
 
 
         public Monster(MeshObject meshObject, float hitRadius, float health, float damage) : base(meshObject)
@@ -31,6 +32,7 @@ namespace ASCII_FPS.GameComponents
             this.damage = damage;
 
             behaviourState = BehaviourState.Idle;
+            targetPosition = Position;
         }
         
         public override void Update(float deltaTime)
@@ -44,10 +46,10 @@ namespace ASCII_FPS.GameComponents
                 behaviourState = StateCheck();
             }
 
-            Vector3 towardsPlayer = Vector3.Normalize(Camera.CameraPos - Position);
-            if (behaviourState == BehaviourState.Chasing)
+            Vector3 towardsTarget = Vector3.Normalize(targetPosition - Position);
+            if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Searching)
             {
-                Position += Scene.SmoothMovement(Position, towardsPlayer * deltaTime * speed, HitRadius);
+                Position += Scene.SmoothMovement(Position, towardsTarget * deltaTime * Speed, HitRadius);
             }
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
             {
@@ -57,7 +59,7 @@ namespace ASCII_FPS.GameComponents
                     ASCII_FPS.tsch.Play();
                     shootTime = 0.3f;
                     MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
-                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsPlayer, 40f, damage));
+                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsTarget, 40f, damage));
                 }
             }
         }
@@ -72,6 +74,8 @@ namespace ASCII_FPS.GameComponents
                 ASCII_FPS.playerStats.totalMonstersKilled++;
                 Destroy = true;
             }
+
+            targetPosition = Camera.CameraPos;
         }
 
         public override void Save(BinaryWriter writer)
@@ -89,20 +93,22 @@ namespace ASCII_FPS.GameComponents
         private BehaviourState StateCheck()
         {
             float distance = Vector3.Distance(Position, Camera.CameraPos);
-            if (distance < alertDistance)
+            if (distance < AlertDistance && Scene.CheckMovement(Position, Camera.CameraPos - Position, 0f))
             {
-                if (Scene.CheckMovement(Position, Camera.CameraPos - Position, 0f))
+                targetPosition = Camera.CameraPos;
+                if (distance < AttackDistance)
                 {
-                    if (distance < attackDistance)
-                    {
-                        return BehaviourState.Attacking;
-                    }
-                    else
-                    {
-                        return BehaviourState.Chasing;
-                    }
+                    return BehaviourState.Attacking;
                 }
-                return BehaviourState.Idle;
+                else
+                {
+                    return BehaviourState.Chasing;
+                }
+            }
+
+            if (Vector3.Distance(targetPosition, Position) > HitRadius)
+            {
+                return BehaviourState.Searching;
             }
             return BehaviourState.Idle;
         }
