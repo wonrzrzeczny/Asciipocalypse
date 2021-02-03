@@ -17,11 +17,11 @@ namespace ASCII_FPS.GameComponents
         }
 
 
-        public void Update(float deltaTime, KeyboardState keyboard, KeyboardState keyboardPrev)
+        public bool Update(float deltaTime, KeyboardState keyboard, KeyboardState keyboardPrev)
         {
             PlayerStats playerStats = ASCII_FPS.playerStats;
             if (playerStats.dead)
-                return;
+                return false;
             
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keybinds.forward))
@@ -72,18 +72,7 @@ namespace ASCII_FPS.GameComponents
                 if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
                     && 2 * playerStats.monsters >= playerStats.totalMonsters)
                 {
-                    ASCII_FPS.theme.Play();
-                    playerStats.floor++;
-
-                    float monsterHealth = 8f + playerStats.floor * 2f;
-                    float monsterDamage = 4f + playerStats.floor;
-                    int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
-                    scene = SceneGenerator.Generate(monsterHealth, monsterDamage, maxMonsters);
-                    scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-                    HUD.scene = scene;
-                    HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
-                    HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
-                    GameSave.SaveGame(scene);
+                    return true;
                 }
                 else
                 {
@@ -133,6 +122,7 @@ namespace ASCII_FPS.GameComponents
                     playerStats.skillShootingSpeed++;
                 }
             }
+            return false;
         }
     }
 }

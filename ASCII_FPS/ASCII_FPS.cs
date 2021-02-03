@@ -31,7 +31,7 @@ namespace ASCII_FPS
         private Console console;
         private Rasterizer rasterizer;
         private HUD hud;
-        private Scene scene;
+        public static Scene scene;
 
         public static bool saveExists = false;
 
@@ -199,7 +199,22 @@ namespace ASCII_FPS
                     gameState = GameState.MainMenu;
                 }
 
-                playerLogic.Update(deltaTime, keyboard, keyboardPrev);
+                if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
+                {
+                    ASCII_FPS.theme.Play();
+                    playerStats.floor++;
+
+                    float monsterHealth = 8f + playerStats.floor * 2f;
+                    float monsterDamage = 4f + playerStats.floor;
+                    int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
+                    scene = SceneGenerator.Generate(monsterHealth, monsterDamage, maxMonsters);
+                    scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+                    HUD.scene = scene;
+                    HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
+                    HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+                    GameSave.SaveGame(scene);
+                    playerLogic = new PlayerLogic(scene);
+                }
 
                 scene.UpdateGameObjects(deltaTime);
 
