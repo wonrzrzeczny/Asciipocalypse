@@ -9,20 +9,22 @@ namespace ASCII_FPS.GameComponents
 {
     public class PlayerLogic
     {
-        private Scene scene;
+        private ASCII_FPS game;
 
-        public PlayerLogic(Scene scene)
+        public PlayerLogic(ASCII_FPS game)
         {
-            this.scene = scene;
+            this.game = game;
         }
 
 
         public bool Update(float deltaTime, KeyboardState keyboard, KeyboardState keyboardPrev)
         {
-            PlayerStats playerStats = ASCII_FPS.playerStats;
+            PlayerStats playerStats = game.PlayerStats;
             if (playerStats.dead)
                 return false;
-            
+
+            Scene scene = game.Scene;
+
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keybinds.forward))
                 shift += 20f * deltaTime * scene.Camera.Forward;
@@ -80,7 +82,7 @@ namespace ASCII_FPS.GameComponents
                     {
                         if (gameObject is Collectible collectible && Vector3.Distance(scene.Camera.CameraPos, collectible.Position) < 7f)
                         {
-                            collectible.PickUp();
+                            collectible.PickUp(playerStats);
                         }
                     }
                 }

@@ -129,12 +129,12 @@ namespace ASCII_FPS.Scenes
             return ret;
         }
 
-        public static Scene Generate(float monsterHealth, float monsterDamage, int maxMonsters)
+        public static Scene Generate(ASCII_FPS game, float monsterHealth, float monsterDamage, int maxMonsters)
         {
-            ASCII_FPS.playerStats.totalMonsters = 0;
-            ASCII_FPS.playerStats.monsters = 0;
+            game.PlayerStats.totalMonsters = 0;
+            game.PlayerStats.monsters = 0;
             Random rand = new Random();
-            Scene scene = new Scene();
+            Scene scene = new Scene(game);
 
             bool[,,] corridors = GenerateCorridors(size, size);
             HUD.corridorLayout = corridors;
@@ -184,12 +184,12 @@ namespace ASCII_FPS.Scenes
                         MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
                             new Vector3(roomCenter.X, -2f, roomCenter.Y));
                         zones[x, y].AddMesh(exit);
-                        ASCII_FPS.playerStats.exitPosition = roomCenter;
+                        game.PlayerStats.exitPosition = roomCenter;
                     }
                     else if (x != size / 2 || y != size / 2)
                     {
                         int cnt = rand.Next(1, maxMonsters + 1);
-                        ASCII_FPS.playerStats.totalMonsters += cnt;
+                        game.PlayerStats.totalMonsters += cnt;
                         Vector2 shift = cnt == 1 ? Vector2.Zero : new Vector2(30f, 0f);
                         float offset = (float)(rand.NextDouble() * Math.PI * 2f);
                         for (int i = 0; i < cnt; i++)

@@ -14,19 +14,19 @@ namespace ASCII_FPS.GameComponents
 
         public override void Update(float deltaTime) { }
 
-        public void PickUp()
+        public void PickUp(PlayerStats playerStats)
         {
             Destroy = true;
             switch (type)
             {
                 case Type.Health:
-                    ASCII_FPS.playerStats.AddHealth(ASCII_FPS.playerStats.maxHealth * 0.3f);
+                    playerStats.AddHealth(playerStats.maxHealth * 0.3f);
                     break;
                 case Type.Armor:
-                    ASCII_FPS.playerStats.AddArmor(ASCII_FPS.playerStats.maxArmor * 0.3f);
+                    playerStats.AddArmor(playerStats.maxArmor * 0.3f);
                     break;
                 case Type.Skill:
-                    ASCII_FPS.playerStats.skillPoints++;
+                    playerStats.skillPoints++;
                     break;
             }
         }

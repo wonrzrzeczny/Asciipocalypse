@@ -50,16 +50,16 @@ namespace ASCII_FPS
 
 
 
-        public static void SaveGame(Scene scene)
+        public static void SaveGame(ASCII_FPS game)
         {
             using (BinaryWriter writer = new BinaryWriter(File.Open("./scene.sav", FileMode.Create)))
             {
-                scene.Save(writer);
+                game.Scene.Save(writer);
             }
 
             using (BinaryWriter writer = new BinaryWriter(File.Open("./player.sav", FileMode.Create)))
             {
-                ASCII_FPS.playerStats.Save(writer);
+                game.PlayerStats.Save(writer);
             }
         }
 
@@ -80,23 +80,24 @@ namespace ASCII_FPS
         }
 
 
-        public static Scene LoadGameScene()
+        public static Scene LoadGameScene(ASCII_FPS game)
         {
             Scene scene;
             using (BinaryReader reader = new BinaryReader(File.Open("./scene.sav", FileMode.Open)))
             {
-                scene = Scene.Load(reader);
+                scene = Scene.Load(reader, game);
             }
             return scene;
         }
 
-        public static void LoadGameStats()
+        public static PlayerStats LoadGameStats()
         {
-            ASCII_FPS.playerStats = new PlayerStats();
+            PlayerStats playerStats = new PlayerStats();
             using (BinaryReader reader = new BinaryReader(File.Open("./player.sav", FileMode.Open)))
             {
-                ASCII_FPS.playerStats.Load(reader);
+                playerStats.Load(reader);
             }
+            return playerStats;
         }
 
         public static bool LoadOptions(GraphicsDeviceManager graphics)

@@ -21,7 +21,7 @@ namespace ASCII_FPS.GameComponents
         {
             if (Vector3.Distance(Position, Camera.CameraPos) < PlayerStats.thickness)
             {
-                ASCII_FPS.playerStats.DealDamage(damage);
+                Game.PlayerStats.DealDamage(damage);
                 Destroy = true;
             }
 

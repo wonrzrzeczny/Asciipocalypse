@@ -13,29 +13,32 @@ namespace ASCII_FPS
 {
     public class ASCII_FPS : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        
-        public ASCII_FPS()
-        {
-            graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-        }
-
-
-
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+        private Random random;
         public static DisplayMode[] resolutions;
 
-        private SpriteFont font;
-        private Random random;
         private Console console;
         private Rasterizer rasterizer;
         private HUD hud;
-        public static Scene scene;
 
         public static bool saveExists = false;
 
-        
+        public Scene Scene { get; private set; }
+        public PlayerStats PlayerStats { get; private set; }
+        private PlayerLogic playerLogic;
+
+        private enum GameState { MainMenu, Tutorial, Options, Game }
+        private GameState gameState = GameState.MainMenu;
+
+        // Content
+        public static SpriteFont font;
+        public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, monsterTexture, projectileTexture, exitTexture;
+        public static OBJFile barrelModel, exitModel;
+        public static SoundEffect tsch, oof, ouch, theme;
+
+        // DEBUG
+        public static bool enableDebug = false;
         public static int triangleCount = 0;
         public static int triangleCountClipped = 0;
         public static int zonesRendered = 0;
@@ -43,17 +46,14 @@ namespace ASCII_FPS
         public static float timeElapsed = 0f;
         public static float fps = 0f;
         public static string additionalDebug = "";
-        public static bool enableDebug = false;
 
-        public static PlayerStats playerStats;
-        private PlayerLogic playerLogic;
 
-        private enum GameState { MainMenu, Tutorial, Options, Game }
-        private GameState gameState = GameState.MainMenu;
+        public ASCII_FPS()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+        }
 
-        public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, monsterTexture, projectileTexture, exitTexture;
-        public static OBJFile barrelModel, exitModel;
-        public static SoundEffect tsch, oof, ouch, theme;
 
         protected override void Initialize()
         {
@@ -74,7 +74,8 @@ namespace ASCII_FPS
             int charsY = (int)Math.Floor((double)graphics.PreferredBackBufferHeight / Console.FONT_SIZE);
             console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
-            hud = new HUD(console);
+            hud = new HUD(this, console);
+
             base.Initialize();
         }
 
@@ -102,7 +103,7 @@ namespace ASCII_FPS
             theme.Play();
 
             ResetGame();
-            playerStats.dead = true;
+            PlayerStats.dead = true;
             saveExists = File.Exists("./scene.sav");
             hud.option = saveExists ? 0 : 1;
         }
@@ -119,7 +120,7 @@ namespace ASCII_FPS
             console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
             int opt = hud.option;
-            hud = new HUD(console);
+            hud = new HUD(this, console);
             hud.option = opt;
             graphics.PreferredBackBufferWidth = resX;
             graphics.PreferredBackBufferHeight = resY;
@@ -134,7 +135,7 @@ namespace ASCII_FPS
 
         private void ResetGame()
         {
-            playerStats = new PlayerStats
+            PlayerStats = new PlayerStats
             {
                 health = 100f,
                 maxHealth = 100f,
@@ -152,20 +153,20 @@ namespace ASCII_FPS
                 totalMonstersKilled = 0
             };
 
-            scene = SceneGenerator.Generate(10f, 5f, 4);
-            scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+            Scene = SceneGenerator.Generate(this, 10f, 5f, 4);
+            Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
             HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
-            HUD.scene = scene;
-            playerLogic = new PlayerLogic(scene);
+            HUD.scene = Scene;
+            playerLogic = new PlayerLogic(this);
         }
 
         private void LoadGame()
         {
-            scene = GameSave.LoadGameScene();
-            GameSave.LoadGameStats();
-            HUD.scene = scene;
-            playerLogic = new PlayerLogic(scene);
+            Scene = GameSave.LoadGameScene(this);
+            PlayerStats = GameSave.LoadGameStats();
+            HUD.scene = Scene;
+            playerLogic = new PlayerLogic(this);
         }
 
 
@@ -184,7 +185,7 @@ namespace ASCII_FPS
 
                 if (keyboard.IsKeyDown(Keys.Escape))
                 {
-                    if (playerStats.dead)
+                    if (PlayerStats.dead)
                     {
                         File.Delete("./player.sav");
                         File.Delete("./scene.sav");
@@ -192,7 +193,7 @@ namespace ASCII_FPS
                     }
                     else
                     {
-                        GameSave.SaveGame(scene);
+                        GameSave.SaveGame(this);
                         saveExists = true;
                     }
                     hud.option = saveExists ? 0 : 1;
@@ -201,25 +202,25 @@ namespace ASCII_FPS
 
                 if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
                 {
-                    ASCII_FPS.theme.Play();
-                    playerStats.floor++;
+                    theme.Play();
+                    PlayerStats.floor++;
 
-                    float monsterHealth = 8f + playerStats.floor * 2f;
-                    float monsterDamage = 4f + playerStats.floor;
-                    int maxMonsters = 4 + (int)Math.Floor(playerStats.floor / 3.0);
-                    scene = SceneGenerator.Generate(monsterHealth, monsterDamage, maxMonsters);
-                    scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-                    HUD.scene = scene;
+                    float monsterHealth = 8f + PlayerStats.floor * 2f;
+                    float monsterDamage = 4f + PlayerStats.floor;
+                    int maxMonsters = 4 + (int)Math.Floor(PlayerStats.floor / 3.0);
+                    Scene = SceneGenerator.Generate(this, monsterHealth, monsterDamage, maxMonsters);
+                    Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
+                    HUD.scene = Scene;
                     HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
                     HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
-                    GameSave.SaveGame(scene);
-                    playerLogic = new PlayerLogic(scene);
+                    GameSave.SaveGame(this);
+                    playerLogic = new PlayerLogic(this);
                 }
 
-                scene.UpdateGameObjects(deltaTime);
+                Scene.UpdateGameObjects(deltaTime);
 
-                int playerRoomX = (int)(scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
-                int playerRoomY = (int)(scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+                int playerRoomX = (int)(Scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+                int playerRoomY = (int)(Scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
                 HUD.visited[playerRoomX, playerRoomY] = true;
             }
             else if (gameState == GameState.MainMenu)
@@ -363,18 +364,18 @@ namespace ASCII_FPS
         
             
             // Update effects
-            if (playerStats.dead && gameState == GameState.Game)
+            if (PlayerStats.dead && gameState == GameState.Game)
             {
                 console.Effect = Console.ColorEffect.Grayscale;
             }
-            else if (playerStats.hit && gameState == GameState.Game)
+            else if (PlayerStats.hit && gameState == GameState.Game)
             {
                 console.Effect = Console.ColorEffect.Red;
-                playerStats.hitTime -= deltaTime;
-                if (playerStats.hitTime < 0f)
+                PlayerStats.hitTime -= deltaTime;
+                if (PlayerStats.hitTime < 0f)
                 {
-                    playerStats.hitTime = 0f;
-                    playerStats.hit = false;
+                    PlayerStats.hitTime = 0f;
+                    PlayerStats.hit = false;
                 }
             }
             else
@@ -386,7 +387,7 @@ namespace ASCII_FPS
             // Rendering
             if (gameState == GameState.Game)
             {
-                rasterizer.Raster(scene, scene.Camera);
+                rasterizer.Raster(Scene, Scene.Camera);
                 hud.Draw();
             }
             else if (gameState == GameState.MainMenu)
@@ -432,13 +433,13 @@ namespace ASCII_FPS
                     timeElapsed = 0f;
                     frames = 0;
                 }
-                string debug = fps + " FPS\nTotal number of static triangles: " + scene.TotalTriangles +
+                string debug = fps + " FPS\nTotal number of static triangles: " + Scene.TotalTriangles +
                                      "\nNumber of rendered triangles: " + triangleCount +
                                      "\nNumber of triangles after clipping: " + triangleCountClipped +
                                      "\nNumber of zones rendered: " + zonesRendered +
-                                     "\nPosition: " + scene.Camera.CameraPos +
+                                     "\nPosition: " + Scene.Camera.CameraPos +
                                      "\n" + additionalDebug +
-                                     "\nHealth: " + (int)playerStats.health;
+                                     "\nHealth: " + (int)PlayerStats.health;
 
                 spriteBatch.DrawString(font, debug, Vector2.Zero, Color.White);
             }

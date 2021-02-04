@@ -7,6 +7,7 @@ namespace ASCII_FPS.GameComponents
     public class HUD
     {
         private readonly Console console;
+        private readonly ASCII_FPS game;
 
         private readonly byte colorRed = Mathg.ColorTo8Bit(Color.Red.ToVector3());
         private readonly byte colorBlack = Mathg.ColorTo8Bit(Color.Black.ToVector3());
@@ -16,9 +17,10 @@ namespace ASCII_FPS.GameComponents
         private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
         private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
-        public HUD(Console console)
+        public HUD(ASCII_FPS game, Console console)
         {
             this.console = console;
+            this.game = game;
         }
 
         public static Scene scene;
@@ -103,10 +105,10 @@ namespace ASCII_FPS.GameComponents
             Rectangle(0, -22, 21, -1, colorBlack, ' ');
             Border(0, -22, 21, -1, colorGray, '@');
             Text(11, -20, "Health", colorWhite);
-            Text(11, -18, (int)Math.Ceiling(ASCII_FPS.playerStats.health) 
-                + " / " + (int)Math.Ceiling(ASCII_FPS.playerStats.maxHealth), colorWhite);
+            Text(11, -18, (int)Math.Ceiling(game.PlayerStats.health) 
+                + " / " + (int)Math.Ceiling(game.PlayerStats.maxHealth), colorWhite);
             LineHorizontal(-16, 0, 21, colorGray, '@');
-            int hpDots = (int)(20 * 14 * ASCII_FPS.playerStats.health / ASCII_FPS.playerStats.maxHealth);
+            int hpDots = (int)(20 * 14 * game.PlayerStats.health / game.PlayerStats.maxHealth);
             if (hpDots >= 20) Rectangle(1, -1 - hpDots / 20, 20, -2, colorRed, '%');
             if (hpDots % 20 > 0) Rectangle(1, -2 - hpDots / 20, 1 + hpDots % 20, -2 - hpDots / 20, colorRed, '%');
 
@@ -114,31 +116,31 @@ namespace ASCII_FPS.GameComponents
             Rectangle(-22, -22, -1, -1, colorBlack, ' ');
             Border(-22, -22, -1, -1, colorGray, '@');
             Text(-11, -20, "Armor", colorWhite);
-            Text(-11, -18, (int)Math.Ceiling(ASCII_FPS.playerStats.armor)
-                + " / " + (int)Math.Ceiling(ASCII_FPS.playerStats.maxArmor), colorWhite);
+            Text(-11, -18, (int)Math.Ceiling(game.PlayerStats.armor)
+                + " / " + (int)Math.Ceiling(game.PlayerStats.maxArmor), colorWhite);
             LineHorizontal(-16, -22, -1, colorGray, '@');
-            int armorDots = (int)(20 * 14 * ASCII_FPS.playerStats.armor / ASCII_FPS.playerStats.maxArmor);
+            int armorDots = (int)(20 * 14 * game.PlayerStats.armor / game.PlayerStats.maxArmor);
             if (armorDots >= 20) Rectangle(-21, -1 - armorDots / 20, -2, -2, colorForestGreen, '#');
             if (armorDots % 20 > 0) Rectangle(-(1 + armorDots % 20), -2 - armorDots / 20, -2, -2 - armorDots / 20, colorForestGreen, '#');
 
             // Floor + killed monsters + skill points
-            int offset = ASCII_FPS.playerStats.skillPoints == 0 ? 0 : skillPointMenu ? 12 : 2;
+            int offset = game.PlayerStats.skillPoints == 0 ? 0 : skillPointMenu ? 12 : 2;
             Rectangle(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorBlack, ' ');
             Border(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorGray, '@');
-            Text(console.Width / 2, -5 - offset, "Floor " + ASCII_FPS.playerStats.floor, colorWhite);
+            Text(console.Width / 2, -5 - offset, "Floor " + game.PlayerStats.floor, colorWhite);
             Text(console.Width / 2, -3 - offset,
-                 "Monsters: " + ASCII_FPS.playerStats.monsters + " / " + ASCII_FPS.playerStats.totalMonsters, colorWhite);
-            if (ASCII_FPS.playerStats.skillPoints > 0)
+                 "Monsters: " + game.PlayerStats.monsters + " / " + game.PlayerStats.totalMonsters, colorWhite);
+            if (game.PlayerStats.skillPoints > 0)
             {
-                Text(console.Width / 2, -1 - offset, "(" + Keybinds.skills + ") Skill points left: " + ASCII_FPS.playerStats.skillPoints, colorWhite);
+                Text(console.Width / 2, -1 - offset, "(" + Keybinds.skills + ") Skill points left: " + game.PlayerStats.skillPoints, colorWhite);
                 if (skillPointMenu)
                 {
                     Rectangle(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorBlack, ' ');
                     Border(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorGray, '@');
-                    Text(console.Width / 2, -9, "(1) Max health lvl. " + ASCII_FPS.playerStats.skillMaxHealth, colorWhite);
-                    Text(console.Width / 2, -7, "(2) Max armor lvl. " + ASCII_FPS.playerStats.skillMaxArmor, colorWhite);
-                    Text(console.Width / 2, -5, "(3) Armor protection lvl. " + ASCII_FPS.playerStats.skillArmorProtection, colorWhite);
-                    Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + ASCII_FPS.playerStats.skillShootingSpeed, colorWhite);
+                    Text(console.Width / 2, -9, "(1) Max health lvl. " + game.PlayerStats.skillMaxHealth, colorWhite);
+                    Text(console.Width / 2, -7, "(2) Max armor lvl. " + game.PlayerStats.skillMaxArmor, colorWhite);
+                    Text(console.Width / 2, -5, "(3) Armor protection lvl. " + game.PlayerStats.skillArmorProtection, colorWhite);
+                    Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + game.PlayerStats.skillShootingSpeed, colorWhite);
                 }
             }
         
@@ -185,13 +187,13 @@ namespace ASCII_FPS.GameComponents
             }
 
             // Game Over
-            if (ASCII_FPS.playerStats.dead)
+            if (game.PlayerStats.dead)
             {
                 Rectangle(console.Width / 2 - 16, console.Height / 2 - 9, console.Width / 2 + 15, console.Height / 2 + 8, colorBlack, ' ');
                 Border(console.Width / 2 - 16, console.Height / 2 - 9, console.Width / 2 + 15, console.Height / 2 + 8, colorWhite, '@');
                 Text(console.Width / 2, console.Height / 2 - 6, "GAME OVER", colorWhite);
-                Text(console.Width / 2, console.Height / 2 - 2, "Floor reached: " + ASCII_FPS.playerStats.floor, colorWhite);
-                Text(console.Width / 2, console.Height / 2, "Monsters killed: " + ASCII_FPS.playerStats.totalMonstersKilled, colorWhite);
+                Text(console.Width / 2, console.Height / 2 - 2, "Floor reached: " + game.PlayerStats.floor, colorWhite);
+                Text(console.Width / 2, console.Height / 2, "Monsters killed: " + game.PlayerStats.totalMonstersKilled, colorWhite);
                 Text(console.Width / 2, console.Height / 2 + 4, "Press Esc to return", colorWhite);
                 Text(console.Width / 2, console.Height / 2 + 5, "to the main menu", colorWhite);
             }

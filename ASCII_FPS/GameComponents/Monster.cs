@@ -54,7 +54,7 @@ namespace ASCII_FPS.GameComponents
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
             {
                 shootTime -= deltaTime;
-                if (shootTime < 0f && !ASCII_FPS.playerStats.dead)
+                if (shootTime < 0f && !Game.PlayerStats.dead)
                 {
                     ASCII_FPS.tsch.Play();
                     shootTime = 0.3f;
@@ -70,8 +70,8 @@ namespace ASCII_FPS.GameComponents
             health -= amount;
             if (health <= 0f)
             {
-                ASCII_FPS.playerStats.monsters++;
-                ASCII_FPS.playerStats.totalMonstersKilled++;
+                Game.PlayerStats.monsters++;
+                Game.PlayerStats.totalMonstersKilled++;
                 Destroy = true;
             }
 

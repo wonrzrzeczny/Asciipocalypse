@@ -11,13 +11,16 @@ namespace ASCII_FPS.Scenes
         public List<Zone> zones;
         public List<GameObject> gameObjects;
 
-        public int TotalTriangles { get; private set; }
-
-        private List<Vector2[]> walls;
         public Camera Camera { get; set; }
 
-        public Scene()
+        public int TotalTriangles { get; private set; }
+
+        private ASCII_FPS game;
+        private List<Vector2[]> walls;
+
+        public Scene(ASCII_FPS game)
         {
+            this.game = game;
             zones = new List<Zone>();
             walls = new List<Vector2[]>();
             gameObjects = new List<GameObject>();
@@ -140,7 +143,7 @@ namespace ASCII_FPS.Scenes
 
         public void AddGameObject(GameObject gameObject)
         {
-            gameObject.Scene = this;
+            gameObject.Game = game;
 
             if (!updating)
             {
@@ -197,9 +200,9 @@ namespace ASCII_FPS.Scenes
             }
         }
 
-        public static Scene Load(BinaryReader reader)
+        public static Scene Load(BinaryReader reader, ASCII_FPS game)
         {
-            Scene scene = new Scene();
+            Scene scene = new Scene(game);
 
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f)
             {

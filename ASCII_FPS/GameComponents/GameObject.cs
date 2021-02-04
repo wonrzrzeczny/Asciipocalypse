@@ -8,7 +8,7 @@ namespace ASCII_FPS.GameComponents
     public abstract class GameObject
     {
         public MeshObject MeshObject { get; }
-        public Scene Scene { get; set; }
+        public ASCII_FPS Game { get; set; }
 
         public bool Destroy { get; protected set; }
 
@@ -16,6 +16,11 @@ namespace ASCII_FPS.GameComponents
         {
             get { return MeshObject.Position; }
             protected set { MeshObject.Position = value; }
+        }
+
+        public Scene Scene
+        {
+            get { return Game.Scene; }
         }
 
         public Camera Camera
