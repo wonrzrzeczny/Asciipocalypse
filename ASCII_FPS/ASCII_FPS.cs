@@ -155,9 +155,8 @@ namespace ASCII_FPS
 
             Scene = SceneGenerator.Generate(this, 10f, 5f, 4);
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-            HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
-            HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
-            HUD.scene = Scene;
+            Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+            hud.Scene = Scene;
             playerLogic = new PlayerLogic(this);
         }
 
@@ -165,7 +164,7 @@ namespace ASCII_FPS
         {
             Scene = GameSave.LoadGameScene(this);
             PlayerStats = GameSave.LoadGameStats();
-            HUD.scene = Scene;
+            hud.Scene = Scene;
             playerLogic = new PlayerLogic(this);
         }
 
@@ -210,9 +209,9 @@ namespace ASCII_FPS
                     int maxMonsters = 4 + (int)Math.Floor(PlayerStats.floor / 3.0);
                     Scene = SceneGenerator.Generate(this, monsterHealth, monsterDamage, maxMonsters);
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-                    HUD.scene = Scene;
-                    HUD.visited = new bool[SceneGenerator.size, SceneGenerator.size];
-                    HUD.visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
+                    hud.Scene = Scene;
+                    Scene.Visited = new bool[SceneGenerator.size, SceneGenerator.size];
+                    Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
                     GameSave.SaveGame(this);
                     playerLogic = new PlayerLogic(this);
                 }
@@ -221,7 +220,7 @@ namespace ASCII_FPS
 
                 int playerRoomX = (int)(Scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
                 int playerRoomY = (int)(Scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
-                HUD.visited[playerRoomX, playerRoomY] = true;
+                Scene.Visited[playerRoomX, playerRoomY] = true;
             }
             else if (gameState == GameState.MainMenu)
             {

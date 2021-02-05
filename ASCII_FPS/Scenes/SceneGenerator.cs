@@ -137,7 +137,8 @@ namespace ASCII_FPS.Scenes
             Scene scene = new Scene(game);
 
             bool[,,] corridors = GenerateCorridors(size, size);
-            HUD.corridorLayout = corridors;
+            scene.CorridorLayout = corridors;
+            scene.Visited = new bool[size, size];
             Zone[,] zones = new Zone[size, size];
 
             int exitX = rand.Next(size);
@@ -147,7 +148,7 @@ namespace ASCII_FPS.Scenes
                 exitX = rand.Next(size);
                 exitY = rand.Next(size);
             }
-            HUD.exitRoom = new Point(exitX, exitY);
+            scene.ExitRoom = new Point(exitX, exitY);
 
             for (int x = 0; x < size; x++)
             {

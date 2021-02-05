@@ -14,6 +14,9 @@ namespace ASCII_FPS.Scenes
         public Camera Camera { get; set; }
 
         public int TotalTriangles { get; private set; }
+        public bool[,,] CorridorLayout { get; set; }
+        public bool[,] Visited { get; set; }
+        public Point ExitRoom { get; set; }
 
         private ASCII_FPS game;
         private List<Vector2[]> walls;
@@ -162,20 +165,20 @@ namespace ASCII_FPS.Scenes
             GameSave.WriteVector3(writer, Camera.CameraPos);
             writer.Write(Camera.Rotation);
 
-            writer.Write(HUD.exitRoom.X);
-            writer.Write(HUD.exitRoom.Y);
-            int xsize = HUD.visited.GetLength(0);
-            int ysize = HUD.visited.GetLength(1);
+            writer.Write(ExitRoom.X);
+            writer.Write(ExitRoom.Y);
+            int xsize = Visited.GetLength(0);
+            int ysize = Visited.GetLength(1);
             writer.Write(xsize);
             writer.Write(ysize);
             for (int i = 0; i < xsize; i++)
             {
                 for (int j = 0; j < ysize; j++)
                 {
-                    writer.Write(HUD.visited[i, j]);
+                    writer.Write(Visited[i, j]);
                     for (int k = 0; k < 4; k++)
                     {
-                        writer.Write(HUD.corridorLayout[i, j, k]);
+                        writer.Write(CorridorLayout[i, j, k]);
                     }
                 }
             }
@@ -203,26 +206,25 @@ namespace ASCII_FPS.Scenes
         public static Scene Load(BinaryReader reader, ASCII_FPS game)
         {
             Scene scene = new Scene(game);
-
             scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f)
             {
                 CameraPos = GameSave.ReadVector3(reader),
                 Rotation = reader.ReadSingle()
             };
 
-            HUD.exitRoom = new Point(reader.ReadInt32(), reader.ReadInt32());
+            scene.ExitRoom = new Point(reader.ReadInt32(), reader.ReadInt32());
             int xsize = reader.ReadInt32();
             int ysize = reader.ReadInt32();
-            HUD.visited = new bool[xsize, ysize];
-            HUD.corridorLayout = new bool[xsize, ysize, 4];
+            scene.Visited = new bool[xsize, ysize];
+            scene.CorridorLayout = new bool[xsize, ysize, 4];
             for (int i = 0; i < xsize; i++)
             {
                 for (int j = 0; j < ysize; j++)
                 {
-                    HUD.visited[i, j] = reader.ReadBoolean();
+                    scene.Visited[i, j] = reader.ReadBoolean();
                     for (int k = 0; k < 4; k++)
                     {
-                        HUD.corridorLayout[i, j, k] = reader.ReadBoolean();
+                        scene.CorridorLayout[i, j, k] = reader.ReadBoolean();
                     }
                 }
             }

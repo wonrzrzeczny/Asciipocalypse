@@ -21,12 +21,10 @@ namespace ASCII_FPS.GameComponents
         {
             this.console = console;
             this.game = game;
+            Scene = null;
         }
 
-        public static Scene scene;
-        public static bool[,,] corridorLayout;
-        public static bool[,] visited;
-        public static Point exitRoom;
+        public Scene Scene { private get; set; }
 
         public static bool skillPointMenu;
 
@@ -148,8 +146,8 @@ namespace ASCII_FPS.GameComponents
             Rectangle(-13, 0, -1, 12, colorLightGray, ' ');
             Border(-13, 0, -1, 12, colorGray, '@');
 
-            int playerRoomX = (int)(scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
-            int playerRoomY = (int)(scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            int playerRoomX = (int)(Scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            int playerRoomY = (int)(Scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
             for (int x = 0; x < 9; x++)
             {
                 for (int y = 0; y < 9; y++)
@@ -159,17 +157,17 @@ namespace ASCII_FPS.GameComponents
 
                     if (x % 2 == 0 && y % 2 == 0)
                     {
-                        if (visited[x / 2, y / 2])
+                        if (Scene.Visited[x / 2, y / 2])
                         {
                             if (playerRoomX == x / 2 && playerRoomY == y / 2)
                             {
                                 console.Color[xx, yy] = colorLightBlue;
-                                float rotation = scene.Camera.Rotation * 4f / (float)Math.PI;
+                                float rotation = Scene.Camera.Rotation * 4f / (float)Math.PI;
                                 int direction = (int)Math.Floor(rotation) % 8;
                                 if (direction < 0) direction += 8;
                                 console.Data[xx, yy] = "^>>vv<<^"[direction];
                             }
-                            else if (exitRoom.X == x / 2 && exitRoom.Y == y / 2)
+                            else if (Scene.ExitRoom.X == x / 2 && Scene.ExitRoom.Y == y / 2)
                             {
                                 console.Data[xx, yy] = 'E';
                             }
@@ -179,10 +177,16 @@ namespace ASCII_FPS.GameComponents
                             }
                         }
                     }
-                    else if (x % 2 == 0 && corridorLayout[x / 2, y / 2, 1] && (visited[x / 2, y / 2] || visited[x / 2, y / 2 + 1]))
+                    else if (x % 2 == 0 && Scene.CorridorLayout[x / 2, y / 2, 1]
+                        && (Scene.Visited[x / 2, y / 2] || Scene.Visited[x / 2, y / 2 + 1]))
+                    {
                         console.Data[xx, yy] = '|';
-                    else if (y % 2 == 0 && corridorLayout[x / 2, y / 2, 0] && (visited[x / 2, y / 2] || visited[x / 2 + 1, y / 2]))
+                    }
+                    else if (y % 2 == 0 && Scene.CorridorLayout[x / 2, y / 2, 0]
+                        && (Scene.Visited[x / 2, y / 2] || Scene.Visited[x / 2 + 1, y / 2]))
+                    {
                         console.Data[xx, yy] = '-';
+                    }
                 }
             }
 
