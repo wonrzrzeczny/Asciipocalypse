@@ -21,7 +21,7 @@ namespace ASCII_FPS
         private Rasterizer rasterizer;
         private HUD hud;
 
-        private bool saveExists = false;
+        public bool SaveExists { get; private set; } = false;
 
         public Scene Scene { get; private set; }
         public PlayerStats PlayerStats { get; private set; }
@@ -100,8 +100,8 @@ namespace ASCII_FPS
             theme = Content.Load<SoundEffect>("audio/theme");
             theme.Play();
 
-            saveExists = File.Exists("./scene.sav");
-            hud.option = saveExists ? 0 : 1;
+            SaveExists = File.Exists("./scene.sav");
+            hud.option = SaveExists ? 0 : 1;
         }
         
         protected override void UnloadContent()
@@ -185,14 +185,14 @@ namespace ASCII_FPS
                     {
                         File.Delete("./player.sav");
                         File.Delete("./scene.sav");
-                        saveExists = false;
+                        SaveExists = false;
                     }
                     else
                     {
                         GameSave.SaveGame(this);
-                        saveExists = true;
+                        SaveExists = true;
                     }
-                    hud.option = saveExists ? 0 : 1;
+                    hud.option = SaveExists ? 0 : 1;
                     gameState = GameState.MainMenu;
                 }
 
@@ -219,13 +219,13 @@ namespace ASCII_FPS
                 if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
                 {
                     hud.option = (hud.option + 1) % 4;
-                    if (!saveExists && hud.option == 0)
+                    if (!SaveExists && hud.option == 0)
                         hud.option = 1;
                 }
                 if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
                 {
                     hud.option = (hud.option + 3) % 4;
-                    if (!saveExists && hud.option == 0)
+                    if (!SaveExists && hud.option == 0)
                         hud.option = 3;
                 }
                 if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
@@ -277,7 +277,7 @@ namespace ASCII_FPS
                         {
                             GameSave.SaveOptions(graphics);
                             gameState = GameState.MainMenu;
-                            hud.option = saveExists ? 0 : 1;
+                            hud.option = SaveExists ? 0 : 1;
                         }
                         else if (hud.option == 1)
                         {
@@ -297,7 +297,7 @@ namespace ASCII_FPS
                     {
                         GameSave.SaveOptions(graphics);
                         gameState = GameState.MainMenu;
-                        hud.option = saveExists ? 0 : 1;
+                        hud.option = SaveExists ? 0 : 1;
                     }
                 }
                 else

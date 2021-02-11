@@ -222,7 +222,7 @@ namespace ASCII_FPS.GameComponents
             Text(console.Width / 2, 15, @"                     | |                             | | |            ", colorWhite);
             Text(console.Width / 2, 16, @"                     |_|                             |_|_|            ", colorWhite);
 
-            if (!ASCII_FPS.saveExists)
+            if (!game.SaveExists)
             {
                 Text(console.Width / 2, 30, "New game", option == 1 ? colorLightBlue : colorGray);
                 Text(console.Width / 2, 32, "Options", option == 2 ? colorLightBlue : colorGray);
