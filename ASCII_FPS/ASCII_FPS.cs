@@ -15,14 +15,13 @@ namespace ASCII_FPS
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private Random random;
         public static DisplayMode[] resolutions;
 
         private Console console;
         private Rasterizer rasterizer;
         private HUD hud;
 
-        public static bool saveExists = false;
+        private bool saveExists = false;
 
         public Scene Scene { get; private set; }
         public PlayerStats PlayerStats { get; private set; }
@@ -69,7 +68,6 @@ namespace ASCII_FPS
                 graphics.ApplyChanges();
             }
 
-            random = new Random();
             int charsX = (int)Math.Floor((double)graphics.PreferredBackBufferWidth / Console.FONT_SIZE);
             int charsY = (int)Math.Floor((double)graphics.PreferredBackBufferHeight / Console.FONT_SIZE);
             console = new Console(charsX, charsY);
@@ -102,8 +100,6 @@ namespace ASCII_FPS
             theme = Content.Load<SoundEffect>("audio/theme");
             theme.Play();
 
-            ResetGame();
-            PlayerStats.dead = true;
             saveExists = File.Exists("./scene.sav");
             hud.option = saveExists ? 0 : 1;
         }
@@ -112,6 +108,7 @@ namespace ASCII_FPS
         {
             Content.Unload();
         }
+
 
         private void ChangeResolution(int resX, int resY)
         {
@@ -210,17 +207,12 @@ namespace ASCII_FPS
                     Scene = SceneGenerator.Generate(this, monsterHealth, monsterDamage, maxMonsters);
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     hud.Scene = Scene;
-                    Scene.Visited = new bool[SceneGenerator.size, SceneGenerator.size];
                     Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
                     GameSave.SaveGame(this);
                     playerLogic = new PlayerLogic(this);
                 }
 
                 Scene.UpdateGameObjects(deltaTime);
-
-                int playerRoomX = (int)(Scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
-                int playerRoomY = (int)(Scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
-                Scene.Visited[playerRoomX, playerRoomY] = true;
             }
             else if (gameState == GameState.MainMenu)
             {
@@ -363,19 +355,13 @@ namespace ASCII_FPS
         
             
             // Update effects
-            if (PlayerStats.dead && gameState == GameState.Game)
+            if (gameState == GameState.Game && PlayerStats.dead)
             {
                 console.Effect = Console.ColorEffect.Grayscale;
             }
-            else if (PlayerStats.hit && gameState == GameState.Game)
+            else if (gameState == GameState.Game && PlayerStats.hit)
             {
                 console.Effect = Console.ColorEffect.Red;
-                PlayerStats.hitTime -= deltaTime;
-                if (PlayerStats.hitTime < 0f)
-                {
-                    PlayerStats.hitTime = 0f;
-                    PlayerStats.hit = false;
-                }
             }
             else
             {
@@ -386,7 +372,7 @@ namespace ASCII_FPS
             // Rendering
             if (gameState == GameState.Game)
             {
-                rasterizer.Raster(Scene, Scene.Camera);
+                rasterizer.Raster(Scene);
                 hud.Draw();
             }
             else if (gameState == GameState.MainMenu)

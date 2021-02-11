@@ -49,13 +49,27 @@ namespace ASCII_FPS.GameComponents
 
             Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
             scene.Camera.CameraPos += realShift;
-
             scene.Camera.Rotation += rotation;
+            
+            int playerRoomX = (int)(scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            int playerRoomY = (int)(scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
+            scene.Visited[playerRoomX, playerRoomY] = true;
 
             if (playerStats.shootTime > 0f)
             {
                 playerStats.shootTime -= deltaTime;
             }
+            
+            if (playerStats.hit)
+            {
+                playerStats.hitTime -= deltaTime;
+                if (playerStats.hitTime < 0f)
+                {
+                    playerStats.hitTime = 0f;
+                    playerStats.hit = false;
+                }
+            }
+
 
             if (keyboard.IsKeyDown(Keybinds.fire))
             {
@@ -124,6 +138,7 @@ namespace ASCII_FPS.GameComponents
                     playerStats.skillShootingSpeed++;
                 }
             }
+
             return false;
         }
     }

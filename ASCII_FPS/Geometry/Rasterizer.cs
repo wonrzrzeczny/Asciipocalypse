@@ -35,8 +35,10 @@ namespace ASCII_FPS
             }
         }
 
-        public void Raster(Scene scene, Camera camera)
+        public void Raster(Scene scene)
         {
+            Camera camera = scene.Camera;
+
             // Reset console
             for (int i = 0; i < console.Width; i++)
             {
