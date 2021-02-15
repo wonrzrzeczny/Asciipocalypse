@@ -150,7 +150,7 @@ namespace ASCII_FPS
                 totalMonstersKilled = 0
             };
 
-            Scene = SceneGenerator.Generate(this, 10f, 5f, 4);
+            Scene = new SceneGenerator(this, 1).Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
             hud.Scene = Scene;
@@ -201,10 +201,7 @@ namespace ASCII_FPS
                     theme.Play();
                     PlayerStats.floor++;
 
-                    float monsterHealth = 8f + PlayerStats.floor * 2f;
-                    float monsterDamage = 4f + PlayerStats.floor;
-                    int maxMonsters = 4 + (int)Math.Floor(PlayerStats.floor / 3.0);
-                    Scene = SceneGenerator.Generate(this, monsterHealth, monsterDamage, maxMonsters);
+                    Scene = new SceneGenerator(this, PlayerStats.floor).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     hud.Scene = Scene;
                     Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;

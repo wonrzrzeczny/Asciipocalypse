@@ -5,25 +5,34 @@ using System.Collections.Generic;
 
 namespace ASCII_FPS.Scenes
 {
-    public static class SceneGenerator
+    public class SceneGenerator
     {
         public const int size = 5;
         public const float tileSize = 100f;
 
+        private Random rand;
 
-        private static List<Triangle> MakeWall(float x0, float z0, float x1, float z1, float h, AsciiTexture texture)
+        private ASCII_FPS game;
+
+        private float monsterHP;
+        private float monsterDamage;
+        private int monstersPerRoom;
+
+        private Point exitRoom;
+        private bool[,,] corridorLayout;
+
+
+        public SceneGenerator(ASCII_FPS game, int floor)
         {
-            float ratio = (new Vector2(x0, z0) - new Vector2(x1, z1)).Length() / h;
-
-            Triangle triangle1 = new Triangle(new Vector3(x0, h, z0), new Vector3(x1, h, z1), new Vector3(x0, -h, z0), texture,
-                new Vector2(0f, 0f), new Vector2(ratio, 0f), new Vector2(0f, 1f));
-            Triangle triangle2 = new Triangle(new Vector3(x0, -h, z0), new Vector3(x1, h, z1), new Vector3(x1, -h, z1), texture,
-                new Vector2(0f, 1f), new Vector2(ratio, 0f), new Vector2(ratio, 1f));
-
-            return new List<Triangle>(new Triangle[] { triangle1, triangle2 });
+            this.game = game;
+            rand = new Random();
+            monsterHP = 8f + floor * 2f;
+            monsterDamage = 4f + floor;
+            monstersPerRoom = 4 + (int)Math.Floor(floor / 3.0);
         }
 
-        private static MeshObject MakeFloor(float left, float right, float bottom, float top, float roomHeight)
+
+        private MeshObject MakeFloor(float left, float right, float bottom, float top, float roomHeight)
         {
             Vector3 trl = new Vector3(right, -roomHeight, top);
             Vector3 trh = new Vector3(right, roomHeight, top);
@@ -47,7 +56,7 @@ namespace ASCII_FPS.Scenes
             return new MeshObject(triangles, Vector3.Zero, 0f);
         }
 
-        public static List<Vector2[]> MakeRoomWalls(float width, float height, bool[] corridors, float wallThickness, float corridorWidth)
+        private List<Vector2[]> MakeRoomWalls(float width, float height, bool[] corridors, float wallThickness, float corridorWidth)
         {
             List<Vector2[]> result = new List<Vector2[]>();
 
@@ -91,10 +100,11 @@ namespace ASCII_FPS.Scenes
             return result;
         }
 
-        public static bool[,,] GenerateCorridors(int sizeX, int sizeY)
+
+        private void GenerateCorridorLayout(int sizeX, int sizeY)
         {
             Random rand = new Random();
-            bool[,,] ret = new bool[sizeX, sizeY, 4];
+            corridorLayout = new bool[sizeX, sizeY, 4];
             bool[,] vis = new bool[sizeX, sizeY];
             Queue<Point> BFSqueue = new Queue<Point>();
             int startX = rand.Next(size);
@@ -120,35 +130,106 @@ namespace ASCII_FPS.Scenes
                     if (q.X >= 0 && q.X < sizeX && q.Y >= 0 && q.Y < sizeY && !vis[q.X, q.Y])
                     {
                         vis[q.X, q.Y] = true;
-                        ret[p.X, p.Y, dir[i]] = true;
-                        ret[q.X, q.Y, (dir[i] + 2) % 4] = true;
+                        corridorLayout[p.X, p.Y, dir[i]] = true;
+                        corridorLayout[q.X, q.Y, (dir[i] + 2) % 4] = true;
                         BFSqueue.Enqueue(q);
                     }
                 }
             }
-            return ret;
         }
 
-        public static Scene Generate(ASCII_FPS game, float monsterHealth, float monsterDamage, int maxMonsters)
+
+        private void PopulateRoom(Scene scene, Zone zone, int x, int y)
+        {
+            float left = x * tileSize - size * tileSize / 2;
+            float right = left + tileSize;
+            float bottom = y * tileSize - size * tileSize / 2;
+            float top = bottom + tileSize;
+            Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
+
+            if (x == exitRoom.X && y == exitRoom.Y)
+            {
+                MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
+                    new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                zone.AddMesh(exit);
+                game.PlayerStats.exitPosition = roomCenter;
+            }
+            else if (x != size / 2 || y != size / 2)
+            {
+                int monsterCount = rand.Next(1, monstersPerRoom + 1);
+                { // monsters
+                    game.PlayerStats.totalMonsters += monsterCount;
+                    Vector2 shift = monsterCount == 1 ? Vector2.Zero : new Vector2(30f, 0f);
+                    float angleOffset = (float)(rand.NextDouble() * Math.PI * 2f);
+                    for (int i = 0; i < monsterCount; i++)
+                    {
+                        Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
+                        MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
+                        scene.AddGameObject(new Monster(monster, 3f, monsterHP, monsterDamage));
+                    }
+                }
+
+                if (monsterCount != 1)
+                {
+                    if (rand.Next(4) == 0) // barrel
+                    {
+                        int rnd = rand.Next(6);
+                        Collectible.Type type = rnd < 3 ? Collectible.Type.Skill : rnd < 5 ? Collectible.Type.Armor : Collectible.Type.Health;
+                        AsciiTexture texture = rnd < 3 ? ASCII_FPS.barrelBlueTexture : rnd < 5 ?
+                            ASCII_FPS.barrelGreenTexture : ASCII_FPS.barrelRedTexture;
+                        MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
+                        scene.AddGameObject(new Collectible(barrel, type));
+                    }
+                    else if (rand.Next(2) == 0) // pillar
+                    {
+                        Vector3 offset = new Vector3(roomCenter.X, 0f, roomCenter.Y);
+                        Vector2[] points = new Vector2[]
+                        {
+                            new Vector2(-5f, -5f),
+                            new Vector2(5f, -5f),
+                            new Vector2(5f, 5f),
+                            new Vector2(-5f, 5f),
+                            new Vector2(-5f, -5f)
+                        };
+                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, offset);
+                    }
+                }
+
+                if (rand.Next(3) == 0) // cut corners
+                {
+                    Vector3 offset = new Vector3(roomCenter.X, 0f, roomCenter.Y);
+                    List<Vector2[]> walls = new List<Vector2[]>
+                    {
+                        new Vector2[] { new Vector2(10f, 50f), new Vector2(50f, 10f) },
+                        new Vector2[] { new Vector2(-50f, 10f), new Vector2(-10f, 50f) },
+                        new Vector2[] { new Vector2(-10f, -50f), new Vector2(-50f, -10f) },
+                        new Vector2[] { new Vector2(50f, -10f), new Vector2(10f, -50f) }
+                    };
+                    SceneGenUtils.AddWalls(scene, zone, walls, 4f, ASCII_FPS.texture1, offset);
+                }
+            }
+        }
+
+
+        public Scene Generate()
         {
             game.PlayerStats.totalMonsters = 0;
             game.PlayerStats.monsters = 0;
-            Random rand = new Random();
             Scene scene = new Scene(game);
 
-            bool[,,] corridors = GenerateCorridors(size, size);
-            scene.CorridorLayout = corridors;
+            GenerateCorridorLayout(size, size);
+            scene.CorridorLayout = corridorLayout;
             scene.Visited = new bool[size, size];
             Zone[,] zones = new Zone[size, size];
 
-            int exitX = rand.Next(size);
-            int exitY = rand.Next(size);
-            while (exitX == size / 2 && exitY == size / 2)
+
+            exitRoom = new Point(rand.Next(size), rand.Next(size));
+            while (exitRoom.X == size / 2 && exitRoom.Y == size / 2)
             {
-                exitX = rand.Next(size);
-                exitY = rand.Next(size);
+                exitRoom = new Point(rand.Next(size), rand.Next(size));
             }
-            scene.ExitRoom = new Point(exitX, exitY);
+            scene.ExitRoom = exitRoom;
+
 
             for (int x = 0; x < size; x++)
             {
@@ -158,7 +239,13 @@ namespace ASCII_FPS.Scenes
                     float right = left + tileSize;
                     float bottom = y * tileSize - size * tileSize / 2;
                     float top = bottom + tileSize;
-                    bool[] roomCorridors = new bool[4] { corridors[x, y, 0], corridors[x, y, 1], corridors[x, y, 2], corridors[x, y, 3] };
+                    bool[] roomCorridors = new bool[4]
+                    { 
+                        corridorLayout[x, y, 0],
+                        corridorLayout[x, y, 1],
+                        corridorLayout[x, y, 2],
+                        corridorLayout[x, y, 3]
+                    };
                     List<Vector2[]> walls = MakeRoomWalls(tileSize, tileSize, roomCorridors, 2f, 10f);
                     Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
 
@@ -168,7 +255,7 @@ namespace ASCII_FPS.Scenes
                     List<Triangle> wallTriangles = new List<Triangle>();
                     foreach (Vector2[] wall in walls)
                     {
-                        wallTriangles.AddRange(MakeWall(wall[0].X, wall[0].Y, wall[1].X, wall[1].Y, 4f, ASCII_FPS.texture1));
+                        wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, 4f, ASCII_FPS.texture1));
                     }
                     MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
                     zones[x, y].AddMesh(wallObject);
@@ -179,40 +266,12 @@ namespace ASCII_FPS.Scenes
                         scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
                     }
 
-
-                    if (x == exitX && y == exitY)
-                    {
-                        MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
-                            new Vector3(roomCenter.X, -2f, roomCenter.Y));
-                        zones[x, y].AddMesh(exit);
-                        game.PlayerStats.exitPosition = roomCenter;
-                    }
-                    else if (x != size / 2 || y != size / 2)
-                    {
-                        int cnt = rand.Next(1, maxMonsters + 1);
-                        game.PlayerStats.totalMonsters += cnt;
-                        Vector2 shift = cnt == 1 ? Vector2.Zero : new Vector2(30f, 0f);
-                        float offset = (float)(rand.NextDouble() * Math.PI * 2f);
-                        for (int i = 0; i < cnt; i++)
-                        {
-                            Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(offset + i * (float)Math.PI * 2f / cnt));
-                            MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
-                            scene.AddGameObject(new Monster(monster, 3f, monsterHealth, monsterDamage));
-                        }
-
-                        if (cnt != 1 && rand.Next(4) == 0)
-                        {
-                            int rnd = rand.Next(6);
-                            Collectible.Type type = rnd < 3 ? Collectible.Type.Skill : rnd < 5 ? Collectible.Type.Armor : Collectible.Type.Health;
-                            AsciiTexture texture = rnd < 3 ? ASCII_FPS.barrelBlueTexture : rnd < 5 ? 
-                                ASCII_FPS.barrelGreenTexture : ASCII_FPS.barrelRedTexture;
-                            MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
-                            scene.AddGameObject(new Collectible(barrel, type));
-                        }
-                    }
+                    PopulateRoom(scene, zones[x, y], x, y);
                 }
             }
 
+
+            // Create portals between adjacent zones
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
@@ -222,16 +281,16 @@ namespace ASCII_FPS.Scenes
                     float bottom = y * tileSize - size * tileSize / 2;
                     float top = bottom + tileSize;
 
-                    if (corridors[x, y, 0])
+                    if (corridorLayout[x, y, 0])
                         zones[x, y].AddPortal(new Portal(zones[x + 1, y], new Vector2(right, (top + bottom) / 2 + 5f),
                                                                           new Vector2(right, (top + bottom) / 2 - 5f)));
-                    if (corridors[x, y, 1])
+                    if (corridorLayout[x, y, 1])
                         zones[x, y].AddPortal(new Portal(zones[x, y + 1], new Vector2((left + right) / 2 - 5f, top),
                                                                           new Vector2((left + right) / 2 + 5f, top)));
-                    if (corridors[x, y, 2])
+                    if (corridorLayout[x, y, 2])
                         zones[x, y].AddPortal(new Portal(zones[x - 1, y], new Vector2(left, (top + bottom) / 2 - 5f),
                                                                           new Vector2(left, (top + bottom) / 2 + 5f)));
-                    if (corridors[x, y, 3])
+                    if (corridorLayout[x, y, 3])
                         zones[x, y].AddPortal(new Portal(zones[x, y - 1], new Vector2((left + right) / 2 + 5f, bottom),
                                                                           new Vector2((left + right) / 2 - 5f, bottom)));
                 }
