@@ -20,6 +20,7 @@ namespace ASCII_FPS.Scenes
 
         private Point exitRoom;
         private bool[,,] corridorLayout;
+        private float[,,] corridorWidths;
 
 
         public SceneGenerator(ASCII_FPS game, int floor)
@@ -32,115 +33,130 @@ namespace ASCII_FPS.Scenes
         }
 
 
-        private MeshObject MakeFloor(float left, float right, float bottom, float top, float roomHeight)
+        public Scene Generate()
         {
-            Vector3 trl = new Vector3(right, -roomHeight, top);
-            Vector3 trh = new Vector3(right, roomHeight, top);
+            game.PlayerStats.totalMonsters = 0;
+            game.PlayerStats.monsters = 0;
+            Scene scene = new Scene(game);
 
-            Vector3 tll = new Vector3(left, -roomHeight, top);
-            Vector3 tlh = new Vector3(left, roomHeight, top);
-
-            Vector3 brl = new Vector3(right, -roomHeight, bottom);
-            Vector3 brh = new Vector3(right, roomHeight, bottom);
-
-            Vector3 bll = new Vector3(left, -roomHeight, bottom);
-            Vector3 blh = new Vector3(left, roomHeight, bottom);
-
-            List<Triangle> triangles = new List<Triangle>
+            corridorLayout = SceneGenUtils.GenerateCorridorLayout(size, size);
+            scene.CorridorLayout = corridorLayout;
+            scene.Visited = new bool[size, size];
+            Zone[,] zones = new Zone[size, size];
+            corridorWidths = new float[size, size, 4];
+            for (int x = 0; x < size; x++)
             {
-                new Triangle(tll, trl, brl, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
-                new Triangle(tlh, brh, trh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitX),
-                new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY),
-                new Triangle(tlh, blh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitY, Vector2.One)
-            };
-            return new MeshObject(triangles, Vector3.Zero, 0f);
-        }
-
-        private List<Vector2[]> MakeRoomWalls(float width, float height, bool[] corridors, float wallThickness, float corridorWidth)
-        {
-            List<Vector2[]> result = new List<Vector2[]>();
-
-            float x = (width - wallThickness) / 2;
-            float x1 = width / 2;
-            float yc0 = corridorWidth / 2;
-            float yc1 = -corridorWidth / 2;
-            float y0 = (height - wallThickness) / 2;
-            float y1 = -y0;
-
-            Vector2 vecTop = new Vector2(x, y0);
-            Vector2 vecTopCorridor = new Vector2(x, yc0);
-            Vector2 vecTopCorridorMiddle = new Vector2(x1, yc0);
-            Vector2 vecBottomCorridor = new Vector2(x, yc1);
-            Vector2 vecBottomCorridorMiddle = new Vector2(x1, yc1);
-            Vector2 vecBottom = new Vector2(x, y1);
-                    
-            for (int t = 0; t < 4; t++)
-            {
-                if (corridors[t])
+                for (int y = 0; y < size; y++)
                 {
-                    result.Add(new Vector2[2] { vecTop, vecTopCorridor });
-                    result.Add(new Vector2[2] { vecTopCorridor, vecTopCorridorMiddle });
-                    
-                    result.Add(new Vector2[2] { vecBottomCorridorMiddle, vecBottomCorridor });
-                    result.Add(new Vector2[2] { vecBottomCorridor, vecBottom });
-                }
-                else
-                {
-                    result.Add(new Vector2[2] { vecTop, vecBottom });
-                }
-                        
-                vecTop = new Vector2(-vecTop.Y, vecTop.X);
-                vecTopCorridor = new Vector2(-vecTopCorridor.Y, vecTopCorridor.X);
-                vecTopCorridorMiddle = new Vector2(-vecTopCorridorMiddle.Y, vecTopCorridorMiddle.X);
-                vecBottomCorridor = new Vector2(-vecBottomCorridor.Y, vecBottomCorridor.X);
-                vecBottomCorridorMiddle = new Vector2(-vecBottomCorridorMiddle.Y, vecBottomCorridorMiddle.X);
-                vecBottom = new Vector2(-vecBottom.Y, vecBottom.X);
-            }
-
-            return result;
-        }
-
-
-        private void GenerateCorridorLayout(int sizeX, int sizeY)
-        {
-            Random rand = new Random();
-            corridorLayout = new bool[sizeX, sizeY, 4];
-            bool[,] vis = new bool[sizeX, sizeY];
-            Queue<Point> BFSqueue = new Queue<Point>();
-            int startX = rand.Next(size);
-            int startY = rand.Next(size);
-            BFSqueue.Enqueue(new Point(startX, startY));
-            vis[startX, startY] = true;
-            while (BFSqueue.Count > 0)
-            {
-                Point p = BFSqueue.Dequeue();
-                int[] dir = new int[4] { 0, 1, 2, 3 };
-                Point[] shift = new Point[4] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
-                for (int i = 0; i < 4; i++)
-                {
-                    int j = rand.Next(4);
-                    int t = dir[i];
-                    dir[i] = dir[j];
-                    dir[j] = t;
-                }
-
-                for (int i = 0; i < 4; i++)
-                {
-                    Point q = p + shift[dir[i]];
-                    if (q.X >= 0 && q.X < sizeX && q.Y >= 0 && q.Y < sizeY && !vis[q.X, q.Y])
+                    for (int t = 0; t < 4; t++)
                     {
-                        vis[q.X, q.Y] = true;
-                        corridorLayout[p.X, p.Y, dir[i]] = true;
-                        corridorLayout[q.X, q.Y, (dir[i] + 2) % 4] = true;
-                        BFSqueue.Enqueue(q);
+                        if (corridorLayout[x, y, t])
+                        {
+                            corridorWidths[x, y, t] = 10f;
+                        }
                     }
                 }
             }
+
+
+            exitRoom = new Point(rand.Next(size), rand.Next(size));
+            while (exitRoom.X == size / 2 && exitRoom.Y == size / 2)
+            {
+                exitRoom = new Point(rand.Next(size), rand.Next(size));
+            }
+            scene.ExitRoom = exitRoom;
+
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    float left = x * tileSize - size * tileSize / 2;
+                    float right = left + tileSize;
+                    float bottom = y * tileSize - size * tileSize / 2;
+                    float top = bottom + tileSize;
+                    float[] roomCorridors = new float[4]
+                    {
+                        corridorWidths[x, y, 0],
+                        corridorWidths[x, y, 1],
+                        corridorWidths[x, y, 2],
+                        corridorWidths[x, y, 3]
+                    };
+
+                    List<Vector2[]> walls = SceneGenUtils.MakeRoomWalls(tileSize, tileSize, roomCorridors, 2f);
+                    Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
+
+                    zones[x, y] = new Zone(new RectangleF(left, bottom, tileSize, tileSize));
+                    zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f));
+
+                    List<Triangle> wallTriangles = new List<Triangle>();
+                    foreach (Vector2[] wall in walls)
+                    {
+                        wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, 4f, ASCII_FPS.texture1));
+                    }
+                    MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
+                    zones[x, y].AddMesh(wallObject);
+
+                    scene.AddZone(zones[x, y]);
+                    foreach (Vector2[] wall in walls)
+                    {
+                        scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
+                    }
+
+                    PopulateRoom(scene, zones[x, y], x, y);
+                }
+            }
+
+
+            // Create portals between adjacent zones
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    float left = x * tileSize - size * tileSize / 2;
+                    float right = left + tileSize;
+                    float bottom = y * tileSize - size * tileSize / 2;
+                    float top = bottom + tileSize;
+
+                    Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
+
+                    int dx = 1;
+                    int dy = 0;
+                    Vector2 wallCenter = new Vector2(tileSize / 2, 0f);
+                    Vector2 unit = new Vector2(0, 1);
+
+                    for (int t = 0; t < 4; t++)
+                    {
+                        if (corridorLayout[x, y, t])
+                        {
+                            float width = corridorWidths[x, y, t];
+                            Vector2 start = roomCenter + wallCenter + unit * width / 2;
+                            Vector2 end = roomCenter + wallCenter - unit * width / 2;
+
+                            zones[x, y].AddPortal(new Portal(zones[x + dx, y + dy], start, end));
+                        }
+
+                        wallCenter = new Vector2(-wallCenter.Y, wallCenter.X);
+                        unit = new Vector2(-unit.Y, unit.X);
+                        int tmp = dx;
+                        dx = -dy;
+                        dy = tmp;
+                    }
+                }
+            }
+
+            return scene;
         }
 
 
         private void PopulateRoom(Scene scene, Zone zone, int x, int y)
         {
+            PopulateSchemeFlags flags = new PopulateSchemeFlags
+            {
+                ClearCenter = true,
+                NotJoint = true,
+                SingleEnemy = true
+            };
+
             float left = x * tileSize - size * tileSize / 2;
             float right = left + tileSize;
             float bottom = y * tileSize - size * tileSize / 2;
@@ -149,6 +165,7 @@ namespace ASCII_FPS.Scenes
 
             if (x == exitRoom.X && y == exitRoom.Y)
             {
+                flags.ClearCenter = false;
                 MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
                     new Vector3(roomCenter.X, -2f, roomCenter.Y));
                 zone.AddMesh(exit);
@@ -171,6 +188,8 @@ namespace ASCII_FPS.Scenes
 
                 if (monsterCount != 1)
                 {
+                    flags.SingleEnemy = false;
+                    
                     if (rand.Next(4) == 0) // barrel
                     {
                         int rnd = rand.Next(6);
@@ -211,92 +230,30 @@ namespace ASCII_FPS.Scenes
         }
 
 
-        public Scene Generate()
+        private struct PopulateSchemeFlags
         {
-            game.PlayerStats.totalMonsters = 0;
-            game.PlayerStats.monsters = 0;
-            Scene scene = new Scene(game);
+            public bool ClearCenter { get; set; }
+            public bool NotJoint { get; set; }
+            public bool SingleEnemy { get; set; }
 
-            GenerateCorridorLayout(size, size);
-            scene.CorridorLayout = corridorLayout;
-            scene.Visited = new bool[size, size];
-            Zone[,] zones = new Zone[size, size];
-
-
-            exitRoom = new Point(rand.Next(size), rand.Next(size));
-            while (exitRoom.X == size / 2 && exitRoom.Y == size / 2)
+            public uint Mask
             {
-                exitRoom = new Point(rand.Next(size), rand.Next(size));
-            }
-            scene.ExitRoom = exitRoom;
-
-
-            for (int x = 0; x < size; x++)
-            {
-                for (int y = 0; y < size; y++)
+                get
                 {
-                    float left = x * tileSize - size * tileSize / 2;
-                    float right = left + tileSize;
-                    float bottom = y * tileSize - size * tileSize / 2;
-                    float top = bottom + tileSize;
-                    bool[] roomCorridors = new bool[4]
-                    { 
-                        corridorLayout[x, y, 0],
-                        corridorLayout[x, y, 1],
-                        corridorLayout[x, y, 2],
-                        corridorLayout[x, y, 3]
-                    };
-                    List<Vector2[]> walls = MakeRoomWalls(tileSize, tileSize, roomCorridors, 2f, 10f);
-                    Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
-
-                    zones[x, y] = new Zone(new RectangleF(left, bottom, tileSize, tileSize));
-                    zones[x, y].AddMesh(MakeFloor(left, right, bottom, top, 4f));
-
-                    List<Triangle> wallTriangles = new List<Triangle>();
-                    foreach (Vector2[] wall in walls)
-                    {
-                        wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, 4f, ASCII_FPS.texture1));
-                    }
-                    MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
-                    zones[x, y].AddMesh(wallObject);
-                    
-                    scene.AddZone(zones[x, y]);
-                    foreach (Vector2[] wall in walls)
-                    {
-                        scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
-                    }
-
-                    PopulateRoom(scene, zones[x, y], x, y);
+                    uint ret = 0;
+                    if (ClearCenter)    ret += 1;
+                    if (NotJoint)       ret += 2;
+                    if (SingleEnemy)    ret += 4;
+                    return ret;
                 }
             }
 
 
-            // Create portals between adjacent zones
-            for (int x = 0; x < size; x++)
+            public bool Fulfills(PopulateSchemeFlags pred)
             {
-                for (int y = 0; y < size; y++)
-                {
-                    float left = x * tileSize - size * tileSize / 2;
-                    float right = left + tileSize;
-                    float bottom = y * tileSize - size * tileSize / 2;
-                    float top = bottom + tileSize;
-
-                    if (corridorLayout[x, y, 0])
-                        zones[x, y].AddPortal(new Portal(zones[x + 1, y], new Vector2(right, (top + bottom) / 2 + 5f),
-                                                                          new Vector2(right, (top + bottom) / 2 - 5f)));
-                    if (corridorLayout[x, y, 1])
-                        zones[x, y].AddPortal(new Portal(zones[x, y + 1], new Vector2((left + right) / 2 - 5f, top),
-                                                                          new Vector2((left + right) / 2 + 5f, top)));
-                    if (corridorLayout[x, y, 2])
-                        zones[x, y].AddPortal(new Portal(zones[x - 1, y], new Vector2(left, (top + bottom) / 2 - 5f),
-                                                                          new Vector2(left, (top + bottom) / 2 + 5f)));
-                    if (corridorLayout[x, y, 3])
-                        zones[x, y].AddPortal(new Portal(zones[x, y - 1], new Vector2((left + right) / 2 + 5f, bottom),
-                                                                          new Vector2((left + right) / 2 - 5f, bottom)));
-                }
+                uint mask = Mask;
+                return (mask | pred.Mask) == mask;
             }
-
-            return scene;
         }
     }
 }
