@@ -161,15 +161,17 @@ namespace ASCII_FPS.Scenes
             float right = left + tileSize;
             float bottom = y * tileSize - size * tileSize / 2;
             float top = bottom + tileSize;
-            Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
+            Vector3 roomCenter = new Vector3((left + right) / 2, 0f, (top + bottom) / 2);
 
             if (x == exitRoom.X && y == exitRoom.Y)
             {
                 flags.ClearCenter = false;
+                flags.SingleEnemy = false;
+
                 MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
-                    new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                    new Vector3(roomCenter.X, -2f, roomCenter.Z));
                 zone.AddMesh(exit);
-                game.PlayerStats.exitPosition = roomCenter;
+                game.PlayerStats.exitPosition = new Vector2(roomCenter.X, roomCenter.Z);
             }
             else if (x != size / 2 || y != size / 2)
             {
@@ -180,7 +182,8 @@ namespace ASCII_FPS.Scenes
                     float angleOffset = (float)(rand.NextDouble() * Math.PI * 2f);
                     for (int i = 0; i < monsterCount; i++)
                     {
-                        Vector2 position = roomCenter + Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
+                        Vector2 position = new Vector2(roomCenter.X, roomCenter.Z);
+                        position += Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
                         MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
                         scene.AddGameObject(new Monster(monster, 3f, monsterHP, monsterDamage));
                     }
@@ -189,43 +192,116 @@ namespace ASCII_FPS.Scenes
                 if (monsterCount != 1)
                 {
                     flags.SingleEnemy = false;
-                    
+
                     if (rand.Next(4) == 0) // barrel
                     {
+                        flags.ClearCenter = false;
+
                         int rnd = rand.Next(6);
                         Collectible.Type type = rnd < 3 ? Collectible.Type.Skill : rnd < 5 ? Collectible.Type.Armor : Collectible.Type.Health;
                         AsciiTexture texture = rnd < 3 ? ASCII_FPS.barrelBlueTexture : rnd < 5 ?
                             ASCII_FPS.barrelGreenTexture : ASCII_FPS.barrelRedTexture;
-                        MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
+                        MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Z));
                         scene.AddGameObject(new Collectible(barrel, type));
                     }
-                    else if (rand.Next(2) == 0) // pillar
+                }
+                else
+                {
+                    flags.ClearCenter = false;
+                }
+            }
+            else
+            {
+                flags.ClearCenter = false;
+                flags.SingleEnemy = false;
+            }
+
+            if (rand.Next(8) == 0 || (flags.SingleEnemy && rand.Next(2) == 0)) // special room
+            {
+                PopulateSpecialRoom(scene, zone, roomCenter, flags);
+            }
+            else
+            {
+                PopulateRoomCenter(scene, zone, roomCenter, flags);
+                PopulateRoomWalls(scene, zone, roomCenter, flags);
+            }
+        }
+
+        private void PopulateSpecialRoom(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags)
+        {
+            if (flags.SingleEnemy)
+            {
+                if (rand.Next(2) == 0) // arena
+                {
+                    Vector2[] points = new Vector2[]
                     {
-                        Vector3 offset = new Vector3(roomCenter.X, 0f, roomCenter.Y);
-                        Vector2[] points = new Vector2[]
+                        new Vector2(27.5f, -15f),
+                        new Vector2(32.5f, -15f),
+                        new Vector2(32.5f, 15f),
+                        new Vector2(27.5f, 15f),
+                        new Vector2(27.5f, -15f)
+                    };
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, roomCenter);
+                        for (int j = 0; j < points.Length; j++)
                         {
-                            new Vector2(-5f, -5f),
-                            new Vector2(5f, -5f),
-                            new Vector2(5f, 5f),
-                            new Vector2(-5f, 5f),
-                            new Vector2(-5f, -5f)
-                        };
-                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, offset);
+                            points[j] = new Vector2(-points[j].Y, points[j].X);
+                        }
                     }
                 }
+            }
+        }
 
-                if (rand.Next(3) == 0) // cut corners
+        private void PopulateRoomCenter(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags)
+        {
+            if (flags.ClearCenter)
+            {
+                int rnd = rand.Next(3);
+                if (rnd == 0) // square pillar
                 {
-                    Vector3 offset = new Vector3(roomCenter.X, 0f, roomCenter.Y);
-                    List<Vector2[]> walls = new List<Vector2[]>
+                    Vector2[] points = new Vector2[]
                     {
-                        new Vector2[] { new Vector2(10f, 50f), new Vector2(50f, 10f) },
-                        new Vector2[] { new Vector2(-50f, 10f), new Vector2(-10f, 50f) },
-                        new Vector2[] { new Vector2(-10f, -50f), new Vector2(-50f, -10f) },
-                        new Vector2[] { new Vector2(50f, -10f), new Vector2(10f, -50f) }
+                        new Vector2(-5f, -5f),
+                        new Vector2(5f, -5f),
+                        new Vector2(5f, 5f),
+                        new Vector2(-5f, 5f),
+                        new Vector2(-5f, -5f)
                     };
-                    SceneGenUtils.AddWalls(scene, zone, walls, 4f, ASCII_FPS.texture1, offset);
+                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, roomCenter);
                 }
+                else if (rnd == 1) // oct pillar
+                {
+                    Vector2[] points = new Vector2[]
+                    {
+                        new Vector2(-4f, -10f),
+                        new Vector2(4f, -10f),
+                        new Vector2(10f, -4f),
+                        new Vector2(10f, 4f),
+                        new Vector2(4f, 10f),
+                        new Vector2(-4f, 10f),
+                        new Vector2(-10f, 4f),
+                        new Vector2(-10f, -4f),
+                        new Vector2(-4f, -10f)
+                    };
+                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, roomCenter);
+                }
+            }
+        }
+
+        private void PopulateRoomWalls(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags)
+        {
+            if (flags.NotJoint && rand.Next(3) == 0) // cut corners
+            {
+                List<Vector2[]> walls = new List<Vector2[]>
+                {
+                    new Vector2[] { new Vector2(10f, 50f), new Vector2(50f, 10f) },
+                    new Vector2[] { new Vector2(-50f, 10f), new Vector2(-10f, 50f) },
+                    new Vector2[] { new Vector2(-10f, -50f), new Vector2(-50f, -10f) },
+                    new Vector2[] { new Vector2(50f, -10f), new Vector2(10f, -50f) }
+                };
+                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ASCII_FPS.texture1, roomCenter);
             }
         }
 
