@@ -106,7 +106,8 @@ namespace ASCII_FPS.Scenes
 
                     if (results.GenerateFloor)
                     {
-                        zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f));
+                        zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, -4f, true));
+                        zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f, false));
                     }
                 }
             }
@@ -268,16 +269,17 @@ namespace ASCII_FPS.Scenes
                     }
                 }
             }
-            if (flags.ClearCenter)
+            if (flags.ClearFloor)
             {
                 if (rng == 1) // void
                 {
                     results.GenerateFloor = false;
 
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X - 30f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X + 30f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z - 50f, roomCenter.Z - 30f, 4f));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z + 30f, roomCenter.Z + 50f, 4f));
+                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X - 30f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, true));
+                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X + 30f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, true));
+                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z - 50f, roomCenter.Z - 30f, -4f, true));
+                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z + 30f, roomCenter.Z + 50f, -4f, true));
+                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f, false));
 
                     Vector2[] walls = new Vector2[]
                     {
@@ -287,7 +289,7 @@ namespace ASCII_FPS.Scenes
                         new Vector2(30f, -30f),
                         new Vector2(-30f, -30f)
                     };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { walls }, -50f, -4f, ASCII_FPS.texture1, roomCenter);
+                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { walls }, -20f, -4f, ASCII_FPS.texture1, roomCenter);
                 }
             }
         }

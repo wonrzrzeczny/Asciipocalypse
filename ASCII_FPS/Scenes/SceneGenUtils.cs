@@ -49,27 +49,29 @@ namespace ASCII_FPS.Scenes
             }
         }
 
-        public static MeshObject MakeFloor(float left, float right, float bottom, float top, float roomHeight)
+        public static MeshObject MakeFloor(float left, float right, float bottom, float top, float height, bool floor, float uvDensity = 100f)
         {
-            Vector3 trl = new Vector3(right, -roomHeight, top);
-            Vector3 trh = new Vector3(right, roomHeight, top);
+            Vector3 tr = new Vector3(right, height, top);
+            Vector3 tl = new Vector3(left, height, top);
+            Vector3 br = new Vector3(right, height, bottom);
+            Vector3 bl = new Vector3(left, height, bottom);
+            
+            Vector2 uvtl = new Vector2(left, top) / uvDensity;
+            Vector2 uvtr = new Vector2(right, top) / uvDensity;
+            Vector2 uvbl = new Vector2(left, bottom) / uvDensity;
+            Vector2 uvbr = new Vector2(right, bottom) / uvDensity;
 
-            Vector3 tll = new Vector3(left, -roomHeight, top);
-            Vector3 tlh = new Vector3(left, roomHeight, top);
-
-            Vector3 brl = new Vector3(right, -roomHeight, bottom);
-            Vector3 brh = new Vector3(right, roomHeight, bottom);
-
-            Vector3 bll = new Vector3(left, -roomHeight, bottom);
-            Vector3 blh = new Vector3(left, roomHeight, bottom);
-
-            List<Triangle> triangles = new List<Triangle>
-            {
-                new Triangle(tll, trl, brl, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitX, Vector2.One),
-                new Triangle(tlh, brh, trh, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitX),
-                new Triangle(tll, brl, bll, ASCII_FPS.texture2, Vector2.Zero, Vector2.One, Vector2.UnitY),
-                new Triangle(tlh, blh, brh, ASCII_FPS.texture2, Vector2.Zero, Vector2.UnitY, Vector2.One)
-            };
+            List<Triangle> triangles = floor
+                ? new List<Triangle>
+                {
+                    new Triangle(tl, tr, br, ASCII_FPS.texture2, uvtl, uvtr, uvbr),
+                    new Triangle(tl, br, bl, ASCII_FPS.texture2, uvtl, uvbr, uvbl)
+                }
+                : new List<Triangle>
+                {
+                    new Triangle(tl, br, tr, ASCII_FPS.texture2, uvtl, uvbr, uvtr),
+                    new Triangle(tl, bl, br, ASCII_FPS.texture2, uvtl, uvbl, uvbr)
+                };
             return new MeshObject(triangles, Vector3.Zero, 0f);
         }
 
