@@ -99,7 +99,7 @@ namespace ASCII_FPS.Scenes
                     scene.AddZone(zones[x, y]);
                     foreach (Vector2[] wall in walls)
                     {
-                        scene.AddWall(wall[0] + roomCenter, wall[1] + roomCenter);
+                        scene.AddObstacle(wall[0] + roomCenter, wall[1] + roomCenter, ObstacleLayer.Wall);
                     }
 
                     PopulateRoomResults results = PopulateRoom(scene, zones[x, y], x, y);
@@ -261,7 +261,7 @@ namespace ASCII_FPS.Scenes
 
                     for (int i = 0; i < 4; i++)
                     {
-                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, roomCenter);
+                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
                         for (int j = 0; j < points.Length; j++)
                         {
                             points[j] = new Vector2(-points[j].Y, points[j].X);
@@ -289,7 +289,7 @@ namespace ASCII_FPS.Scenes
                         new Vector2(30f, -30f),
                         new Vector2(-30f, -30f)
                     };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { walls }, -20f, -4f, ASCII_FPS.texture1, roomCenter);
+                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { walls }, -20f, -4f, ObstacleLayer.Gap, ASCII_FPS.texture1, roomCenter);
                 }
             }
         }
@@ -309,7 +309,7 @@ namespace ASCII_FPS.Scenes
                         new Vector2(-5f, 5f),
                         new Vector2(-5f, -5f)
                     };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, roomCenter);
+                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
                 }
                 else if (rnd == 1) // oct pillar
                 {
@@ -325,7 +325,7 @@ namespace ASCII_FPS.Scenes
                         new Vector2(-10f, -4f),
                         new Vector2(-4f, -10f)
                     };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ASCII_FPS.texture1, roomCenter);
+                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
                 }
             }
             else
@@ -352,7 +352,7 @@ namespace ASCII_FPS.Scenes
                         }
                     }
 
-                    SceneGenUtils.AddWalls(scene, zone, walls, 4f, ASCII_FPS.texture1, roomCenter);
+                    SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
                 }
             }
         }
@@ -369,7 +369,7 @@ namespace ASCII_FPS.Scenes
                     new Vector2[] { new Vector2(-10f, -50f), new Vector2(-50f, -10f) },
                     new Vector2[] { new Vector2(50f, -10f), new Vector2(10f, -50f) }
                 };
-                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ASCII_FPS.texture1, roomCenter);
+                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
             }
             else if (rnd == 1) // 4 pillars
             {
@@ -393,7 +393,7 @@ namespace ASCII_FPS.Scenes
                     }
                 }
 
-                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ASCII_FPS.texture1, roomCenter);
+                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
             }
         }
 

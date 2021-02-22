@@ -19,13 +19,13 @@ namespace ASCII_FPS.Scenes
         public Point ExitRoom { get; set; }
 
         private ASCII_FPS game;
-        private List<Vector2[]> walls;
+        private List<Obstacle> obstacles;
 
         public Scene(ASCII_FPS game)
         {
             this.game = game;
             zones = new List<Zone>();
-            walls = new List<Vector2[]>();
+            obstacles = new List<Obstacle>();
             gameObjects = new List<GameObject>();
         }
 
@@ -38,40 +38,43 @@ namespace ASCII_FPS.Scenes
             }
         }
 
-        public void AddWall(Vector2 v0, Vector2 v1)
+        public void AddObstacle(Vector2 v0, Vector2 v1, ObstacleLayer layer)
         {
-            AddWall(v0.X, v0.Y, v1.X, v1.Y);
+            obstacles.Add(new Obstacle(v0, v1, layer));
         }
 
-        public void AddWall(float x0, float z0, float x1, float z1)
-        {
-            walls.Add(new Vector2[2] { new Vector2(x0, z0), new Vector2(x1, z1) });
-        }
-
-        public bool CheckMovement(Vector3 from, Vector3 direction, float radius)
+        public bool CheckMovement(Vector3 from, Vector3 direction, float radius, int layerMask)
         {
             Vector2 from2 = new Vector2(from.X, from.Z);
             Vector2 direction2 = new Vector2(direction.X, direction.Z);
             Vector2 to2 = from2 + direction2;
-            foreach (Vector2[] wall in walls)
+            foreach (Obstacle obstacle in obstacles)
             {
-                Vector2 v0 = wall[0];
-                Vector2 v1 = wall[1];
-                Vector2 normal2 = Vector2.Normalize(new Vector2((v1 - v0).Y, -(v1 - v0).X));
-                if (Mathg.Cross2D(v1 - v0, from2 - v0) > 0)
-                    normal2 *= -1;
-                v0 += normal2 * radius;
-                v1 += normal2 * radius;
+                if (ObstacleLayerMask.CheckMask(layerMask, obstacle.Layer))
+                {
+                    Vector2 v0 = obstacle.Start;
+                    Vector2 v1 = obstacle.End;
+                    Vector2 normal2 = Vector2.Normalize(new Vector2((v1 - v0).Y, -(v1 - v0).X));
+                    if (Mathg.Cross2D(v1 - v0, from2 - v0) > 0)
+                        normal2 *= -1;
+                    v0 += normal2 * radius;
+                    v1 += normal2 * radius;
 
-                if (Mathg.Cross2D(v1 - v0, from2 - v0) * Mathg.Cross2D(v1 - v0, to2 - v0) < 0 &&
-                    Mathg.Cross2D(to2 - from2, v0 - from2) * Mathg.Cross2D(to2 - from2, v1 - from2) < 0)
-                    return false;
+                    if (Mathg.Cross2D(v1 - v0, from2 - v0) * Mathg.Cross2D(v1 - v0, to2 - v0) < 0 &&
+                        Mathg.Cross2D(to2 - from2, v0 - from2) * Mathg.Cross2D(to2 - from2, v1 - from2) < 0)
+                        return false;
+                }
             }
 
             return true;
         }
 
-        public bool CheckMovement(Vector3 from, Vector3 direction, float radius, out Vector3 normal, out float relativeLength)
+        public bool CheckMovement(Vector3 from, Vector3 direction, float radius)
+        {
+            return CheckMovement(from, direction, radius, ObstacleLayerMask.Everything);
+        }
+
+        public bool CheckMovement(Vector3 from, Vector3 direction, float radius, int layerMask, out Vector3 normal, out float relativeLength)
         {
             normal = Vector3.Zero;
             relativeLength = float.MaxValue;
@@ -80,38 +83,45 @@ namespace ASCII_FPS.Scenes
             Vector2 from2 = new Vector2(from.X, from.Z);
             Vector2 direction2 = new Vector2(direction.X, direction.Z);
             Vector2 to2 = from2 + direction2;
-            foreach (Vector2[] wall in walls)
+            foreach (Obstacle obstacle in obstacles)
             {
-                Vector2 v0 = wall[0];
-                Vector2 v1 = wall[1];
-                Vector2 normal2 = Vector2.Normalize(new Vector2((v1 - v0).Y, -(v1 - v0).X));
-                Vector2 orth = new Vector2(normal2.Y, -normal2.X);
-                v0 += (normal2 + orth) * radius;
-                v1 += (normal2 - orth) * radius;
-
-                if (Mathg.Cross2D(v1 - v0, from2 - v0) * Mathg.Cross2D(v1 - v0, to2 - v0) < 0 &&
-                    Mathg.Cross2D(to2 - from2, v0 - from2) * Mathg.Cross2D(to2 - from2, v1 - from2) < 0 &&
-                    Vector2.Dot(normal2, Vector2.Normalize(direction2)) < 0.1f)
+                if (ObstacleLayerMask.CheckMask(layerMask, obstacle.Layer))
                 {
-                    float t = Vector2.Dot(v0 - from2, normal2) / Vector2.Dot(direction2, normal2);
-                    if (t < relativeLength)
+                    Vector2 v0 = obstacle.Start;
+                    Vector2 v1 = obstacle.End;
+                    Vector2 normal2 = Vector2.Normalize(new Vector2((v1 - v0).Y, -(v1 - v0).X));
+                    Vector2 orth = new Vector2(normal2.Y, -normal2.X);
+                    v0 += (normal2 + orth) * radius;
+                    v1 += (normal2 - orth) * radius;
+
+                    if (Mathg.Cross2D(v1 - v0, from2 - v0) * Mathg.Cross2D(v1 - v0, to2 - v0) < 0 &&
+                        Mathg.Cross2D(to2 - from2, v0 - from2) * Mathg.Cross2D(to2 - from2, v1 - from2) < 0 &&
+                        Vector2.Dot(normal2, Vector2.Normalize(direction2)) < 0.1f)
                     {
-                        relativeLength = t;
-                        normal = new Vector3(normal2.X, 0f, normal2.Y);
+                        float t = Vector2.Dot(v0 - from2, normal2) / Vector2.Dot(direction2, normal2);
+                        if (t < relativeLength)
+                        {
+                            relativeLength = t;
+                            normal = new Vector3(normal2.X, 0f, normal2.Y);
+                        }
+                        ret = false;
                     }
-                    ret = false;
                 }
             }
 
             return ret;
         }
 
+        public bool CheckMovement(Vector3 from, Vector3 direction, float radius, out Vector3 normal, out float relativeLength)
+        {
+            return CheckMovement(from, direction, radius, ObstacleLayerMask.Everything, out normal, out relativeLength);
+        }
 
         // Given start position and movement vector, return the real movement vector taking into account collisions
-        public Vector3 SmoothMovement(Vector3 from, Vector3 direction, float radius)
+        public Vector3 SmoothMovement(Vector3 from, Vector3 direction, float radius, int layerMask)
         {
             Vector3 ret = direction;
-            while (!CheckMovement(from, ret, radius, out Vector3 normal, out float relativeLength))
+            while (!CheckMovement(from, ret, radius, layerMask, out Vector3 normal, out float relativeLength))
             {
                 relativeLength *= 0.9f;
                 if (relativeLength < 0.01f)
@@ -120,6 +130,11 @@ namespace ASCII_FPS.Scenes
             }
             
             return ret;
+        }
+
+        public Vector3 SmoothMovement(Vector3 from, Vector3 direction, float radius)
+        {
+            return SmoothMovement(from, direction, radius, ObstacleLayerMask.Everything);
         }
 
 
@@ -195,11 +210,12 @@ namespace ASCII_FPS.Scenes
                 gameObject.Save(writer);
             }
 
-            writer.Write(walls.Count);
-            foreach (Vector2[] wall in walls)
+            writer.Write(obstacles.Count);
+            foreach (Obstacle obstacle in obstacles)
             {
-                GameSave.WriteVector2(writer, wall[0]);
-                GameSave.WriteVector2(writer, wall[1]);
+                GameSave.WriteVector2(writer, obstacle.Start);
+                GameSave.WriteVector2(writer, obstacle.End);
+                writer.Write((int)obstacle.Layer);
             }
         }
 
@@ -244,7 +260,7 @@ namespace ASCII_FPS.Scenes
             int wallCount = reader.ReadInt32();
             for (int i = 0; i < wallCount; i++)
             {
-                scene.AddWall(GameSave.ReadVector2(reader), GameSave.ReadVector2(reader));
+                scene.AddObstacle(GameSave.ReadVector2(reader), GameSave.ReadVector2(reader), (ObstacleLayer)reader.ReadInt32());
             }
 
             return scene;

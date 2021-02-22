@@ -29,12 +29,12 @@ namespace ASCII_FPS.Scenes
             return triangles;
         }
 
-        public static void AddWalls(Scene scene, Zone zone, List<Vector2[]> walls, float h, AsciiTexture texture, Vector3 offset)
+        public static void AddWalls(Scene scene, Zone zone, List<Vector2[]> walls, float h, ObstacleLayer layer, AsciiTexture texture, Vector3 offset)
         {
-            AddWalls(scene, zone, walls, -h, h, texture, offset);
+            AddWalls(scene, zone, walls, -h, h, layer, texture, offset);
         }
 
-        public static void AddWalls(Scene scene, Zone zone, List<Vector2[]> walls, float low, float high, AsciiTexture texture, Vector3 offset)
+        public static void AddWalls(Scene scene, Zone zone, List<Vector2[]> walls, float low, float high, ObstacleLayer layer, AsciiTexture texture, Vector3 offset)
         {
             Vector2 offset2D = new Vector2(offset.X, offset.Z);
             foreach (Vector2[] wall in walls)
@@ -44,7 +44,7 @@ namespace ASCII_FPS.Scenes
                 zone.AddMesh(meshObject);
                 for (int i = 0; i < wall.Length - 1; i++)
                 {
-                    scene.AddWall(wall[i] + offset2D, wall[i + 1] + offset2D);
+                    scene.AddObstacle(wall[i] + offset2D, wall[i + 1] + offset2D, layer);
                 }
             }
         }

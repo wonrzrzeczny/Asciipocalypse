@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.Scenes;
+using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 
@@ -49,7 +50,7 @@ namespace ASCII_FPS.GameComponents
             Vector3 towardsTarget = Vector3.Normalize(targetPosition - Position);
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Searching)
             {
-                Position += Scene.SmoothMovement(Position, towardsTarget * deltaTime * Speed, HitRadius);
+                Position += Scene.SmoothMovement(Position, towardsTarget * deltaTime * Speed, HitRadius, ObstacleLayerMask.GetMask(ObstacleLayer.Wall));
             }
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
             {
@@ -93,7 +94,7 @@ namespace ASCII_FPS.GameComponents
         private BehaviourState StateCheck()
         {
             float distance = Vector3.Distance(Position, Camera.CameraPos);
-            if (distance < AlertDistance && Scene.CheckMovement(Position, Camera.CameraPos - Position, 0f))
+            if (distance < AlertDistance && Scene.CheckMovement(Position, Camera.CameraPos - Position, 0f, ObstacleLayerMask.GetMask(ObstacleLayer.Wall)))
             {
                 targetPosition = Camera.CameraPos;
                 if (distance < AttackDistance)
