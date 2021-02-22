@@ -289,7 +289,12 @@ namespace ASCII_FPS.Scenes
                         new Vector2(30f, -30f),
                         new Vector2(-30f, -30f)
                     };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { walls }, -20f, -4f, ObstacleLayer.Gap, ASCII_FPS.texture1, roomCenter);
+                    zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -20f, -4f, ASCII_FPS.texture1), roomCenter, 0f));
+                    Vector2 offset = new Vector2(roomCenter.X, roomCenter.Z);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        scene.AddObstacle(walls[i + 1] + offset, walls[i] + offset, ObstacleLayer.Gap);
+                    }
                 }
             }
         }
