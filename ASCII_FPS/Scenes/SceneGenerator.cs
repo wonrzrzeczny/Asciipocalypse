@@ -64,12 +64,16 @@ namespace ASCII_FPS.Scenes
                 int x = rand.Next(size);
                 int y = rand.Next(size);
                 int d = rand.Next(4);
-                if (corridorLayout[x, y, d])
+                if (corridorLayout[x, y, d] && (x != size / 2 || y != size / 2))
                 {
                     Point[] shift = new Point[4] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
-                    corridorWidths[x, y, d] = 80f;
-                    corridorWidths[x + shift[d].X, y + shift[d].Y, d ^ 2] = 80f;
-                    break;
+                    if (x + shift[d].X != size / 2 || y + shift[d].Y != size / 2)
+                    {
+                        corridorWidths[x, y, d] = 80f;
+                        corridorWidths[x + shift[d].X, y + shift[d].Y, d ^ 2] = 80f;
+                        break;
+                    }
+
                 }
             }
 
