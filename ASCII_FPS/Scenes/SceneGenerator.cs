@@ -59,6 +59,20 @@ namespace ASCII_FPS.Scenes
                 }
             }
 
+            for (int t = 0; t < 5; t++)
+            {
+                int x = rand.Next(size);
+                int y = rand.Next(size);
+                int d = rand.Next(4);
+                if (corridorLayout[x, y, d])
+                {
+                    Point[] shift = new Point[4] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
+                    corridorWidths[x, y, d] = 80f;
+                    corridorWidths[x + shift[d].X, y + shift[d].Y, d ^ 2] = 80f;
+                    break;
+                }
+            }
+
 
             exitRoom = new Point(rand.Next(size), rand.Next(size));
             while (exitRoom.X == size / 2 && exitRoom.Y == size / 2)
@@ -168,6 +182,13 @@ namespace ASCII_FPS.Scenes
                 SingleEnemy = true,
                 ClearFloor = true
             };
+            for (int t = 0; t < 4; t++)
+            {
+                if (corridorLayout[x, y, t] && corridorWidths[x, y, t] > 15f)
+                {
+                    flags.NotJoint = false;
+                }
+            }
 
             float left = x * tileSize - size * tileSize / 2;
             float right = left + tileSize;
@@ -227,6 +248,7 @@ namespace ASCII_FPS.Scenes
             else
             {
                 flags.ClearCenter = false;
+                flags.ClearFloor = false;
                 flags.SingleEnemy = false;
             }
 
@@ -245,10 +267,10 @@ namespace ASCII_FPS.Scenes
 
         private void PopulateSpecialRoom(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags, ref PopulateRoomResults results)
         {
-            int rng = rand.Next(3);
+            int rng = rand.Next(6);
             if (flags.SingleEnemy)
             {
-                if (rng == 0) // arena
+                if (rng == 0 || rng == 1) // arena
                 {
                     Vector2[] points = new Vector2[]
                     {
@@ -271,7 +293,7 @@ namespace ASCII_FPS.Scenes
             }
             if (flags.ClearFloor)
             {
-                if (rng == 1) // void
+                if (rng == 2 || rng == 3) // void
                 {
                     results.GenerateFloor = false;
 
@@ -289,11 +311,24 @@ namespace ASCII_FPS.Scenes
                         new Vector2(30f, -30f),
                         new Vector2(-30f, -30f)
                     };
-                    zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -20f, -4f, ASCII_FPS.texture1), roomCenter, 0f));
+                    zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -28f, -4f, ASCII_FPS.texture1), roomCenter, 0f));
                     Vector2 offset = new Vector2(roomCenter.X, roomCenter.Z);
                     for (int i = 0; i < 4; i++)
                     {
                         scene.AddObstacle(walls[i + 1] + offset, walls[i] + offset, ObstacleLayer.Gap);
+                    }
+
+                    if (rng == 3 && flags.ClearCenter) // pillar
+                    {
+                        Vector2[] pillar = new Vector2[]
+                        {
+                            new Vector2(-5f, -5f),
+                            new Vector2(5f, -5f),
+                            new Vector2(5f, 5f),
+                            new Vector2(-5f, 5f),
+                            new Vector2(-5f, -5f)
+                        };
+                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { pillar }, -20f, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
                     }
                 }
             }
