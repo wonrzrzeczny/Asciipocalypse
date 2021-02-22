@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.Scenes;
+using Microsoft.Xna.Framework;
 using System.IO;
 
 namespace ASCII_FPS.GameComponents
@@ -25,7 +26,7 @@ namespace ASCII_FPS.GameComponents
                 Destroy = true;
             }
 
-            if (Scene.CheckMovement(Position, direction * speed * deltaTime, 0f))
+            if (Scene.CheckMovement(Position, direction * speed * deltaTime, 0f, ObstacleLayerMask.GetMask(ObstacleLayer.Wall)))
             {
                 Position += direction * speed * deltaTime;
             }
