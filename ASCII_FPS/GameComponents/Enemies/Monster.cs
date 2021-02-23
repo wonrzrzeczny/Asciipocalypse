@@ -116,7 +116,7 @@ namespace ASCII_FPS.GameComponents.Enemies
             writer.Write(typeof(Loaders.DefaultMonsterLoader).FullName);
             writer.Write(GetType().FullName);
 
-            MeshObject.Save(writer);
+            GameSave.WriteVector3(writer, Position);
             writer.Write(health);
             writer.Write(damage);
         }

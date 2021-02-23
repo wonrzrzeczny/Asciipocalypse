@@ -4,8 +4,8 @@ namespace ASCII_FPS.GameComponents.Enemies
 {
     public class BasicMonster : Monster
     {
-        public BasicMonster(MeshObject meshObject, float health, float damage)
-            : base(meshObject, health, damage) { }
+        public BasicMonster(Vector3 position, float health, float damage)
+            : base(PrimitiveMeshes.Tetrahedron(position, 3f, ASCII_FPS.monsterTexture), health, damage) { }
 
 
         public override float HitRadius => 3f;

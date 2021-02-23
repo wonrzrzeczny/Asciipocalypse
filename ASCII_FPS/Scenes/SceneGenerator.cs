@@ -19,6 +19,7 @@ namespace ASCII_FPS.Scenes
         private float monsterHP;
         private float monsterDamage;
         private int monstersPerRoom;
+        private float shotgunChance;
 
         private Point exitRoom;
         private bool[,,] corridorLayout;
@@ -32,6 +33,7 @@ namespace ASCII_FPS.Scenes
             monsterHP = 8f + floor * 2f;
             monsterDamage = 4f + floor;
             monstersPerRoom = 4 + (int)Math.Floor(floor / 3.0);
+            shotgunChance = 0.5f * (1 - 1 / (0.2f * (floor - 1) + 1f));
         }
 
 
@@ -223,8 +225,15 @@ namespace ASCII_FPS.Scenes
                     {
                         Vector2 position = new Vector2(roomCenter.X, roomCenter.Z);
                         position += Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
-                        MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
-                        scene.AddGameObject(new BasicMonster(monster, monsterHP, monsterDamage));
+
+                        if (rand.NextDouble() < shotgunChance)
+                        {
+                            scene.AddGameObject(new ShotgunDude(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
+                        }
+                        else
+                        {
+                            scene.AddGameObject(new BasicMonster(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
+                        }
                     }
                 }
 

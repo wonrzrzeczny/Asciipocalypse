@@ -20,15 +20,15 @@ namespace ASCII_FPS
             Vector3 u = radius * Vector3.Up;
             Vector3 d = radius * Vector3.Down;
 
-            triangles.Add(new Triangle(f, r, u, texture, new Vector2(0.5f, 0f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f)));
-            triangles.Add(new Triangle(r, b, u, texture, new Vector2(1f, 0.5f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f)));
-            triangles.Add(new Triangle(b, l, u, texture, new Vector2(0.5f, 1f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f)));
-            triangles.Add(new Triangle(l, f, u, texture, new Vector2(0f, 0.5f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(r, f, u, texture, new Vector2(1f, 0.5f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(b, r, u, texture, new Vector2(0.5f, 1f), new Vector2(1f, 0.5f),  new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(l, b, u, texture, new Vector2(0f, 0.5f), new Vector2(0.5f, 1f),  new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(f, l, u, texture, new Vector2(0.5f, 0f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f)));
 
-            triangles.Add(new Triangle(r, f, d, texture, new Vector2(0.5f, 0f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f)));
-            triangles.Add(new Triangle(b, r, d, texture, new Vector2(1f, 0.5f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f)));
-            triangles.Add(new Triangle(l, b, d, texture, new Vector2(0.5f, 1f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f)));
-            triangles.Add(new Triangle(f, l, d, texture, new Vector2(0f, 0.5f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(f, r, d, texture, new Vector2(0.5f, 0f), new Vector2(1f, 0.5f), new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(r, b, d, texture, new Vector2(1f, 0.5f), new Vector2(0.5f, 1f), new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(b, l, d, texture, new Vector2(0.5f, 1f), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f)));
+            triangles.Add(new Triangle(l, f, d, texture, new Vector2(0f, 0.5f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0.5f)));
 
             return new MeshObject(triangles, position, 0f);
         }

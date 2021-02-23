@@ -4,8 +4,8 @@ namespace ASCII_FPS.GameComponents.Enemies
 {
     public class ShotgunDude : Monster
     {
-        public ShotgunDude(MeshObject meshObject, float health, float damage)
-            : base(meshObject, health, damage) { }
+        public ShotgunDude(Vector3 position, float health, float damage)
+            : base(PrimitiveMeshes.Octahedron(position, 3f, ASCII_FPS.shotgunDudeTexture), health, damage) { }
 
 
         public override float HitRadius => 3f;
