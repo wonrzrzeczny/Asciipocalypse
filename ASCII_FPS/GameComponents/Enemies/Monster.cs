@@ -3,32 +3,30 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 
-namespace ASCII_FPS.GameComponents
+namespace ASCII_FPS.GameComponents.Enemies
 {
-    public class Monster : GameObject
+    public abstract class Monster : GameObject
     {
-        private readonly Random random;
-        private float health;
-        private readonly float damage;
+        protected float health;
+        protected readonly float damage;
 
         private enum BehaviourState { Idle, Chasing, Attacking, Searching }
         private BehaviourState behaviourState;
         private float behaviourCheckTime = 0.2f;
         private Vector3 targetPosition;
 
-        private float shootTime = 0.3f;
-
-        public float HitRadius { get; }
-
-        public float AlertDistance { get; set; } = 70f;
-        public float AttackDistance { get; set; } = 30f;
-        public float Speed { get; set; } = 12f;
+        private float shootTime = 0f;
 
 
-        public Monster(MeshObject meshObject, float hitRadius, float health, float damage) : base(meshObject)
+        public abstract float HitRadius { get; }
+        protected abstract float AlertDistance { get; }
+        protected abstract float AttackDistance { get; }
+        protected abstract float Speed { get; }
+        protected abstract float ShootSpeed { get; }
+
+
+        public Monster(MeshObject meshObject, float health, float damage) : base(meshObject)
         {
-            random = new Random();
-            HitRadius = hitRadius;
             this.health = health;
             this.damage = damage;
 
@@ -54,13 +52,12 @@ namespace ASCII_FPS.GameComponents
             }
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
             {
-                shootTime -= deltaTime;
-                if (shootTime < 0f && !Game.PlayerStats.dead)
+                shootTime += deltaTime;
+                if (shootTime > ShootSpeed && !Game.PlayerStats.dead)
                 {
                     ASCII_FPS.tsch.Play();
-                    shootTime = 0.3f;
-                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
-                    Scene.AddGameObject(new EnemyProjectile(projectileMesh, towardsTarget, 40f, damage));
+                    shootTime = 0f;
+                    Attack(towardsTarget);
                 }
             }
         }
@@ -79,16 +76,14 @@ namespace ASCII_FPS.GameComponents
             targetPosition = Camera.CameraPos;
         }
 
-        public override void Save(BinaryWriter writer)
+
+        protected abstract void Attack(Vector3 towardsTarget);
+
+        protected void Fire(Vector3 direction)
         {
-            writer.Write(typeof(Loaders.MonsterLoader).FullName);
-
-            MeshObject.Save(writer);
-            writer.Write(health);
-            writer.Write(damage);
-            writer.Write(HitRadius);
+            MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
+            Scene.AddGameObject(new EnemyProjectile(projectileMesh, direction, 40f, damage));
         }
-
 
 
         private BehaviourState StateCheck()

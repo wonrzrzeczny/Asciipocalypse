@@ -1,4 +1,5 @@
 ﻿using ASCII_FPS.GameComponents;
+using ASCII_FPS.GameComponents.Enemies;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -223,7 +224,7 @@ namespace ASCII_FPS.Scenes
                         Vector2 position = new Vector2(roomCenter.X, roomCenter.Z);
                         position += Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
                         MeshObject monster = PrimitiveMeshes.Tetrahedron(new Vector3(position.X, -1f, position.Y), 3f, ASCII_FPS.monsterTexture);
-                        scene.AddGameObject(new Monster(monster, 3f, monsterHP, monsterDamage));
+                        scene.AddGameObject(new BasicMonster(monster, monsterHP, monsterDamage));
                     }
                 }
 

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ASCII_FPS.GameComponents.Enemies;
 using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 
