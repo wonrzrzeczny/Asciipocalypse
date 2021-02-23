@@ -1,8 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace ASCII_FPS.GameComponents.Enemies
 {
@@ -22,16 +18,6 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected override void Attack(Vector3 towardsTarget)
         {
             Fire(towardsTarget);
-        }
-
-
-        public override void Save(BinaryWriter writer)
-        {
-            writer.Write(typeof(Loaders.BasicMonsterLoader).FullName);
-
-            MeshObject.Save(writer);
-            writer.Write(health);
-            writer.Write(damage);
         }
     }
 }

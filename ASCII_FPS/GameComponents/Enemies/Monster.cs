@@ -48,7 +48,8 @@ namespace ASCII_FPS.GameComponents.Enemies
             Vector3 towardsTarget = Vector3.Normalize(targetPosition - Position);
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Searching)
             {
-                Position += Scene.SmoothMovement(Position, towardsTarget * deltaTime * Speed, HitRadius, ObstacleLayerMask.GetMask(ObstacleLayer.Wall));
+                float magnitude = Math.Min(deltaTime * Speed, PlayerStats.thickness + HitRadius);
+                Position += Scene.SmoothMovement(Position, towardsTarget * magnitude, HitRadius, ObstacleLayerMask.GetMask(ObstacleLayer.Wall));
             }
             if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Attacking)
             {
@@ -79,10 +80,10 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected abstract void Attack(Vector3 towardsTarget);
 
-        protected void Fire(Vector3 direction)
+        protected void Fire(Vector3 direction, float projectileSpeed = 40f)
         {
             MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
-            Scene.AddGameObject(new EnemyProjectile(projectileMesh, direction, 40f, damage));
+            Scene.AddGameObject(new EnemyProjectile(projectileMesh, direction, projectileSpeed, damage));
         }
 
 
@@ -107,6 +108,17 @@ namespace ASCII_FPS.GameComponents.Enemies
                 return BehaviourState.Searching;
             }
             return BehaviourState.Idle;
+        }
+
+
+        public override void Save(BinaryWriter writer)
+        {
+            writer.Write(typeof(Loaders.DefaultMonsterLoader).FullName);
+            writer.Write(GetType().FullName);
+
+            MeshObject.Save(writer);
+            writer.Write(health);
+            writer.Write(damage);
         }
     }
 }
