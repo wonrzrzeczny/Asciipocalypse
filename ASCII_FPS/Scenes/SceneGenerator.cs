@@ -35,8 +35,9 @@ namespace ASCII_FPS.Scenes
             monstersPerRoom = 4 + (int)Math.Floor(floor / 3.0);
             monsterChances = new float[]
             {
-                floor < 2 ? 0f : 0.4f * (1 - 1 / (0.6f * (floor - 1) + 1f)),
-                floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f))
+                floor < 2 ? 0f : 0.3f * (1 - 1 / (0.7f * (floor - 1) + 1f)),
+                floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f)),
+                floor < 4 ? 0f : 0.2f * (1 - 1 / (0.4f * (floor - 3) + 1f))
             };
         }
 
@@ -238,6 +239,10 @@ namespace ASCII_FPS.Scenes
                         else if (rnd < monsterChances[0] + monsterChances[1])
                         {
                             scene.AddGameObject(new SpinnyBoi(new Vector3(position.X, -1f, position.Y), monsterHP * 2, monsterDamage));
+                        }
+                        else if (rnd < monsterChances[0] + monsterChances[1] + monsterChances[2])
+                        {
+                            scene.AddGameObject(new Spooper(new Vector3(position.X, -1f, position.Y), monsterHP * 1.5f, monsterDamage));
                         }
                         else
                         {

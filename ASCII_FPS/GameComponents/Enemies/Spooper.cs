@@ -5,8 +5,8 @@ namespace ASCII_FPS.GameComponents.Enemies
 {
     public class Spooper : Monster
     {
-        public Spooper(MeshObject meshObject, float health, float damage)
-            : base(meshObject, health, damage) { }
+        public Spooper(Vector3 position, float health, float damage)
+            : base(new MeshObject(ASCII_FPS.spooperModel, ASCII_FPS.spooperTexture, position), health, damage) { }
 
 
         public override float HitRadius => 2f;

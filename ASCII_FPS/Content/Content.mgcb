@@ -55,6 +55,11 @@
 /processor:OBJProcessor
 /build:models/exit.obj
 
+#begin models/spooper.obj
+/importer:OBJImporter
+/processor:OBJProcessor
+/build:models/spooper.obj
+
 #begin textures/barrel_blue.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -186,4 +191,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:textures/spinny_boi.png
+
+#begin textures/spooper.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/spooper.png
 

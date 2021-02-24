@@ -18,6 +18,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Attack(Vector3 towardsTarget)
         {
+            ASCII_FPS.tsch.Play();
             for (int i = 0; i < 16; i++)
             {
                 float delta = i * 2f * (float)Math.PI / 16f + MeshObject.Rotation;

@@ -17,6 +17,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Attack(Vector3 towardsTarget)
         {
+            ASCII_FPS.tsch.Play();
             Vector3 left = Vector3.Transform(towardsTarget, Mathg.RotationMatrix(-0.25f));
             Vector3 right = Vector3.Transform(towardsTarget, Mathg.RotationMatrix(0.25f));
             Fire(towardsTarget);

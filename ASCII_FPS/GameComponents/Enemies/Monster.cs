@@ -56,7 +56,6 @@ namespace ASCII_FPS.GameComponents.Enemies
                 shootTime += deltaTime;
                 if (shootTime > ShootSpeed && !Game.PlayerStats.dead)
                 {
-                    ASCII_FPS.tsch.Play();
                     shootTime = 0f;
                     Attack(towardsTarget);
                 }

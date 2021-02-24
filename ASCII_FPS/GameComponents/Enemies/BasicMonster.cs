@@ -17,6 +17,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Attack(Vector3 towardsTarget)
         {
+            ASCII_FPS.tsch.Play();
             Fire(towardsTarget);
         }
     }

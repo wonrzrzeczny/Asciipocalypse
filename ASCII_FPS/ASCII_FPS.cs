@@ -33,8 +33,8 @@ namespace ASCII_FPS
         // Content
         public static SpriteFont font;
         public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, projectileTexture, exitTexture;
-        public static AsciiTexture monsterTexture, shotgunDudeTexture, spinnyBoiTexture;
-        public static OBJFile barrelModel, exitModel;
+        public static AsciiTexture monsterTexture, shotgunDudeTexture, spinnyBoiTexture, spooperTexture;
+        public static OBJFile barrelModel, exitModel, spooperModel;
         public static SoundEffect tsch, oof, ouch, theme;
 
         // DEBUG
@@ -94,9 +94,11 @@ namespace ASCII_FPS
             monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             shotgunDudeTexture = new AsciiTexture(Content.Load<Texture2D>("textures/shotgun_dude"));
             spinnyBoiTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spinny_boi"));
+            spooperTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spooper"));
 
             barrelModel = Content.Load<OBJFile>("models/barrel");
             exitModel = Content.Load<OBJFile>("models/exit");
+            spooperModel = Content.Load<OBJFile>("models/spooper");
 
             tsch = Content.Load<SoundEffect>("audio/tsch");
             oof = Content.Load<SoundEffect>("audio/oof");
