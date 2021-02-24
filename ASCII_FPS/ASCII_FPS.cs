@@ -32,7 +32,8 @@ namespace ASCII_FPS
 
         // Content
         public static SpriteFont font;
-        public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, monsterTexture, projectileTexture, exitTexture, shotgunDudeTexture;
+        public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, projectileTexture, exitTexture;
+        public static AsciiTexture monsterTexture, shotgunDudeTexture, spinnyBoiTexture;
         public static OBJFile barrelModel, exitModel;
         public static SoundEffect tsch, oof, ouch, theme;
 
@@ -87,10 +88,12 @@ namespace ASCII_FPS
             barrelRedTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_red"));
             barrelGreenTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_green"));
             barrelBlueTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_blue"));
-            monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
             exitTexture = new AsciiTexture(Content.Load<Texture2D>("textures/exit"));
+
+            monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
             shotgunDudeTexture = new AsciiTexture(Content.Load<Texture2D>("textures/shotgun_dude"));
+            spinnyBoiTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spinny_boi"));
 
             barrelModel = Content.Load<OBJFile>("models/barrel");
             exitModel = Content.Load<OBJFile>("models/exit");

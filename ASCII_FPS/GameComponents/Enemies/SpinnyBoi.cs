@@ -5,8 +5,8 @@ namespace ASCII_FPS.GameComponents.Enemies
 {
     public class SpinnyBoi : Monster
     {
-        public SpinnyBoi(MeshObject meshObject, float health, float damage)
-            : base(meshObject, health, damage) { }
+        public SpinnyBoi(Vector3 position, float health, float damage)
+            : base(PrimitiveMeshes.TetraStar(position, 3f, ASCII_FPS.spinnyBoiTexture), health, damage) { }
 
 
         public override float HitRadius => 5f;

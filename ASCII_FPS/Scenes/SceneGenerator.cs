@@ -19,7 +19,7 @@ namespace ASCII_FPS.Scenes
         private float monsterHP;
         private float monsterDamage;
         private int monstersPerRoom;
-        private float shotgunChance;
+        private float[] monsterChances;
 
         private Point exitRoom;
         private bool[,,] corridorLayout;
@@ -33,7 +33,11 @@ namespace ASCII_FPS.Scenes
             monsterHP = 8f + floor * 2f;
             monsterDamage = 4f + floor;
             monstersPerRoom = 4 + (int)Math.Floor(floor / 3.0);
-            shotgunChance = 0.5f * (1 - 1 / (0.2f * (floor - 1) + 1f));
+            monsterChances = new float[]
+            {
+                floor < 2 ? 0f : 0.4f * (1 - 1 / (0.6f * (floor - 1) + 1f)),
+                floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f))
+            };
         }
 
 
@@ -226,9 +230,14 @@ namespace ASCII_FPS.Scenes
                         Vector2 position = new Vector2(roomCenter.X, roomCenter.Z);
                         position += Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
 
-                        if (rand.NextDouble() < shotgunChance)
+                        float rnd = (float)rand.NextDouble();
+                        if (rnd < monsterChances[0])
                         {
                             scene.AddGameObject(new ShotgunDude(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
+                        }
+                        else if (rnd < monsterChances[0] + monsterChances[1])
+                        {
+                            scene.AddGameObject(new SpinnyBoi(new Vector3(position.X, -1f, position.Y), monsterHP * 2, monsterDamage));
                         }
                         else
                         {
