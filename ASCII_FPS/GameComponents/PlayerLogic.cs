@@ -25,9 +25,11 @@ namespace ASCII_FPS.GameComponents
 
             Scene scene = game.Scene;
 
+            float sprintMultiplier = keyboard.IsKeyDown(Keybinds.sprint) ? 2.5f : 1f;
+
             Vector3 shift = Vector3.Zero;
             if (keyboard.IsKeyDown(Keybinds.forward))
-                shift += 20f * deltaTime * scene.Camera.Forward;
+                shift += 20f * deltaTime * scene.Camera.Forward * sprintMultiplier;
             if (keyboard.IsKeyDown(Keybinds.backwards))
                 shift -= 20f * deltaTime * scene.Camera.Forward;
             if (keyboard.IsKeyDown(Keybinds.strafeRight))
@@ -37,15 +39,9 @@ namespace ASCII_FPS.GameComponents
 
             float rotation = 0f;
             if (keyboard.IsKeyDown(Keybinds.turnLeft))
-                rotation -= 0.5f * (float)Math.PI * deltaTime;
+                rotation -= 0.5f * (float)Math.PI * deltaTime * sprintMultiplier;
             if (keyboard.IsKeyDown(Keybinds.turnRight))
-                rotation += 0.5f * (float)Math.PI * deltaTime;
-
-            if (keyboard.IsKeyDown(Keybinds.sprint))
-            {
-                shift *= 2.5f;
-                rotation *= 2.5f;
-            }
+                rotation += 0.5f * (float)Math.PI * deltaTime * sprintMultiplier;
 
             Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
             scene.Camera.CameraPos += realShift;

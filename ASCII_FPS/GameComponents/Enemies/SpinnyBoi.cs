@@ -16,12 +16,17 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected override float ShootSpeed => 0.6f;
 
 
+        private int counter = 0;
+
+
         protected override void Attack(Vector3 towardsTarget)
         {
+            counter++;
             ASCII_FPS.tsch.Play();
+            float dispersion = (float)Math.Atan(0.5f);
             for (int i = 0; i < 16; i++)
             {
-                float delta = i * 2f * (float)Math.PI / 16f + MeshObject.Rotation;
+                float delta = i * 2f * (float)Math.PI / 16f + (counter % 3 - 1) * dispersion;
                 Vector3 direction = Vector3.Transform(towardsTarget, Mathg.RotationMatrix(delta));
                 Fire(direction, 20f);
             }
