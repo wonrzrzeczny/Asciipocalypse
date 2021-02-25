@@ -22,6 +22,7 @@ namespace ASCII_FPS.Scenes
         private float[] monsterChances;
 
         private Point exitRoom;
+        private bool[,] generated;
         private bool[,,] corridorLayout;
         private float[,,] corridorWidths;
 
@@ -48,7 +49,7 @@ namespace ASCII_FPS.Scenes
             game.PlayerStats.monsters = 0;
             Scene scene = new Scene(game);
 
-            corridorLayout = SceneGenUtils.GenerateCorridorLayout(size, size);
+            corridorLayout = SceneGenUtils.GenerateCorridorLayout(size, size, out generated);
             scene.CorridorLayout = corridorLayout;
             scene.Visited = new bool[size, size];
             Zone[,] zones = new Zone[size, size];
@@ -87,7 +88,7 @@ namespace ASCII_FPS.Scenes
 
 
             exitRoom = new Point(rand.Next(size), rand.Next(size));
-            while (exitRoom.X == size / 2 && exitRoom.Y == size / 2)
+            while (!generated[exitRoom.X, exitRoom.Y] || (exitRoom.X == size / 2 && exitRoom.Y == size / 2))
             {
                 exitRoom = new Point(rand.Next(size), rand.Next(size));
             }
@@ -97,43 +98,46 @@ namespace ASCII_FPS.Scenes
             {
                 for (int y = 0; y < size; y++)
                 {
-                    float left = x * tileSize - size * tileSize / 2;
-                    float right = left + tileSize;
-                    float bottom = y * tileSize - size * tileSize / 2;
-                    float top = bottom + tileSize;
-                    float[] roomCorridors = new float[4]
+                    if (generated[x, y])
                     {
+                        float left = x * tileSize - size * tileSize / 2;
+                        float right = left + tileSize;
+                        float bottom = y * tileSize - size * tileSize / 2;
+                        float top = bottom + tileSize;
+                        float[] roomCorridors = new float[4]
+                        {
                         corridorWidths[x, y, 0],
                         corridorWidths[x, y, 1],
                         corridorWidths[x, y, 2],
                         corridorWidths[x, y, 3]
-                    };
+                        };
 
-                    List<Vector2[]> walls = SceneGenUtils.MakeRoomWalls(tileSize, tileSize, roomCorridors, 2f);
-                    Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
+                        List<Vector2[]> walls = SceneGenUtils.MakeRoomWalls(tileSize, tileSize, roomCorridors, 2f);
+                        Vector2 roomCenter = new Vector2((left + right) / 2, (top + bottom) / 2);
 
-                    zones[x, y] = new Zone(new RectangleF(left, bottom, tileSize, tileSize));
+                        zones[x, y] = new Zone(new RectangleF(left, bottom, tileSize, tileSize));
 
-                    List<Triangle> wallTriangles = new List<Triangle>();
-                    foreach (Vector2[] wall in walls)
-                    {
-                        wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, ASCII_FPS.texture1));
-                    }
-                    MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
-                    zones[x, y].AddMesh(wallObject);
+                        List<Triangle> wallTriangles = new List<Triangle>();
+                        foreach (Vector2[] wall in walls)
+                        {
+                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, ASCII_FPS.texture1));
+                        }
+                        MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
+                        zones[x, y].AddMesh(wallObject);
 
-                    scene.AddZone(zones[x, y]);
-                    foreach (Vector2[] wall in walls)
-                    {
-                        scene.AddObstacle(wall[0] + roomCenter, wall[1] + roomCenter, ObstacleLayer.Wall);
-                    }
+                        scene.AddZone(zones[x, y]);
+                        foreach (Vector2[] wall in walls)
+                        {
+                            scene.AddObstacle(wall[0] + roomCenter, wall[1] + roomCenter, ObstacleLayer.Wall);
+                        }
 
-                    PopulateRoomResults results = PopulateRoom(scene, zones[x, y], x, y);
+                        PopulateRoomResults results = PopulateRoom(scene, zones[x, y], x, y);
 
-                    if (results.GenerateFloor)
-                    {
-                        zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, -4f, true));
-                        zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f, false));
+                        if (results.GenerateFloor)
+                        {
+                            zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, -4f, true));
+                            zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f, false));
+                        }
                     }
                 }
             }

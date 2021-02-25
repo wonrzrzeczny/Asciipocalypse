@@ -117,40 +117,52 @@ namespace ASCII_FPS.Scenes
             return result;
         }
 
-        public static bool[,,] GenerateCorridorLayout(int sizeX, int sizeY)
+        public static bool[,,] GenerateCorridorLayout(int sizeX, int sizeY, out bool[,] visited)
         {
+            float loopChance = 4f / (sizeX * sizeY);
+
+            int roomsLeft = sizeX * sizeY;
+
             Random rand = new Random();
             bool[,,] corridorLayout = new bool[sizeX, sizeY, 4];
-            bool[,] vis = new bool[sizeX, sizeY];
-            Queue<Point> BFSqueue = new Queue<Point>();
+            visited = new bool[sizeX, sizeY];
+            List<Point> BFSnext = new List<Point>();
 
-            int startX = rand.Next(sizeX);
-            int startY = rand.Next(sizeY);
-            BFSqueue.Enqueue(new Point(startX, startY));
-            vis[startX, startY] = true;
+            int startX = sizeX / 2;
+            int startY = sizeY / 2;
+            BFSnext.Add(new Point(startX, startY));
+            visited[startX, startY] = true;
 
-            while (BFSqueue.Count > 0)
+            while (BFSnext.Count > 0)
             {
-                Point p = BFSqueue.Dequeue();
-                int[] dir = new int[4] { 0, 1, 2, 3 };
+                int idx = rand.Next(BFSnext.Count);
+                Point p = BFSnext[idx];
+                BFSnext.RemoveAt(idx);
+                roomsLeft--;
+
                 Point[] shift = new Point[4] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
-                for (int i = 0; i < 4; i++)
-                {
-                    int j = rand.Next(4);
-                    int t = dir[i];
-                    dir[i] = dir[j];
-                    dir[j] = t;
-                }
 
                 for (int i = 0; i < 4; i++)
                 {
-                    Point q = p + shift[dir[i]];
-                    if (q.X >= 0 && q.X < sizeX && q.Y >= 0 && q.Y < sizeY && !vis[q.X, q.Y])
+                    Point q = p + shift[i];
+                    if (q.X >= 0 && q.X < sizeX && q.Y >= 0 && q.Y < sizeY)
                     {
-                        vis[q.X, q.Y] = true;
-                        corridorLayout[p.X, p.Y, dir[i]] = true;
-                        corridorLayout[q.X, q.Y, (dir[i] + 2) % 4] = true;
-                        BFSqueue.Enqueue(q);
+                        if (!visited[q.X, q.Y])
+                        {
+                            float pruneChance = (float)Math.Max(0f, 1 - roomsLeft / (sizeX + sizeY));
+                            if (rand.NextDouble() > pruneChance)
+                            {
+                                visited[q.X, q.Y] = true;
+                                corridorLayout[p.X, p.Y, i] = true;
+                                corridorLayout[q.X, q.Y, (i + 2) % 4] = true;
+                                BFSnext.Add(q);
+                            }
+                        }
+                        else if (rand.NextDouble() < loopChance)
+                        {
+                            corridorLayout[p.X, p.Y, i] = true;
+                            corridorLayout[q.X, q.Y, (i + 2) % 4] = true;
+                        }
                     }
                 }
             }
