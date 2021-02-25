@@ -19,8 +19,8 @@ namespace ASCII_FPS.GameComponents.Enemies
         {
             ASCII_FPS.tsch.Play();
             Vector3 orth = Vector3.Cross(towardsTarget, Vector3.Up);
-            Vector3 left = towardsTarget - orth * 0.25f;
-            Vector3 right = towardsTarget + orth * 0.25f;
+            Vector3 left = towardsTarget - orth * 0.375f;
+            Vector3 right = towardsTarget + orth * 0.375f;
             Fire(towardsTarget);
             Fire(left);
             Fire(right);

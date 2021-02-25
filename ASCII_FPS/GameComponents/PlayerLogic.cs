@@ -33,9 +33,9 @@ namespace ASCII_FPS.GameComponents
             if (keyboard.IsKeyDown(Keybinds.backwards))
                 shift -= 20f * deltaTime * scene.Camera.Forward;
             if (keyboard.IsKeyDown(Keybinds.strafeRight))
-                shift += 10f * deltaTime * scene.Camera.Right;
+                shift += 15f * deltaTime * scene.Camera.Right;
             if (keyboard.IsKeyDown(Keybinds.strafeLeft))
-                shift -= 10f * deltaTime * scene.Camera.Right;
+                shift -= 15f * deltaTime * scene.Camera.Right;
 
             float rotation = 0f;
             if (keyboard.IsKeyDown(Keybinds.turnLeft))

@@ -79,7 +79,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected abstract void Attack(Vector3 towardsTarget);
 
-        protected void Fire(Vector3 direction, float projectileSpeed = 40f)
+        protected virtual void Fire(Vector3 direction, float projectileSpeed = 40f)
         {
             MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
             Scene.AddGameObject(new EnemyProjectile(projectileMesh, direction, projectileSpeed, damage));
