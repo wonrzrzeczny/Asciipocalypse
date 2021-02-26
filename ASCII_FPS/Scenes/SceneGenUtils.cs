@@ -119,7 +119,7 @@ namespace ASCII_FPS.Scenes
 
         public static bool[,,] GenerateCorridorLayout(int sizeX, int sizeY, out bool[,] visited)
         {
-            float loopChance = 4f / (sizeX * sizeY);
+            float loopChance = 2f / (sizeX * sizeY);
 
             int roomsLeft = sizeX * sizeY;
 

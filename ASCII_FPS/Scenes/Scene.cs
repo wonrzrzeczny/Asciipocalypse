@@ -16,6 +16,7 @@ namespace ASCII_FPS.Scenes
         public int TotalTriangles { get; private set; }
         public bool[,,] CorridorLayout { get; set; }
         public bool[,] Visited { get; set; }
+        public Collectible.Type?[,] Collectibles { get; set; }
         public Point ExitRoom { get; set; }
 
         private ASCII_FPS game;
