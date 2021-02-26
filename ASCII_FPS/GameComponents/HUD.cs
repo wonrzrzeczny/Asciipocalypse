@@ -171,6 +171,22 @@ namespace ASCII_FPS.GameComponents
                             {
                                 console.Data[xx, yy] = 'E';
                             }
+                            else if (Scene.Collectibles[x / 2, y / 2] != null)
+                            {
+                                console.Data[xx, yy] = 'x';
+                                switch (Scene.Collectibles[x / 2, y / 2])
+                                {
+                                    case Collectible.Type.Health:
+                                        console.Color[xx, yy] = colorRed;
+                                        break;
+                                    case Collectible.Type.Armor:
+                                        console.Color[xx, yy] = colorForestGreen;
+                                        break;
+                                    case Collectible.Type.Skill:
+                                        console.Color[xx, yy] = colorLightBlue;
+                                        break;
+                                }
+                            }
                             else
                             {
                                 console.Data[xx, yy] = 'o';

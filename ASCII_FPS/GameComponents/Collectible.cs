@@ -1,15 +1,20 @@
-﻿using System.IO;
+﻿using Microsoft.Xna.Framework;
+using System.IO;
 
 namespace ASCII_FPS.GameComponents
 {
     public class Collectible : GameObject
     {
         public enum Type { Health, Armor, Skill }
-        public Type type;
+        private Type type;
 
-        public Collectible(MeshObject meshObject, Type type) : base(meshObject)
+        private int roomX, roomY;
+
+        public Collectible(MeshObject meshObject, Type type, int roomX, int roomY) : base(meshObject)
         {
             this.type = type;
+            this.roomX = roomX;
+            this.roomY = roomY;
         }
 
         public override void Update(float deltaTime) { }
@@ -17,6 +22,7 @@ namespace ASCII_FPS.GameComponents
         public void PickUp(PlayerStats playerStats)
         {
             Destroy = true;
+            Scene.Collectibles[roomX, roomY] = null;
             switch (type)
             {
                 case Type.Health:
@@ -37,6 +43,8 @@ namespace ASCII_FPS.GameComponents
 
             MeshObject.Save(writer);
             writer.Write((int)type);
+            writer.Write(roomX);
+            writer.Write(roomY);
         }
     }
 }

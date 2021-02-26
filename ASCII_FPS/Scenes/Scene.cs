@@ -196,6 +196,9 @@ namespace ASCII_FPS.Scenes
                     {
                         writer.Write(CorridorLayout[i, j, k]);
                     }
+
+                    Collectible.Type? type = Collectibles[i, j];
+                    writer.Write(type == null ? -1 : (int)type.Value);
                 }
             }
 
@@ -234,6 +237,7 @@ namespace ASCII_FPS.Scenes
             int ysize = reader.ReadInt32();
             scene.Visited = new bool[xsize, ysize];
             scene.CorridorLayout = new bool[xsize, ysize, 4];
+            scene.Collectibles = new Collectible.Type?[xsize, ysize];
             for (int i = 0; i < xsize; i++)
             {
                 for (int j = 0; j < ysize; j++)
@@ -242,6 +246,11 @@ namespace ASCII_FPS.Scenes
                     for (int k = 0; k < 4; k++)
                     {
                         scene.CorridorLayout[i, j, k] = reader.ReadBoolean();
+                    }
+                    int type = reader.ReadInt32();
+                    if (type != -1)
+                    {
+                        scene.Collectibles[i, j] = (Collectible.Type)type;
                     }
                 }
             }

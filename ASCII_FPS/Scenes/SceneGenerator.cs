@@ -300,7 +300,7 @@ namespace ASCII_FPS.Scenes
                             break;
                     }
                     MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Z));
-                    scene.AddGameObject(new Collectible(barrel, type));
+                    scene.AddGameObject(new Collectible(barrel, type, x, y));
                 }
             }
             else
