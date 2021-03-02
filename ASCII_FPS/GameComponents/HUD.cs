@@ -99,27 +99,30 @@ namespace ASCII_FPS.GameComponents
 
         public void Draw()
         {
+            const int barX = 16;
+            const int barY = 10;
+
             // HP bar
-            Rectangle(0, -22, 21, -1, colorBlack, ' ');
-            Border(0, -22, 21, -1, colorGray, '@');
-            Text(11, -20, "Health", colorWhite);
-            Text(11, -18, (int)Math.Ceiling(game.PlayerStats.health) 
+            Rectangle(0, -barY - 8, barX + 1, -1, colorBlack, ' ');
+            Border(0, -barY - 8, barX + 1, -1, colorGray, '@');
+            Text(1 + barX / 2, -barY - 6, "Health", colorWhite);
+            Text(1 + barX / 2, -barY - 4, (int)Math.Ceiling(game.PlayerStats.health) 
                 + " / " + (int)Math.Ceiling(game.PlayerStats.maxHealth), colorWhite);
-            LineHorizontal(-16, 0, 21, colorGray, '@');
-            int hpDots = (int)(20 * 14 * game.PlayerStats.health / game.PlayerStats.maxHealth);
-            if (hpDots >= 20) Rectangle(1, -1 - hpDots / 20, 20, -2, colorRed, '%');
-            if (hpDots % 20 > 0) Rectangle(1, -2 - hpDots / 20, 1 + hpDots % 20, -2 - hpDots / 20, colorRed, '%');
+            LineHorizontal(-barY - 2, 0, barX + 1, colorGray, '@');
+            int hpDots = (int)(barX * barY * game.PlayerStats.health / game.PlayerStats.maxHealth);
+            if (hpDots >= barX) Rectangle(1, -1 - hpDots / barX, barX, -2, colorRed, '%');
+            if (hpDots % barX > 0) Rectangle(1, -2 - hpDots / barX, 1 + hpDots % barX, -2 - hpDots / barX, colorRed, '%');
 
             // Armor bar
-            Rectangle(-22, -22, -1, -1, colorBlack, ' ');
-            Border(-22, -22, -1, -1, colorGray, '@');
-            Text(-11, -20, "Armor", colorWhite);
-            Text(-11, -18, (int)Math.Ceiling(game.PlayerStats.armor)
+            Rectangle(-2 - barX, -barY - 8, -1, -1, colorBlack, ' ');
+            Border(-2 - barX, -barY - 8, -1, -1, colorGray, '@');
+            Text(-1 - barX / 2, -barY - 6, "Armor", colorWhite);
+            Text(-1 - barX / 2, -barY - 4, (int)Math.Ceiling(game.PlayerStats.armor)
                 + " / " + (int)Math.Ceiling(game.PlayerStats.maxArmor), colorWhite);
-            LineHorizontal(-16, -22, -1, colorGray, '@');
-            int armorDots = (int)(20 * 14 * game.PlayerStats.armor / game.PlayerStats.maxArmor);
-            if (armorDots >= 20) Rectangle(-21, -1 - armorDots / 20, -2, -2, colorForestGreen, '#');
-            if (armorDots % 20 > 0) Rectangle(-(1 + armorDots % 20), -2 - armorDots / 20, -2, -2 - armorDots / 20, colorForestGreen, '#');
+            LineHorizontal(-barY - 2, -2 - barX, -1, colorGray, '@');
+            int armorDots = (int)(barX * barY * game.PlayerStats.armor / game.PlayerStats.maxArmor);
+            if (armorDots >= barX) Rectangle(-barX - 1, -1 - armorDots / barX, -2, -2, colorForestGreen, '#');
+            if (armorDots % barX > 0) Rectangle(-(1 + armorDots % barX), -2 - armorDots / barX, -2, -2 - armorDots / barX, colorForestGreen, '#');
 
             // Floor + killed monsters + skill points
             int offset = game.PlayerStats.skillPoints == 0 ? 0 : skillPointMenu ? 12 : 2;
