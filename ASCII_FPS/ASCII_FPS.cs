@@ -216,6 +216,31 @@ namespace ASCII_FPS
                     playerLogic = new PlayerLogic(this);
                 }
 
+                hud.Notification = "";
+                if (PlayerStats.skillPoints > 0)
+                {
+                    hud.Notification = "(" + Keybinds.skills + ") Skill points left: " + PlayerStats.skillPoints;
+                }
+                if (Vector3.Distance(Scene.Camera.CameraPos, new Vector3(PlayerStats.exitPosition.X, 0f, PlayerStats.exitPosition.Y)) < 7f)
+                {
+                    if (2 * PlayerStats.monsters >= PlayerStats.totalMonsters)
+                    {
+                        hud.Notification = "(" + Keybinds.action + ") Next level";
+                    }
+                    else
+                    {
+                        hud.Notification = "Defeat more monsters to progress.";
+                    }
+                }
+                foreach (GameObject gameObject in Scene.gameObjects)
+                {
+                    if (gameObject is Collectible collectible && Vector3.Distance(Scene.Camera.CameraPos, collectible.Position) < 7f)
+                    {
+                        hud.Notification = "(" + Keybinds.action + ") Pickup the bonus";
+                        break;
+                    }
+                }
+                    
                 Scene.UpdateGameObjects(deltaTime);
             }
             else if (gameState == GameState.MainMenu)

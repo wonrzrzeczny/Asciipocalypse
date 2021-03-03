@@ -17,6 +17,8 @@ namespace ASCII_FPS.GameComponents
         private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
         private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
+        public string Notification { get; set; } = "";
+
         public HUD(ASCII_FPS game, Console console)
         {
             this.console = console;
@@ -124,25 +126,28 @@ namespace ASCII_FPS.GameComponents
             if (armorDots >= barX) Rectangle(-barX - 1, -1 - armorDots / barX, -2, -2, colorForestGreen, '#');
             if (armorDots % barX > 0) Rectangle(-(1 + armorDots % barX), -2 - armorDots / barX, -2, -2 - armorDots / barX, colorForestGreen, '#');
 
-            // Floor + killed monsters + skill points
-            int offset = game.PlayerStats.skillPoints == 0 ? 0 : skillPointMenu ? 12 : 2;
-            Rectangle(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorBlack, ' ');
-            Border(console.Width / 2 - 15, -7 - offset, console.Width / 2 + 14, -1, colorGray, '@');
+            // Floor + killed monsters + notification + skill points
+            int offset = (skillPointMenu ? 10 : 0) + (Notification != "" ? 2 : 0);
+            int width = Math.Max(30, Notification.Length + 4);
+            Rectangle(console.Width / 2 - width / 2, -7 - offset, console.Width / 2 + width / 2, -1, colorBlack, ' ');
+            Border(console.Width / 2 - width / 2, -7 - offset, console.Width / 2 + width / 2, -1, colorGray, '@');
             Text(console.Width / 2, -5 - offset, "Floor " + game.PlayerStats.floor, colorWhite);
             Text(console.Width / 2, -3 - offset,
                  "Monsters: " + game.PlayerStats.monsters + " / " + game.PlayerStats.totalMonsters, colorWhite);
-            if (game.PlayerStats.skillPoints > 0)
+
+            if (skillPointMenu)
             {
-                Text(console.Width / 2, -1 - offset, "(" + Keybinds.skills + ") Skill points left: " + game.PlayerStats.skillPoints, colorWhite);
-                if (skillPointMenu)
-                {
-                    Rectangle(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorBlack, ' ');
-                    Border(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorGray, '@');
-                    Text(console.Width / 2, -9, "(1) Max health lvl. " + game.PlayerStats.skillMaxHealth, colorWhite);
-                    Text(console.Width / 2, -7, "(2) Max armor lvl. " + game.PlayerStats.skillMaxArmor, colorWhite);
-                    Text(console.Width / 2, -5, "(3) Armor protection lvl. " + game.PlayerStats.skillArmorProtection, colorWhite);
-                    Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + game.PlayerStats.skillShootingSpeed, colorWhite);
-                }
+                Rectangle(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorBlack, ' ');
+                Border(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorGray, '@');
+                Text(console.Width / 2, -9, "(1) Max health lvl. " + game.PlayerStats.skillMaxHealth, colorWhite);
+                Text(console.Width / 2, -7, "(2) Max armor lvl. " + game.PlayerStats.skillMaxArmor, colorWhite);
+                Text(console.Width / 2, -5, "(3) Armor protection lvl. " + game.PlayerStats.skillArmorProtection, colorWhite);
+                Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + game.PlayerStats.skillShootingSpeed, colorWhite);
+            }
+
+            if (Notification != "")
+            {
+                Text(console.Width / 2, -1 - offset, Notification, colorWhite);
             }
         
             // Minimap
