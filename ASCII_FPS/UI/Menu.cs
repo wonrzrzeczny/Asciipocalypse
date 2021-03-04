@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 
@@ -40,11 +41,17 @@ namespace ASCII_FPS.UI
             int x = console.Width / 2;
             foreach (MenuEntry entry in callableEntries)
             {
-                Text(console, x, entry.Position, entry.Text, entry.Color);
+                if (!entry.IsHidden)
+                {
+                    Text(console, x, entry.Position, entry.Text, entry.Color);
+                }
             }
             foreach (MenuEntry entry in nonCallableEntries)
             {
-                Text(console, x, entry.Position, entry.Text, entry.Color);
+                if (!entry.IsHidden)
+                {
+                    Text(console, x, entry.Position, entry.Text, entry.Color);
+                }
             }
         }
 
