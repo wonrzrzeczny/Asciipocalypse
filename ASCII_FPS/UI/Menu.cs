@@ -7,9 +7,16 @@ namespace ASCII_FPS.UI
 {
     public class Menu
     {
-        private List<MenuEntry> callableEntries;
-        private List<MenuEntry> nonCallableEntries;
+        private readonly List<MenuEntry> callableEntries;
+        private readonly List<MenuEntry> nonCallableEntries;
         private int option = 0;
+
+
+        public Menu()
+        {
+            callableEntries = new List<MenuEntry>();
+            nonCallableEntries = new List<MenuEntry>();
+        }
 
 
         public void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
