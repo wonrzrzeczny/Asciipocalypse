@@ -45,19 +45,28 @@ namespace ASCII_FPS.UI
 
         public void Draw(Console console)
         {
-            int x = console.Width / 2;
+            for (int x = 0; x < console.Width; x++)
+            {
+                for (int y = 0;y < console.Height; y++)
+                {
+                    console.Data[x, y] = ' ';
+                }
+            }
+
+            int c = console.Width / 2;
             foreach (MenuEntry entry in callableEntries)
             {
                 if (!entry.IsHidden)
                 {
-                    Text(console, x, entry.Position, entry.Text, entry.Color);
+                    byte color = entry == callableEntries[option] ? entry.ColorSelected : entry.Color;
+                    Text(console, c, entry.Position, entry.Text, color);
                 }
             }
             foreach (MenuEntry entry in nonCallableEntries)
             {
                 if (!entry.IsHidden)
                 {
-                    Text(console, x, entry.Position, entry.Text, entry.Color);
+                    Text(console, c, entry.Position, entry.Text, entry.Color);
                 }
             }
         }
