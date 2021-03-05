@@ -11,6 +11,18 @@ namespace ASCII_FPS.UI
         private readonly List<MenuEntry> nonCallableEntries;
         private int option = 0;
 
+        public MenuEntry SelectedEntry
+        {
+            get
+            {
+                if (callableEntries.Count == 0)
+                {
+                    return null;
+                }
+                return callableEntries[option];
+            }
+        }
+
 
         public Menu()
         {
@@ -21,6 +33,11 @@ namespace ASCII_FPS.UI
 
         public void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
         {
+            while (callableEntries[option].IsHidden)
+            {
+                option = (option + 1) % callableEntries.Count;
+            }
+
             if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
             {
                 do
@@ -83,6 +100,15 @@ namespace ASCII_FPS.UI
             {
                 nonCallableEntries.Add(entry);
                 callableEntries.Sort();
+            }
+        }
+
+        public void ResetCursor()
+        {
+            option = 0;
+            while (callableEntries[option].IsHidden)
+            {
+                option = (option + 1) % callableEntries.Count;
             }
         }
 

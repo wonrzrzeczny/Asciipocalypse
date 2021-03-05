@@ -12,7 +12,21 @@ namespace ASCII_FPS.UI
         public int Position { get; private set; }
         public byte Color { get; private set; }
         public byte ColorSelected { get; private set; }
-        public bool IsHidden { get; set; } = false;
+
+        public Func<bool> HiddenPred { get; set; }
+
+        public bool IsHidden
+        {
+            get
+            {
+                if (HiddenPred == null)
+                {
+                    return false;
+                }
+                return HiddenPred.Invoke();
+            }
+        }
+
 
         public string Text
         {

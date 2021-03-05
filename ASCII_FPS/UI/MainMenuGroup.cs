@@ -20,6 +20,9 @@ namespace ASCII_FPS.UI
         public Action<int> ChangeResolution { private get; set; }
         public Action SaveOptions { private get; set; }
 
+        public Func<bool> ContinueEntryPred { private get; set; }
+
+
         private readonly byte colorRed = Mathg.ColorTo8Bit(Color.Red.ToVector3());
         private readonly byte colorBlack = Mathg.ColorTo8Bit(Color.Black.ToVector3());
         private readonly byte colorGray = Mathg.ColorTo8Bit(Color.DarkGray.ToVector3());
@@ -60,7 +63,9 @@ namespace ASCII_FPS.UI
             mainMenu.AddEntry(new MenuEntry(15, @"                     | |                             | | |            ", colorWhite));
             mainMenu.AddEntry(new MenuEntry(16, @"                     |_|                             |_|_|            ", colorWhite));
 
-            mainMenu.AddEntry(new MenuEntry(30, "Continue", LoadGame, colorGray, colorLightBlue));
+            MenuEntry continueEntry = new MenuEntry(30, "Continue", LoadGame, colorGray, colorLightBlue);
+            continueEntry.HiddenPred = ContinueEntryPred;
+            mainMenu.AddEntry(continueEntry);
             mainMenu.AddEntry(new MenuEntry(32, "New game", () => { activeMenu = tutorialMenu; }, colorGray, colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(34, "Options", () => { activeMenu = optionsMenuMain; }, colorGray, colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, colorGray, colorLightBlue));
@@ -121,6 +126,7 @@ namespace ASCII_FPS.UI
         public void ToggleMainMenu()
         {
             activeMenu = mainMenu;
+            mainMenu.ResetCursor();
         }
     }
 }
