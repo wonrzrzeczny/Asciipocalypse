@@ -7,11 +7,12 @@ namespace ASCII_FPS.UI
 {
     public class MainMenuGroup
     {
+        private readonly UIStack uiStack;
+
         private readonly UIMenu mainMenu;
         private readonly UIMenu optionsMenuMain;
         private readonly UIMenu optionsMenuKeybinds;
         private readonly UIMenu tutorialMenu;
-        private UIMenu activeMenu;
 
         public Action LoadGame { private get; set; }
         public Action NewGame { private get; set; }
@@ -38,7 +39,7 @@ namespace ASCII_FPS.UI
             optionsMenuMain = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
             optionsMenuKeybinds = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
             tutorialMenu = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
-            activeMenu = mainMenu;
+            uiStack = new UIStack(mainMenu);
         }
 
         public void Init()
@@ -66,8 +67,8 @@ namespace ASCII_FPS.UI
             MenuEntry continueEntry = new MenuEntry(30, "Continue", LoadGame, colorGray, colorLightBlue);
             continueEntry.HiddenPred = ContinueEntryPred;
             mainMenu.AddEntry(continueEntry);
-            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { activeMenu = tutorialMenu; }, colorGray, colorLightBlue));
-            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { activeMenu = optionsMenuMain; }, colorGray, colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, colorGray, colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsMenuMain); }, colorGray, colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, colorGray, colorLightBlue));
         }
 
@@ -75,9 +76,9 @@ namespace ASCII_FPS.UI
         {
             // Options main
             optionsMenuMain.AddEntry(new MenuEntry(
-                12, "Back to main menu", () => { activeMenu = mainMenu; SaveOptions.Invoke(); }, colorGray, colorLightBlue
+                12, "Back to main menu", () => { uiStack.Pop(); SaveOptions.Invoke(); }, colorGray, colorLightBlue
             ));
-            optionsMenuMain.AddEntry(new MenuEntry(16, "Keybinds", () => { activeMenu = optionsMenuKeybinds; }, colorGray, colorLightBlue));
+            optionsMenuMain.AddEntry(new MenuEntry(16, "Keybinds", () => { uiStack.Push(optionsMenuKeybinds); }, colorGray, colorLightBlue));
             optionsMenuMain.AddEntry(new MenuEntry(18, "Fullscreen", ChangeFullScreen, colorGray, colorLightBlue));
 
             optionsMenuMain.AddEntry(new MenuEntry(22, "Resolution", colorWhite));
@@ -117,17 +118,17 @@ namespace ASCII_FPS.UI
 
         public void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
         {
-            activeMenu.Update(keyboard, keyboardPrev);
+            uiStack.Update(keyboard, keyboardPrev);
         }
 
         public void Draw(Console console)
         {
-            activeMenu.Draw(console);
+            uiStack.Draw(console);
         }
 
         public void ToggleMainMenu()
         {
-            activeMenu = mainMenu;
+            uiStack.Clear();
             mainMenu.MoveToFirst();
         }
     }
