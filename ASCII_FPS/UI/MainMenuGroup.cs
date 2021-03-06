@@ -7,11 +7,11 @@ namespace ASCII_FPS.UI
 {
     public class MainMenuGroup
     {
-        private readonly Menu mainMenu;
-        private readonly Menu optionsMenuMain;
-        private readonly Menu optionsMenuKeybinds;
-        private readonly Menu tutorialMenu;
-        private Menu activeMenu;
+        private readonly UIMenu mainMenu;
+        private readonly UIMenu optionsMenuMain;
+        private readonly UIMenu optionsMenuKeybinds;
+        private readonly UIMenu tutorialMenu;
+        private UIMenu activeMenu;
 
         public Action LoadGame { private get; set; }
         public Action NewGame { private get; set; }
@@ -32,12 +32,12 @@ namespace ASCII_FPS.UI
         private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
 
-        public MainMenuGroup()
+        public MainMenuGroup(Console console)
         {
-            mainMenu = new Menu();
-            optionsMenuMain = new Menu();
-            optionsMenuKeybinds = new Menu();
-            tutorialMenu = new Menu();
+            mainMenu = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
+            optionsMenuMain = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
+            optionsMenuKeybinds = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
+            tutorialMenu = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
             activeMenu = mainMenu;
         }
 
@@ -74,7 +74,9 @@ namespace ASCII_FPS.UI
         private void InitOptionsMenu()
         {
             // Options main
-            optionsMenuMain.AddEntry(new MenuEntry(12, "Back to main menu", () => { activeMenu = mainMenu; }, colorGray, colorLightBlue));
+            optionsMenuMain.AddEntry(new MenuEntry(
+                12, "Back to main menu", () => { activeMenu = mainMenu; SaveOptions.Invoke(); }, colorGray, colorLightBlue
+            ));
             optionsMenuMain.AddEntry(new MenuEntry(16, "Keybinds", () => { activeMenu = optionsMenuKeybinds; }, colorGray, colorLightBlue));
             optionsMenuMain.AddEntry(new MenuEntry(18, "Fullscreen", ChangeFullScreen, colorGray, colorLightBlue));
 

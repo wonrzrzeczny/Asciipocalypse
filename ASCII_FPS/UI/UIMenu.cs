@@ -1,12 +1,15 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
 
 namespace ASCII_FPS.UI
 {
-    public class Menu
+    public class UIMenu : UIElement
     {
+        private Rectangle bounds;
+
         private readonly List<MenuEntry> callableEntries;
         private readonly List<MenuEntry> nonCallableEntries;
         private int option = 0;
@@ -24,14 +27,15 @@ namespace ASCII_FPS.UI
         }
 
 
-        public Menu()
+        public UIMenu(Rectangle bounds)
         {
+            this.bounds = bounds;
             callableEntries = new List<MenuEntry>();
             nonCallableEntries = new List<MenuEntry>();
         }
 
 
-        public void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
         {
             while (callableEntries[option].IsHidden)
             {
@@ -60,11 +64,11 @@ namespace ASCII_FPS.UI
             }
         }
 
-        public void Draw(Console console)
+        public override void Draw(Console console)
         {
-            for (int x = 0; x < console.Width; x++)
+            for (int x = bounds.Left; x < bounds.Right; x++)
             {
-                for (int y = 0;y < console.Height; y++)
+                for (int y = bounds.Top; y < bounds.Bottom; y++)
                 {
                     console.Data[x, y] = ' ';
                 }
