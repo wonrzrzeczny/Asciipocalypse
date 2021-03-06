@@ -128,7 +128,7 @@ namespace ASCII_FPS.UI
         public void ToggleMainMenu()
         {
             activeMenu = mainMenu;
-            mainMenu.ResetCursor();
+            mainMenu.MoveToFirst();
         }
     }
 }

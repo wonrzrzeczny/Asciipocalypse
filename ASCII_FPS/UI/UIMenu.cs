@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 
 
@@ -10,19 +9,18 @@ namespace ASCII_FPS.UI
     {
         private Rectangle bounds;
 
-        private readonly List<MenuEntry> callableEntries;
-        private readonly List<MenuEntry> nonCallableEntries;
+        private readonly List<MenuEntry> entries;
         private int option = 0;
 
         public MenuEntry SelectedEntry
         {
             get
             {
-                if (callableEntries.Count == 0)
+                if (entries.Count == 0)
                 {
                     return null;
                 }
-                return callableEntries[option];
+                return entries[option];
             }
         }
 
@@ -30,37 +28,36 @@ namespace ASCII_FPS.UI
         public UIMenu(Rectangle bounds)
         {
             this.bounds = bounds;
-            callableEntries = new List<MenuEntry>();
-            nonCallableEntries = new List<MenuEntry>();
+            entries = new List<MenuEntry>();
         }
 
 
         public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
         {
-            while (callableEntries[option].IsHidden)
+            while (entries[option].IsHidden || !entries[option].IsCallable)
             {
-                option = (option + 1) % callableEntries.Count;
+                option = (option + 1) % entries.Count;
             }
 
             if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
             {
                 do
                 {
-                    option = (option + 1) % callableEntries.Count;
+                    option = (option + 1) % entries.Count;
                 }
-                while (callableEntries[option].IsHidden);
+                while (entries[option].IsHidden || !entries[option].IsCallable);
             }
             else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
             {
                 do
                 {
-                    option = (option + callableEntries.Count - 1) % callableEntries.Count;
+                    option = (option + entries.Count - 1) % entries.Count;
                 }
-                while (callableEntries[option].IsHidden);
+                while (entries[option].IsHidden || !entries[option].IsCallable);
             }
             else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
             {
-                callableEntries[option].Call();
+                entries[option].Call();
             }
         }
 
@@ -75,19 +72,12 @@ namespace ASCII_FPS.UI
             }
 
             int c = console.Width / 2;
-            foreach (MenuEntry entry in callableEntries)
+            foreach (MenuEntry entry in entries)
             {
                 if (!entry.IsHidden)
                 {
-                    byte color = entry == callableEntries[option] ? entry.ColorSelected : entry.Color;
+                    byte color = entry == entries[option] ? entry.ColorSelected : entry.Color;
                     Text(console, c, entry.Position, entry.Text, color);
-                }
-            }
-            foreach (MenuEntry entry in nonCallableEntries)
-            {
-                if (!entry.IsHidden)
-                {
-                    Text(console, c, entry.Position, entry.Text, entry.Color);
                 }
             }
         }
@@ -95,24 +85,25 @@ namespace ASCII_FPS.UI
 
         public void AddEntry(MenuEntry entry)
         {
-            if (entry.IsCallable)
+            entries.Add(entry);
+            entries.Sort();
+        }
+
+        public void MoveToFirst()
+        {
+            option = 0;
+            while (entries[option].IsHidden || !entries[option].IsCallable)
             {
-                callableEntries.Add(entry);
-                callableEntries.Sort();
-            }
-            else
-            {
-                nonCallableEntries.Add(entry);
-                callableEntries.Sort();
+                option = (option + 1) % entries.Count;
             }
         }
 
-        public void ResetCursor()
+        public void MoveToLast()
         {
-            option = 0;
-            while (callableEntries[option].IsHidden)
+            option = entries.Count - 1;
+            while (entries[option].IsHidden || !entries[option].IsCallable)
             {
-                option = (option + 1) % callableEntries.Count;
+                option = (option + entries.Count - 1) % entries.Count;
             }
         }
 
