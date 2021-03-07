@@ -7,7 +7,7 @@ namespace ASCII_FPS.UI
 {
     public class UIMenu : UIElement
     {
-        private Rectangle bounds;
+        private Point boundsStart, boundsEnd;
 
         private readonly List<MenuEntry> entries;
         private int option = 0;
@@ -25,11 +25,14 @@ namespace ASCII_FPS.UI
         }
 
 
-        public UIMenu(Rectangle bounds)
+        public UIMenu(Point boundsStart, Point boundsEnd)
         {
-            this.bounds = bounds;
+            this.boundsStart = boundsStart;
+            this.boundsEnd = boundsEnd;
             entries = new List<MenuEntry>();
         }
+
+        public UIMenu() : this(Point.Zero, new Point(-1, -1)) { }
 
 
         public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
@@ -63,9 +66,11 @@ namespace ASCII_FPS.UI
 
         public override void Draw(Console console)
         {
-            for (int x = bounds.Left; x < bounds.Right; x++)
+            Point start = TranslatePoint(console, boundsStart);
+            Point end = TranslatePoint(console, boundsEnd);
+            for (int x = start.X; x <= end.X; x++)
             {
-                for (int y = bounds.Top; y < bounds.Bottom; y++)
+                for (int y = start.Y; y <= end.Y; y++)
                 {
                     console.Data[x, y] = ' ';
                 }
@@ -122,6 +127,15 @@ namespace ASCII_FPS.UI
                     console.Color[xx, y] = color;
                 }
             }
+        }
+
+        private Point TranslatePoint(Console console, Point point)
+        {
+            int x = point.X;
+            int y = point.Y;
+            x += point.X < 0 ? console.Width : 0;
+            y += point.Y < 0 ? console.Height : 0;
+            return new Point(x, y);
         }
     }
 }

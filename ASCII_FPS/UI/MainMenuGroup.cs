@@ -33,12 +33,12 @@ namespace ASCII_FPS.UI
         private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
 
-        public MainMenuGroup(Console console)
+        public MainMenuGroup()
         {
-            mainMenu = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
-            optionsMenuMain = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
-            optionsMenuKeybinds = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
-            tutorialMenu = new UIMenu(new Rectangle(0, 0, console.Width, console.Height));
+            mainMenu = new UIMenu();
+            optionsMenuMain = new UIMenu();
+            optionsMenuKeybinds = new UIMenu();
+            tutorialMenu = new UIMenu();
             uiStack = new UIStack(mainMenu);
         }
 
