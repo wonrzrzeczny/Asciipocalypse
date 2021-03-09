@@ -16,16 +16,19 @@ namespace ASCII_FPS.UI
         public static readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
 
-        public static void Text(Console console, UIPosition position, string text, byte color)
+        public static void Text(Console console, int x, int y, string text, byte color, UIAlignment alignment = UIAlignment.Center)
         {
-            int x = position.GetX(console);
-            int y = position.GetY(console);
-            Text(console, x, y, text, color);
-        }
+            int start = x;
+            switch (alignment)
+            {
+                case UIAlignment.Center:
+                    start -= text.Length / 2;
+                    break;
+                case UIAlignment.Right:
+                    start -= text.Length - 1;
+                    break;
+            }
 
-        public static void Text(Console console, int x, int y, string text, byte color)
-        {
-            int start = x - text.Length / 2;
             for (int xx = start; xx < start + text.Length; xx++)
             {
                 if (xx >= 0 && xx < console.Width)
@@ -34,6 +37,13 @@ namespace ASCII_FPS.UI
                     console.Color[xx, y] = color;
                 }
             }
+        }
+
+        public static void Text(Console console, UIPosition position, string text, byte color, UIAlignment alignment = UIAlignment.Center)
+        {
+            int x = position.GetX(console);
+            int y = position.GetY(console);
+            Text(console, x, y, text, color, alignment);
         }
     }
 }

@@ -23,6 +23,16 @@ namespace ASCII_FPS.UI
             get { return new UIPosition(Vector2.Zero, Point.Zero); }
         }
 
+        public static UIPosition TopRight
+        {
+            get { return new UIPosition(Vector2.UnitX, Point.Zero); }
+        }
+
+        public static UIPosition BottomLeft
+        {
+            get { return new UIPosition(Vector2.UnitY, Point.Zero); }
+        }
+
         public static UIPosition BottomRight
         {
             get { return new UIPosition(Vector2.One, Point.Zero); }
@@ -31,13 +41,13 @@ namespace ASCII_FPS.UI
 
         public int GetX(Console console)
         {
-            int x = Offset.X + (int)Math.Round(Relative.X * console.Width);
+            int x = Offset.X + (int)Math.Round(Relative.X * (console.Width - 1));
             return Math.Clamp(x, 0, console.Width - 1);
         }
 
         public int GetY(Console console)
         {
-            int y = Offset.Y + (int)Math.Round(Relative.Y * console.Height);
+            int y = Offset.Y + (int)Math.Round(Relative.Y * (console.Height - 1));
             return Math.Clamp(y, 0, console.Height - 1);
         }
         

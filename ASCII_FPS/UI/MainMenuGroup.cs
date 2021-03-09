@@ -1,4 +1,5 @@
 ﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 
@@ -8,6 +9,7 @@ namespace ASCII_FPS.UI
     {
         private readonly UIStack uiStack;
 
+        private readonly UICollection mainTab;
         private readonly UIMenu mainMenu;
         private readonly UIMenu optionsMenu;
         private readonly UIMenu tutorialMenu;
@@ -25,11 +27,13 @@ namespace ASCII_FPS.UI
 
         public MainMenuGroup()
         {
+            mainTab = new UICollection();
             mainMenu = new UIMenu();
             optionsMenu = new UIMenu();
             tutorialMenu = new UIMenu();
             keybindsMenu = new UIKeybinds();
-            uiStack = new UIStack(mainMenu);
+
+            uiStack = new UIStack(mainTab);
         }
 
         public void Init()
@@ -42,24 +46,43 @@ namespace ASCII_FPS.UI
 
         private void InitMainMenu()
         {
-            mainMenu.AddEntry(new MenuEntry(6,  @"_______                                        ___                    ", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(7,  @"|     |______________________________________  | |__ _________________", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(8,  @"| ___ |   |   ||_||_||     |     |   ||     |  | | | | |     |   |   |", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(9,  @"| |_| | __| __|______| ___ | ___ | __|| ___ |  | | | | | ___ | __| __|", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(10, @"|     |   | |  | || || | | | | | | |  | | | |  | | | | | | | |   |  | ", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(11, @"| ___ |__ | |__| || || |_| | |_| | |__| |_| |__| | |_| | |_| |__ | _|_", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(12, @"| | | |   |   || || ||     |     |   ||       || |     |     |   |   |", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(13, @"|_| |_|___|___||_||_|| ____|_____|___||_______||_|____ | ____|___|___|", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(14, @"                     | |                             | | |            ", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(15, @"                     | |                             | | |            ", UIUtils.colorWhite));
-            mainMenu.AddEntry(new MenuEntry(16, @"                     |_|                             |_|_|            ", UIUtils.colorWhite));
+            UIText logo = new UIText(UIUtils.colorWhite, new UIPosition(new Vector2(0.5f, 0f), new Point(0, 6)));
 
-            MenuEntry continueEntry = new MenuEntry(30, "Continue", LoadGame, UIUtils.colorGray, UIUtils.colorLightBlue);
-            continueEntry.HiddenPred = ContinueEntryPred;
+            logo.AddLine(@"_______                                        ___                    ");
+            logo.AddLine(@"|     |______________________________________  | |__ _________________");
+            logo.AddLine(@"| ___ |   |   ||_||_||     |     |   ||     |  | | | | |     |   |   |");
+            logo.AddLine(@"| |_| | __| __|______| ___ | ___ | __|| ___ |  | | | | | ___ | __| __|");
+            logo.AddLine(@"|     |   | |  | || || | | | | | | |  | | | |  | | | | | | | |   |  | ");
+            logo.AddLine(@"| ___ |__ | |__| || || |_| | |_| | |__| |_| |__| | |_| | |_| |__ | _|_");
+            logo.AddLine(@"| | | |   |   || || ||     |     |   ||       || |     |     |   |   |");
+            logo.AddLine(@"|_| |_|___|___||_||_|| ____|_____|___||_______||_|____ | ____|___|___|");
+            logo.AddLine(@"                     | |                             | | |            ");
+            logo.AddLine(@"                     | |                             | | |            ");
+            logo.AddLine(@"                     |_|                             |_|_|            ");
+
+            MenuEntry continueEntry = new MenuEntry(30, "Continue", LoadGame, UIUtils.colorGray, UIUtils.colorLightBlue)
+            {
+                HiddenPred = ContinueEntryPred
+            };
             mainMenu.AddEntry(continueEntry);
             mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
+
+            mainTab.AddElement(mainMenu);
+            mainTab.AddElement(logo);
+            mainTab.AddElement(new UIText(
+                UIUtils.colorWhite,
+                new UIPosition(Vector2.UnitY, new Point(2, -2)),
+                UIAlignment.Left,
+                ASCII_FPS.VERSION
+            ));
+            mainTab.AddElement(new UIText(
+                UIUtils.colorWhite,
+                new UIPosition(Vector2.One, new Point(-2, -2)),
+                UIAlignment.Right,
+                "by wonrzrzeczny"
+            ));
         }
 
         private void InitOptionsMenu()
