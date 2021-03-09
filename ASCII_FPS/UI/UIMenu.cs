@@ -66,8 +66,8 @@ namespace ASCII_FPS.UI
 
         public override void Draw(Console console)
         {
-            Point start = TranslatePoint(console, boundsStart);
-            Point end = TranslatePoint(console, boundsEnd);
+            Point start = UIUtils.TranslatePoint(console, boundsStart);
+            Point end = UIUtils.TranslatePoint(console, boundsEnd);
             for (int x = start.X; x <= end.X; x++)
             {
                 for (int y = start.Y; y <= end.Y; y++)
@@ -82,7 +82,7 @@ namespace ASCII_FPS.UI
                 if (!entry.IsHidden)
                 {
                     byte color = entry == entries[option] ? entry.ColorSelected : entry.Color;
-                    Text(console, c, entry.Position, entry.Text, color);
+                    UIUtils.Text(console, c, entry.Position, entry.Text, color);
                 }
             }
         }
@@ -110,32 +110,6 @@ namespace ASCII_FPS.UI
             {
                 option = (option + entries.Count - 1) % entries.Count;
             }
-        }
-
-
-        private void Text(Console console, int x, int y, string text, byte color)
-        {
-            if (x < 0) x += console.Width;
-            if (y < 0) y += console.Height;
-
-            int start = x - text.Length / 2;
-            for (int xx = start; xx < start + text.Length; xx++)
-            {
-                if (xx >= 0 && xx < console.Width)
-                {
-                    console.Data[xx, y] = text[xx - start];
-                    console.Color[xx, y] = color;
-                }
-            }
-        }
-
-        private Point TranslatePoint(Console console, Point point)
-        {
-            int x = point.X;
-            int y = point.Y;
-            x += point.X < 0 ? console.Width : 0;
-            y += point.Y < 0 ? console.Height : 0;
-            return new Point(x, y);
         }
     }
 }

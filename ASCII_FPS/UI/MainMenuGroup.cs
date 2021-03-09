@@ -1,5 +1,4 @@
 ﻿using ASCII_FPS.GameComponents;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 
@@ -24,15 +23,6 @@ namespace ASCII_FPS.UI
         public Func<bool> ContinueEntryPred { private get; set; }
 
 
-        private readonly byte colorRed = Mathg.ColorTo8Bit(Color.Red.ToVector3());
-        private readonly byte colorBlack = Mathg.ColorTo8Bit(Color.Black.ToVector3());
-        private readonly byte colorGray = Mathg.ColorTo8Bit(Color.DarkGray.ToVector3());
-        private readonly byte colorLightGray = Mathg.ColorTo8Bit(Color.LightGray.ToVector3());
-        private readonly byte colorWhite = Mathg.ColorTo8Bit(Color.White.ToVector3());
-        private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
-        private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
-
-
         public MainMenuGroup()
         {
             mainMenu = new UIMenu();
@@ -52,36 +42,36 @@ namespace ASCII_FPS.UI
 
         private void InitMainMenu()
         {
-            mainMenu.AddEntry(new MenuEntry(6,  @"_______                                        ___                    ", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(7,  @"|     |______________________________________  | |__ _________________", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(8,  @"| ___ |   |   ||_||_||     |     |   ||     |  | | | | |     |   |   |", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(9,  @"| |_| | __| __|______| ___ | ___ | __|| ___ |  | | | | | ___ | __| __|", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(10, @"|     |   | |  | || || | | | | | | |  | | | |  | | | | | | | |   |  | ", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(11, @"| ___ |__ | |__| || || |_| | |_| | |__| |_| |__| | |_| | |_| |__ | _|_", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(12, @"| | | |   |   || || ||     |     |   ||       || |     |     |   |   |", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(13, @"|_| |_|___|___||_||_|| ____|_____|___||_______||_|____ | ____|___|___|", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(14, @"                     | |                             | | |            ", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(15, @"                     | |                             | | |            ", colorWhite));
-            mainMenu.AddEntry(new MenuEntry(16, @"                     |_|                             |_|_|            ", colorWhite));
+            mainMenu.AddEntry(new MenuEntry(6,  @"_______                                        ___                    ", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(7,  @"|     |______________________________________  | |__ _________________", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(8,  @"| ___ |   |   ||_||_||     |     |   ||     |  | | | | |     |   |   |", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(9,  @"| |_| | __| __|______| ___ | ___ | __|| ___ |  | | | | | ___ | __| __|", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(10, @"|     |   | |  | || || | | | | | | |  | | | |  | | | | | | | |   |  | ", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(11, @"| ___ |__ | |__| || || |_| | |_| | |__| |_| |__| | |_| | |_| |__ | _|_", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(12, @"| | | |   |   || || ||     |     |   ||       || |     |     |   |   |", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(13, @"|_| |_|___|___||_||_|| ____|_____|___||_______||_|____ | ____|___|___|", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(14, @"                     | |                             | | |            ", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(15, @"                     | |                             | | |            ", UIUtils.colorWhite));
+            mainMenu.AddEntry(new MenuEntry(16, @"                     |_|                             |_|_|            ", UIUtils.colorWhite));
 
-            MenuEntry continueEntry = new MenuEntry(30, "Continue", LoadGame, colorGray, colorLightBlue);
+            MenuEntry continueEntry = new MenuEntry(30, "Continue", LoadGame, UIUtils.colorGray, UIUtils.colorLightBlue);
             continueEntry.HiddenPred = ContinueEntryPred;
             mainMenu.AddEntry(continueEntry);
-            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, colorGray, colorLightBlue));
-            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsMenu); }, colorGray, colorLightBlue));
-            mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, colorGray, colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
         }
 
         private void InitOptionsMenu()
         {
             // Options main
             optionsMenu.AddEntry(new MenuEntry(
-                12, "Back to main menu", () => { uiStack.Pop(); SaveOptions.Invoke(); }, colorGray, colorLightBlue
+                12, "Back to main menu", () => { uiStack.Pop(); SaveOptions.Invoke(); }, UIUtils.colorGray, UIUtils.colorLightBlue
             ));
-            optionsMenu.AddEntry(new MenuEntry(16, "Keybinds", () => { uiStack.Push(keybindsMenu); }, colorGray, colorLightBlue));
-            optionsMenu.AddEntry(new MenuEntry(18, "Fullscreen", ChangeFullScreen, colorGray, colorLightBlue));
+            optionsMenu.AddEntry(new MenuEntry(16, "Keybinds", () => { uiStack.Push(keybindsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            optionsMenu.AddEntry(new MenuEntry(18, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
 
-            optionsMenu.AddEntry(new MenuEntry(22, "Resolution", colorWhite));
+            optionsMenu.AddEntry(new MenuEntry(22, "Resolution", UIUtils.colorWhite));
             for (int i = 0; i < ASCII_FPS.resolutions.Length; i++)
             {
                 int resX = ASCII_FPS.resolutions[i].Width;
@@ -89,7 +79,7 @@ namespace ASCII_FPS.UI
                 string line = resX + " x " + resY;
                 if (resX == 1920 && resY == 1080) line += " (recommended)";
                 int j = i; // manual closure :D
-                optionsMenu.AddEntry(new MenuEntry(24 + 2 * i, line, () => { ChangeResolution(j); }, colorGray, colorLightBlue));
+                optionsMenu.AddEntry(new MenuEntry(24 + 2 * i, line, () => { ChangeResolution(j); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             }
 
             keybindsMenu.BackAction = uiStack.Pop;
@@ -97,24 +87,24 @@ namespace ASCII_FPS.UI
 
         private void InitTutorialMenu()
         {
-            tutorialMenu.AddEntry(new MenuEntry(12, "Controls", colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(12, "Controls", UIUtils.colorWhite));
 
-            tutorialMenu.AddEntry(new MenuEntry(16, "Walk forward / backwards - " + Keybinds.forward + " / " + Keybinds.backwards, colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(18, "Turn left / right - " + Keybinds.turnLeft + " / " + Keybinds.turnRight, colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(20, "Strafe left / right - " + Keybinds.strafeLeft + " / " + Keybinds.strafeRight, colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(22, "Hold " + Keybinds.sprint + " - faster movement", colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(24, "Hold " + Keybinds.fire + " - shoot", colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(26, Keybinds.action + " - use barrel / ladder", colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(28, Keybinds.skills + " - skill menu", colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(30, "1/2/3/4 - upgrade skill", colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(32, "Escape - pause game", colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(16, "Walk forward / backwards - " + Keybinds.forward + " / " + Keybinds.backwards, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(18, "Turn left / right - " + Keybinds.turnLeft + " / " + Keybinds.turnRight, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(20, "Strafe left / right - " + Keybinds.strafeLeft + " / " + Keybinds.strafeRight, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(22, "Hold " + Keybinds.sprint + " - faster movement", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(24, "Hold " + Keybinds.fire + " - shoot", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(26, Keybinds.action + " - use barrel / ladder", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(28, Keybinds.skills + " - skill menu", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(30, "1/2/3/4 - upgrade skill", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(32, "Escape - pause game", UIUtils.colorWhite));
 
-            tutorialMenu.AddEntry(new MenuEntry(36, "To progress you must kill at least half of the monsters on the floor", colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(36, "To progress you must kill at least half of the monsters on the floor", UIUtils.colorWhite));
 
-            tutorialMenu.AddEntry(new MenuEntry(40, "Press enter to start the game", colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(40, "Press enter to start the game", UIUtils.colorWhite));
 
 
-            tutorialMenu.AddEntry(new MenuEntry(0, "dummy", NewGame, colorBlack, colorBlack));
+            tutorialMenu.AddEntry(new MenuEntry(0, "dummy", NewGame, UIUtils.colorBlack, UIUtils.colorBlack));
         }
 
 

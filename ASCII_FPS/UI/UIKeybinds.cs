@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 
@@ -10,10 +9,6 @@ namespace ASCII_FPS.UI
 {
     public class UIKeybinds : UIElement
     {
-        private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
-        private readonly byte colorWhite = Mathg.ColorTo8Bit(Color.White.ToVector3());
-        private readonly byte colorGray = Mathg.ColorTo8Bit(Color.DarkGray.ToVector3());
-
         private readonly FieldInfo[] fields;
         private bool waitingForKey = false;
         private int option = 0;
@@ -75,29 +70,12 @@ namespace ASCII_FPS.UI
 
             int c = console.Width / 2;
 
-            Text(console, c, 12, "Back", option == 0 ? colorLightBlue : colorGray);
+            UIUtils.Text(console, c, 12, "Back", option == 0 ? UIUtils.colorLightBlue : UIUtils.colorGray);
             for (int i = 0; i < fields.Length; i++)
             {
                 string text = fields[i].Name + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : fields[i].GetValue(null));
-                byte color = option == i + 1 ? colorLightBlue : colorGray;
-                Text(console, c, 16 + 2 * i, text, color);
-            }
-        }
-
-
-        private void Text(Console console, int x, int y, string text, byte color)
-        {
-            if (x < 0) x += console.Width;
-            if (y < 0) y += console.Height;
-
-            int start = x - text.Length / 2;
-            for (int xx = start; xx < start + text.Length; xx++)
-            {
-                if (xx >= 0 && xx < console.Width)
-                {
-                    console.Data[xx, y] = text[xx - start];
-                    console.Color[xx, y] = color;
-                }
+                byte color = option == i + 1 ? UIUtils.colorLightBlue : UIUtils.colorGray;
+                UIUtils.Text(console, c, 16 + 2 * i, text, color);
             }
         }
     }
