@@ -7,8 +7,8 @@ namespace ASCII_FPS.UI
 {
     public class UIMenu : UIElement
     {
-        private Point boundsStart, boundsEnd;
-
+        private readonly UIPosition boundsStart;
+        private readonly UIPosition boundsEnd;
         private readonly List<MenuEntry> entries;
         private int option = 0;
 
@@ -25,14 +25,14 @@ namespace ASCII_FPS.UI
         }
 
 
-        public UIMenu(Point boundsStart, Point boundsEnd)
+        public UIMenu(UIPosition boundsStart, UIPosition boundsEnd)
         {
             this.boundsStart = boundsStart;
             this.boundsEnd = boundsEnd;
             entries = new List<MenuEntry>();
         }
 
-        public UIMenu() : this(Point.Zero, new Point(-1, -1)) { }
+        public UIMenu() : this(UIPosition.TopLeft, UIPosition.BottomRight) { }
 
 
         public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
@@ -66,8 +66,8 @@ namespace ASCII_FPS.UI
 
         public override void Draw(Console console)
         {
-            Point start = UIUtils.TranslatePoint(console, boundsStart);
-            Point end = UIUtils.TranslatePoint(console, boundsEnd);
+            Point start = boundsStart.GetPosition(console);
+            Point end = boundsEnd.GetPosition(console);
             for (int x = start.X; x <= end.X; x++)
             {
                 for (int y = start.Y; y <= end.Y; y++)
@@ -76,7 +76,7 @@ namespace ASCII_FPS.UI
                 }
             }
 
-            int c = console.Width / 2;
+            int c = (end.X - start.X + 1) / 2;
             foreach (MenuEntry entry in entries)
             {
                 if (!entry.IsHidden)

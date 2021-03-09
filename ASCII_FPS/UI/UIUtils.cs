@@ -16,11 +16,15 @@ namespace ASCII_FPS.UI
         public static readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
 
+        public static void Text(Console console, UIPosition position, string text, byte color)
+        {
+            int x = position.GetX(console);
+            int y = position.GetY(console);
+            Text(console, x, y, text, color);
+        }
+
         public static void Text(Console console, int x, int y, string text, byte color)
         {
-            if (x < 0) x += console.Width;
-            if (y < 0) y += console.Height;
-
             int start = x - text.Length / 2;
             for (int xx = start; xx < start + text.Length; xx++)
             {
@@ -30,15 +34,6 @@ namespace ASCII_FPS.UI
                     console.Color[xx, y] = color;
                 }
             }
-        }
-
-        public static Point TranslatePoint(Console console, Point point)
-        {
-            int x = point.X;
-            int y = point.Y;
-            x += point.X < 0 ? console.Width : 0;
-            y += point.Y < 0 ? console.Height : 0;
-            return new Point(x, y);
         }
     }
 }
