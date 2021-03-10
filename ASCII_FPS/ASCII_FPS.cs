@@ -8,11 +8,14 @@ using OBJContentPipelineExtension;
 using System;
 using System.Linq;
 using System.IO;
+using ASCII_FPS.UI;
 
 namespace ASCII_FPS
 {
     public class ASCII_FPS : Game
     {
+        public const string VERSION = "v1.0.1";
+
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         public static DisplayMode[] resolutions;
@@ -29,6 +32,7 @@ namespace ASCII_FPS
 
         private enum GameState { MainMenu, Tutorial, Options, Game }
         private GameState gameState = GameState.MainMenu;
+        private MainMenuGroup menuGroup;
 
         // Content
         public static SpriteFont font;
@@ -74,6 +78,28 @@ namespace ASCII_FPS
             console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
             hud = new HUD(this, console);
+            menuGroup = new MainMenuGroup()
+            {
+                NewGame = () =>
+                {
+                    ResetGame();
+                    gameState = GameState.Game;
+                },
+                LoadGame = () =>
+                {
+                    LoadGame();
+                    gameState = GameState.Game;
+                },
+                ExitGame = Exit,
+                ChangeFullScreen = ChangeFullScreen,
+                ChangeResolution = (int id) =>
+                {
+                    ChangeResolution(resolutions[id].Width, resolutions[id].Height);
+                },
+                ContinueEntryPred = () => { return !SaveExists; },
+                SaveOptions = () => { GameSave.SaveOptions(graphics); }
+            };
+            menuGroup.Init();
 
             base.Initialize();
         }
@@ -108,7 +134,6 @@ namespace ASCII_FPS
             theme.Play();
 
             SaveExists = File.Exists("./scene.sav");
-            hud.option = SaveExists ? 0 : 1;
         }
         
         protected override void UnloadContent()
@@ -123,9 +148,7 @@ namespace ASCII_FPS
             int charsY = (int)Math.Floor((double)resY / Console.FONT_SIZE);
             console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
-            int opt = hud.option;
             hud = new HUD(this, console);
-            hud.option = opt;
             graphics.PreferredBackBufferWidth = resX;
             graphics.PreferredBackBufferHeight = resY;
             graphics.ApplyChanges();
@@ -199,7 +222,7 @@ namespace ASCII_FPS
                         GameSave.SaveGame(this);
                         SaveExists = true;
                     }
-                    hud.option = SaveExists ? 0 : 1;
+                    menuGroup.ToggleMainMenu();
                     gameState = GameState.MainMenu;
                 }
 
@@ -245,139 +268,7 @@ namespace ASCII_FPS
             }
             else if (gameState == GameState.MainMenu)
             {
-                if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
-                {
-                    hud.option = (hud.option + 1) % 4;
-                    if (!SaveExists && hud.option == 0)
-                        hud.option = 1;
-                }
-                if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
-                {
-                    hud.option = (hud.option + 3) % 4;
-                    if (!SaveExists && hud.option == 0)
-                        hud.option = 3;
-                }
-                if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
-                {
-                    if (hud.option == 0)
-                    {
-                        LoadGame();
-                        gameState = GameState.Game;
-                    }
-                    else if (hud.option == 1)
-                        gameState = GameState.Tutorial;
-                    else if (hud.option == 2)
-                        gameState = GameState.Options;
-                    else if (hud.option == 3)
-                        Exit();
-
-                    hud.option = 0;
-                    hud.submenu = 0;
-                }
-            }
-            else if (gameState == GameState.Tutorial)
-            {
-                if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
-                {
-                    ResetGame();
-                    
-                    gameState = GameState.Game;
-                }
-                else if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
-                {
-                    gameState = GameState.MainMenu;
-                }
-            }
-            else if (gameState == GameState.Options)
-            {
-                if (hud.submenu == 0)
-                {
-                    if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
-                    {
-                        hud.option = (hud.option + 1) % (resolutions.Length + 3);
-                    }
-                    if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
-                    {
-                        hud.option = (hud.option + resolutions.Length + 2) % (resolutions.Length + 3);
-                    }
-                    if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
-                    {
-                        if (hud.option == 0)
-                        {
-                            GameSave.SaveOptions(graphics);
-                            gameState = GameState.MainMenu;
-                            hud.option = SaveExists ? 0 : 1;
-                        }
-                        else if (hud.option == 1)
-                        {
-                            hud.submenu = 1;
-                            hud.option = 0;
-                        }
-                        else if (hud.option == 2)
-                        {
-                            ChangeFullScreen();
-                        }
-                        else
-                        {
-                            ChangeResolution(resolutions[hud.option - 3].Width, resolutions[hud.option - 3].Height);
-                        }
-                    }
-                    if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
-                    {
-                        GameSave.SaveOptions(graphics);
-                        gameState = GameState.MainMenu;
-                        hud.option = SaveExists ? 0 : 1;
-                    }
-                }
-                else
-                {
-                    if (hud.selected == 0)
-                    {
-                        if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
-                        {
-                            hud.option = (hud.option + 1) % 11;
-                        }
-                        if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
-                        {
-                            hud.option = (hud.option + 10) % 11;
-                        }
-                        if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
-                        {
-                            if (hud.option == 0)
-                            {
-                                hud.submenu = 0;
-                            }
-                            else
-                            {
-                                hud.selected = hud.option;
-                            }
-                        }
-                        if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
-                        {
-                            hud.option = 0;
-                            hud.submenu = 0;
-                        }
-                    }
-                    else
-                    {
-                        Keys[] keys = keyboard.GetPressedKeys();
-                        if (keys.Length > 0 && !keyboardPrev.IsKeyDown(keys[0]))
-                        {
-                            if (hud.selected == 1) Keybinds.forward = keys[0];
-                            else if (hud.selected == 2) Keybinds.backwards = keys[0];
-                            else if (hud.selected == 3) Keybinds.turnLeft = keys[0];
-                            else if (hud.selected == 4) Keybinds.turnRight = keys[0];
-                            else if (hud.selected == 5) Keybinds.strafeLeft = keys[0];
-                            else if (hud.selected == 6) Keybinds.strafeRight = keys[0];
-                            else if (hud.selected == 7) Keybinds.sprint = keys[0];
-                            else if (hud.selected == 8) Keybinds.fire = keys[0];
-                            else if (hud.selected == 9) Keybinds.action = keys[0];
-                            else if (hud.selected == 10) Keybinds.skills = keys[0];
-
-                            hud.selected = 0;
-                        }
-                    }
-                }
+                menuGroup.Update(keyboard, keyboardPrev);
             }
 
             keyboardPrev = keyboard;
@@ -406,15 +297,7 @@ namespace ASCII_FPS
             }
             else if (gameState == GameState.MainMenu)
             {
-                hud.MainMenu();
-            }
-            else if (gameState == GameState.Tutorial)
-            {
-                hud.Tutorial();
-            }
-            else if (gameState == GameState.Options)
-            {
-                hud.Options();
+                menuGroup.Draw(console);
             }
 
             base.Update(gameTime);
