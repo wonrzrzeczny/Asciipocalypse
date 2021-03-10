@@ -127,8 +127,8 @@ namespace ASCII_FPS
         // Clipping triangles with near, left and right plane - warning, very ugly code ahead
         public List<Triangle> ClipTriangles(List<Triangle> triangles, Camera camera)
         {
-            Vector3[] planeNormals = new Vector3[] { camera.LeftPlane, -Vector3.Forward, camera.RightPlane };
-            Vector3[] planeOffsets = new Vector3[] { Vector3.Zero, -camera.Near * Vector3.Forward, Vector3.Zero };
+            Vector3[] planeNormals = new Vector3[] { camera.LeftPlane, -Vector3.Forward, camera.RightPlane, camera.BottomPlane, camera.TopPlane };
+            Vector3[] planeOffsets = new Vector3[] { Vector3.Zero, -camera.Near * Vector3.Forward, Vector3.Zero, Vector3.Zero, Vector3.Zero };
 
             List<Triangle> trianglesIn = new List<Triangle>(triangles);
             for (int i = 0; i < planeNormals.Length; i++)
