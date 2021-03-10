@@ -112,15 +112,15 @@ namespace ASCII_FPS.UI
         {
             tutorialMenu.AddEntry(new MenuEntry(12, "Controls", UIUtils.colorWhite));
 
-            tutorialMenu.AddEntry(new MenuEntry(16, "Walk forward / backwards - " + Keybinds.forward + " / " + Keybinds.backwards, UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(18, "Turn left / right - " + Keybinds.turnLeft + " / " + Keybinds.turnRight, UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(20, "Strafe left / right - " + Keybinds.strafeLeft + " / " + Keybinds.strafeRight, UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(22, "Hold " + Keybinds.sprint + " - faster movement", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(24, "Hold " + Keybinds.fire + " - shoot", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(26, Keybinds.action + " - use barrel / ladder", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(28, Keybinds.skills + " - skill menu", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(30, "1/2/3/4 - upgrade skill", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(32, "Escape - pause game", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(16, () => "Walk forward / backwards - " + Keybinds.forward + " / " + Keybinds.backwards, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(18, () => "Turn left / right - " + Keybinds.turnLeft + " / " + Keybinds.turnRight, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(20, () => "Strafe left / right - " + Keybinds.strafeLeft + " / " + Keybinds.strafeRight, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(22, () => "Hold " + Keybinds.sprint + " - faster movement", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(24, () => "Hold " + Keybinds.fire + " - shoot", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(26, () => Keybinds.action + " - use barrel / ladder", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(28, () => Keybinds.skills + " - skill menu", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(30, () => "1/2/3/4 - upgrade skill", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(32, () => "Escape - pause game", UIUtils.colorWhite));
 
             tutorialMenu.AddEntry(new MenuEntry(36, "To progress you must kill at least half of the monsters on the floor", UIUtils.colorWhite));
 

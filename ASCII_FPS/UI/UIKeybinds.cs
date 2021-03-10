@@ -73,7 +73,8 @@ namespace ASCII_FPS.UI
             UIUtils.Text(console, c, 12, "Back", option == 0 ? UIUtils.colorLightBlue : UIUtils.colorGray);
             for (int i = 0; i < fields.Length; i++)
             {
-                string text = fields[i].Name + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : fields[i].GetValue(null));
+                string keyName = fields[i].GetCustomAttribute<KeyNameAttribute>().Name;
+                string text = keyName + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : fields[i].GetValue(null));
                 byte color = option == i + 1 ? UIUtils.colorLightBlue : UIUtils.colorGray;
                 UIUtils.Text(console, c, 16 + 2 * i, text, color);
             }
