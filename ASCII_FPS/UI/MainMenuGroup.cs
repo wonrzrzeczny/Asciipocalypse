@@ -11,7 +11,7 @@ namespace ASCII_FPS.UI
 
         private readonly UICollection mainTab;
         private readonly UIMenu mainMenu;
-        private readonly UIMenu optionsMenu;
+        private readonly UICollection optionsTab;
         private readonly UIMenu tutorialMenu;
         private readonly UIKeybinds keybindsMenu;
 
@@ -29,7 +29,7 @@ namespace ASCII_FPS.UI
         {
             mainTab = new UICollection();
             mainMenu = new UIMenu();
-            optionsMenu = new UIMenu();
+            optionsTab = new UICollection();
             tutorialMenu = new UIMenu();
             keybindsMenu = new UIKeybinds();
 
@@ -66,7 +66,7 @@ namespace ASCII_FPS.UI
             };
             mainMenu.AddEntry(continueEntry);
             mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
-            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsTab); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
 
             mainTab.AddElement(mainMenu);
@@ -87,6 +87,8 @@ namespace ASCII_FPS.UI
 
         private void InitOptionsMenu()
         {
+            UIMenu optionsMenu = new UIMenu();
+
             // Options main
             optionsMenu.AddEntry(new MenuEntry(
                 12, "Back to main menu", () => { uiStack.Pop(); SaveOptions.Invoke(); }, UIUtils.colorGray, UIUtils.colorLightBlue
@@ -95,6 +97,10 @@ namespace ASCII_FPS.UI
             optionsMenu.AddEntry(new MenuEntry(18, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
 
             optionsMenu.AddEntry(new MenuEntry(22, "Resolution", UIUtils.colorWhite));
+
+            UIPosition resolutionsStart = new UIPosition(new Point(0, 24));
+            UIPosition resolutionsEnd = new UIPosition(Vector2.One, new Point(0, -6));
+            UIMenu resolutionsMenu = new UIMenu(resolutionsStart, resolutionsEnd);
             for (int i = 0; i < ASCII_FPS.resolutions.Length; i++)
             {
                 int resX = ASCII_FPS.resolutions[i].Width;
@@ -102,8 +108,16 @@ namespace ASCII_FPS.UI
                 string line = resX + " x " + resY;
                 if (resX == 1920 && resY == 1080) line += " (recommended)";
                 int j = i; // manual closure :D
-                optionsMenu.AddEntry(new MenuEntry(24 + 2 * i, line, () => { ChangeResolution(j); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+                resolutionsMenu.AddEntry(new MenuEntry(24 + 2 * i, line, () => { ChangeResolution(j); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             }
+
+            optionsMenu.MoveBeforeFirstBehaviour = () => { optionsTab.PreviousTab(); resolutionsMenu.MoveToLast(); };
+            optionsMenu.MovePastLastBehaviour = () => { optionsTab.NextTab(); resolutionsMenu.MoveToFirst(); };
+            resolutionsMenu.MoveBeforeFirstBehaviour = () => { optionsTab.PreviousTab(); optionsMenu.MoveToLast(); };
+            resolutionsMenu.MovePastLastBehaviour = () => { optionsTab.NextTab(); optionsMenu.MoveToFirst(); };
+            optionsTab.AddElement(optionsMenu);
+            optionsTab.AddElement(resolutionsMenu);
+
 
             keybindsMenu.BackAction = uiStack.Pop;
         }

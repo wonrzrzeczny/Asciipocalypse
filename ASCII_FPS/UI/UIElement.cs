@@ -6,5 +6,7 @@ namespace ASCII_FPS.UI
     {
         public abstract void Draw(Console console);
         public abstract void Update(KeyboardState keyboard, KeyboardState keyboardPrev);
+
+        public bool IsActive { get; set; } = true;
     }
 }

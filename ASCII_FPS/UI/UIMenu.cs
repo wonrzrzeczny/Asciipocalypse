@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 
@@ -7,22 +8,13 @@ namespace ASCII_FPS.UI
 {
     public class UIMenu : UIElement
     {
-        private readonly UIPosition boundsStart;
-        private readonly UIPosition boundsEnd;
-        private readonly List<MenuEntry> entries;
-        private int option = 0;
+        protected readonly UIPosition boundsStart;
+        protected readonly UIPosition boundsEnd;
+        protected readonly List<MenuEntry> entries;
+        protected int option = 0;
 
-        public MenuEntry SelectedEntry
-        {
-            get
-            {
-                if (entries.Count == 0)
-                {
-                    return null;
-                }
-                return entries[option];
-            }
-        }
+        public Action MovePastLastBehaviour { get; set; }
+        public Action MoveBeforeFirstBehaviour { get; set; }
 
 
         public UIMenu(UIPosition boundsStart, UIPosition boundsEnd)
@@ -30,6 +22,8 @@ namespace ASCII_FPS.UI
             this.boundsStart = boundsStart;
             this.boundsEnd = boundsEnd;
             entries = new List<MenuEntry>();
+            MovePastLastBehaviour = MoveToFirst;
+            MoveBeforeFirstBehaviour = MoveToLast;
         }
 
         public UIMenu() : this(UIPosition.TopLeft, UIPosition.BottomRight) { }
@@ -37,26 +31,47 @@ namespace ASCII_FPS.UI
 
         public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
         {
-            while (entries[option].IsHidden || !entries[option].IsCallable)
+            if (!IsActive)
             {
-                option = (option + 1) % entries.Count;
+                return;
+            }
+
+            if (entries[option].IsHidden || !entries[option].IsCallable)
+            {
+                int? next = GetNextSlot(option);
+                if (next == null)
+                {
+                    option = GetPreviousSlot(option).Value;
+                }
+                else
+                {
+                    option = next.Value;
+                }
             }
 
             if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
             {
-                do
+                int? next = GetNextSlot(option);
+                if (next == null)
                 {
-                    option = (option + 1) % entries.Count;
+                    MovePastLastBehaviour.Invoke();
                 }
-                while (entries[option].IsHidden || !entries[option].IsCallable);
+                else
+                {
+                    option = next.Value;
+                }
             }
             else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
             {
-                do
+                int? prev = GetPreviousSlot(option);
+                if (prev == null)
                 {
-                    option = (option + entries.Count - 1) % entries.Count;
+                    MoveBeforeFirstBehaviour.Invoke();
                 }
-                while (entries[option].IsHidden || !entries[option].IsCallable);
+                else
+                {
+                    option = prev.Value;
+                }
             }
             else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
             {
@@ -81,7 +96,7 @@ namespace ASCII_FPS.UI
             {
                 if (!entry.IsHidden)
                 {
-                    byte color = entry == entries[option] ? entry.ColorSelected : entry.Color;
+                    byte color = (IsActive && entry == entries[option]) ? entry.ColorSelected : entry.Color;
                     UIUtils.Text(console, c, entry.Position, entry.Text, color);
                 }
             }
@@ -110,6 +125,37 @@ namespace ASCII_FPS.UI
             {
                 option = (option + entries.Count - 1) % entries.Count;
             }
+        }
+
+
+        private int? GetNextSlot(int position)
+        {
+            do
+            {
+                position++;
+                if (position == entries.Count)
+                {
+                    return null;
+                }
+            }
+            while (entries[position].IsHidden || !entries[position].IsCallable);
+            
+            return position;
+        }
+
+        private int? GetPreviousSlot(int position)
+        {
+            do
+            {
+                position--;
+                if (position == -1)
+                {
+                    return null;
+                }
+            }
+            while (entries[position].IsHidden || !entries[position].IsCallable);
+
+            return position;
         }
     }
 }
