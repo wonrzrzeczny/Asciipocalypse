@@ -22,6 +22,9 @@ namespace ASCII_FPS.GameComponents
         public void PickUp(PlayerStats playerStats)
         {
             Destroy = true;
+            Game.PlayerStats.totalBarrels++;
+            Achievements.UnlockLeveled("Barrel", Game.PlayerStats.totalBarrels);
+
             Scene.Collectibles[roomX, roomY] = null;
             switch (type)
             {

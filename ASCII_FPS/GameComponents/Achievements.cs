@@ -30,23 +30,23 @@ namespace ASCII_FPS.GameComponents
         {
             progress = new Dictionary<string, Entry>
             {
-                ["Level 1"] = new Entry("Reach floor 2 of the dungeon"),
-                ["Level 2"] = new Entry("Reach floor 3 of the dungeon"),
-                ["Level 3"] = new Entry("Reach floor 4 of the dungeon"),
-                ["Level 4"] = new Entry("Reach floor 5 of the dungeon"),
-                ["Level 10"] = new Entry("Reach floor 11 of the dungeon"),
-                ["Level 15"] = new Entry("Reach floor 16 of the dungeon"),
-                ["Level 20"] = new Entry("Reach floor 21 of the dungeon"),
+                ["Level 2"] = new Entry("Reach floor 2 of the dungeon"),
+                ["Level 3"] = new Entry("Reach floor 3 of the dungeon"),
+                ["Level 4"] = new Entry("Reach floor 4 of the dungeon"),
+                ["Level 5"] = new Entry("Reach floor 5 of the dungeon"),
+                ["Level 11"] = new Entry("Reach floor 11 of the dungeon"),
+                ["Level 16"] = new Entry("Reach floor 16 of the dungeon"),
+                ["Level 21"] = new Entry("Reach floor 21 of the dungeon"),
 
                 ["100% 5"] = new Entry("100% clear floors 1 - 5 (all monsters + all pickups)"),
-                ["100% 10"] = new Entry("100% clear floor 1 - 10 (all monsters + all pickups)"),
-                ["100% 15"] = new Entry("100% clear floor 1 - 15 (all monsters + all pickups)"),
-                ["100% 20"] = new Entry("100% clear floor 1 - 20 (all monsters + all pickups)"),
+                ["100% 10"] = new Entry("100% clear floors 1 - 10 (all monsters + all pickups)"),
+                ["100% 15"] = new Entry("100% clear floors 1 - 15 (all monsters + all pickups)"),
+                ["100% 20"] = new Entry("100% clear floors 1 - 20 (all monsters + all pickups)"),
 
-                ["Barrel 5"] = new Entry("Pick up 5 bonuses during a single run"),
-                ["Barrel 12"] = new Entry("Pick up 12 bonuses during a single run"),
+                ["Barrel 10"] = new Entry("Pick up 10 bonuses during a single run"),
                 ["Barrel 25"] = new Entry("Pick up 25 bonuses during a single run"),
                 ["Barrel 50"] = new Entry("Pick up 50 bonuses during a single run"),
+                ["Barrel 100"] = new Entry("Pick up 100 bonuses during a single run"),
 
                 ["Monster 50"] = new Entry("Defeat 50 monsters during a sinle run"),
                 ["Monster 100"] = new Entry("Defeat 100 monsters during a sinle run"),
@@ -71,10 +71,10 @@ namespace ASCII_FPS.GameComponents
                 ["AP 25"] = new Entry("Upgrade your armor protection to level 25"),
                 ["AP 35"] = new Entry("Max out your armor protection"),
 
-                ["Speed 2"] = new Entry("Upgrade your shoot speed to level 2"),
-                ["Speed 5"] = new Entry("Upgrade your shoot speed to level 5"),
-                ["Speed 10"] = new Entry("Upgrade your shoot speed to level 10"),
-                ["Speed 25"] = new Entry("Upgrade your shoot speed to level 25"),
+                ["Speed 2"] = new Entry("Upgrade your shooting speed to level 2"),
+                ["Speed 5"] = new Entry("Upgrade your shooting speed to level 5"),
+                ["Speed 10"] = new Entry("Upgrade your shooting speed to level 10"),
+                ["Speed 25"] = new Entry("Upgrade your shooting speed to level 25"),
             };
 
             Read();
@@ -85,6 +85,15 @@ namespace ASCII_FPS.GameComponents
         {
             progress[key].Progress = 1;
             Write();
+        }
+
+        public static void UnlockLeveled(string key, int level)
+        {
+            string fullKey = key + " " + level;
+            if (progress.ContainsKey(fullKey))
+            {
+                Unlock(fullKey);
+            }
         }
 
         public static List<Entry> Entries { get { return progress.Values.ToList(); } }

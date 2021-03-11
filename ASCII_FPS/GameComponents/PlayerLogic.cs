@@ -84,6 +84,26 @@ namespace ASCII_FPS.GameComponents
                 if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
                     && 2 * playerStats.monsters >= playerStats.totalMonsters)
                 {
+                    if (playerStats.monsters < playerStats.totalMonsters)
+                    {
+                        playerStats.fullClear = false;
+                    }
+                    foreach (Collectible.Type? collectible in scene.Collectibles)
+                    {
+                        if (collectible != null)
+                        {
+                            playerStats.fullClear = false;
+                        }
+                    }
+
+                    playerStats.floor++;
+                    Achievements.UnlockLeveled("Level", playerStats.floor);
+
+                    if (playerStats.fullClear)
+                    {
+                        Achievements.UnlockLeveled("100%", playerStats.floor - 1);
+                    }
+
                     return true;
                 }
                 else
@@ -114,6 +134,7 @@ namespace ASCII_FPS.GameComponents
                     playerStats.skillMaxHealth++;
                     playerStats.maxHealth += 20f;
                     playerStats.AddHealth(20f);
+                    Achievements.UnlockLeveled("HP", playerStats.skillMaxHealth);
                 }
                 else if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
                 {
@@ -121,17 +142,20 @@ namespace ASCII_FPS.GameComponents
                     playerStats.skillMaxArmor++;
                     playerStats.maxArmor += 20f;
                     playerStats.AddArmor(20f);
+                    Achievements.UnlockLeveled("Armor", playerStats.skillMaxArmor);
                 }
                 else if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
                 {
                     playerStats.skillPoints--;
                     playerStats.skillArmorProtection++;
                     playerStats.armorProtection += 0.02f;
+                    Achievements.UnlockLeveled("AP", playerStats.skillArmorProtection);
                 }
                 else if (keyboard.IsKeyDown(Keys.D4) && !keyboardPrev.IsKeyDown(Keys.D4))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillShootingSpeed++;
+                    Achievements.UnlockLeveled("Speed", playerStats.skillShootingSpeed);
                 }
             }
 

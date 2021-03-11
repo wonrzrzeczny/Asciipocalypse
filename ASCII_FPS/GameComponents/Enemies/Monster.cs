@@ -70,6 +70,8 @@ namespace ASCII_FPS.GameComponents.Enemies
             {
                 Game.PlayerStats.monsters++;
                 Game.PlayerStats.totalMonstersKilled++;
+                Achievements.UnlockLeveled("Monster", Game.PlayerStats.totalMonstersKilled);
+
                 Destroy = true;
             }
 

@@ -31,6 +31,8 @@ namespace ASCII_FPS.GameComponents
         public int totalMonsters;
         public int monsters;
         public int totalMonstersKilled;
+        public bool fullClear = true;
+        public int totalBarrels;
         public Vector2 exitPosition;
 
         public void Save(BinaryWriter writer)
@@ -52,6 +54,8 @@ namespace ASCII_FPS.GameComponents
             writer.Write(totalMonsters);
             writer.Write(monsters);
             writer.Write(totalMonstersKilled);
+            writer.Write(fullClear);
+            writer.Write(totalBarrels);
             GameSave.WriteVector2(writer, exitPosition);
         }
 
@@ -74,8 +78,10 @@ namespace ASCII_FPS.GameComponents
             totalMonsters = reader.ReadInt32();
             monsters = reader.ReadInt32();
             totalMonstersKilled = reader.ReadInt32();
-            exitPosition = GameSave.ReadVector2(reader);
+            fullClear = reader.ReadBoolean();
+            totalBarrels = reader.ReadInt32();
 
+            exitPosition = GameSave.ReadVector2(reader);
         }
 
 

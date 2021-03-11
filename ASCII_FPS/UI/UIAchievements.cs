@@ -59,13 +59,14 @@ namespace ASCII_FPS.UI
 
             int xleft = console.Width / 5;
 
-            UIUtils.Text(console, console.Width / 2, 8, "Achievements - " + unlocked + " unlocked out of " + total, UIUtils.colorWhite);
-            UIUtils.Text(console, console.Width / 2, 12, "Back", UIUtils.colorLightBlue);
+            UIUtils.Text(console, console.Width / 2, 8, "Back", UIUtils.colorLightBlue);
             for (int i = offset; i < total && i < offset + limit; i++)
             {
                 byte color = achievements[i].Progress == 1 ? UIUtils.colorLightGray : UIUtils.colorDarkGray;
-                UIUtils.Text(console, xleft, 16 + 2 * (i - offset), achievements[i].Description, color, UIAlignment.Left);
+                UIUtils.Text(console, xleft, 14 + 2 * (i - offset), achievements[i].Description, color, UIAlignment.Left);
             }
+
+            UIUtils.Text(console, console.Width / 2, console.Height - 6, unlocked + " unlocked out of " + total, UIUtils.colorWhite);
         }
     }
 }

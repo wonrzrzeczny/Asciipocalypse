@@ -171,13 +171,7 @@ namespace ASCII_FPS
                 armorProtection = 0.3f,
                 dead = false,
                 hit = false,
-                floor = 1,
-                skillPoints = 0,
-                skillMaxHealth = 0,
-                skillMaxArmor = 0,
-                skillArmorProtection = 0,
-                skillShootingSpeed = 0,
-                totalMonstersKilled = 0
+                floor = 1
             };
 
             Scene = new SceneGenerator(this, 1).Generate();
@@ -229,8 +223,6 @@ namespace ASCII_FPS
                 if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
                 {
                     theme.Play();
-                    PlayerStats.floor++;
-
                     Scene = new SceneGenerator(this, PlayerStats.floor).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     hud.Scene = Scene;
