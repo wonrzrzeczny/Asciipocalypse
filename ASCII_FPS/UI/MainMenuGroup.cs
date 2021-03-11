@@ -14,6 +14,7 @@ namespace ASCII_FPS.UI
         private readonly UICollection optionsTab;
         private readonly UIMenu tutorialMenu;
         private readonly UIKeybinds keybindsMenu;
+        private readonly UIAchievements achievementsMenu;
 
         public Action LoadGame { private get; set; }
         public Action NewGame { private get; set; }
@@ -32,6 +33,7 @@ namespace ASCII_FPS.UI
             optionsTab = new UICollection();
             tutorialMenu = new UIMenu();
             keybindsMenu = new UIKeybinds();
+            achievementsMenu = new UIAchievements();
 
             uiStack = new UIStack(mainTab);
         }
@@ -41,6 +43,9 @@ namespace ASCII_FPS.UI
             InitMainMenu();
             InitOptionsMenu();
             InitTutorialMenu();
+
+            keybindsMenu.BackAction = uiStack.Pop;
+            achievementsMenu.BackAction = uiStack.Pop;
         }
 
 
@@ -66,8 +71,9 @@ namespace ASCII_FPS.UI
             };
             mainMenu.AddEntry(continueEntry);
             mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
-            mainMenu.AddEntry(new MenuEntry(34, "Options", () => { uiStack.Push(optionsTab); }, UIUtils.colorGray, UIUtils.colorLightBlue));
-            mainMenu.AddEntry(new MenuEntry(36, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(34, "Achievements", () => { uiStack.Push(achievementsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(36, "Options", () => { uiStack.Push(optionsTab); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(38, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
 
             mainTab.AddElement(mainMenu);
             mainTab.AddElement(logo);
@@ -117,9 +123,6 @@ namespace ASCII_FPS.UI
             resolutionsMenu.MovePastLastBehaviour = () => { optionsTab.NextTab(); optionsMenu.MoveToFirst(); };
             optionsTab.AddElement(optionsMenu);
             optionsTab.AddElement(resolutionsMenu);
-
-
-            keybindsMenu.BackAction = uiStack.Pop;
         }
 
         private void InitTutorialMenu()

@@ -9,6 +9,7 @@ namespace ASCII_FPS.UI
     {
         public static readonly byte colorRed = Mathg.ColorTo8Bit(Color.Red.ToVector3());
         public static readonly byte colorBlack = Mathg.ColorTo8Bit(Color.Black.ToVector3());
+        public static readonly byte colorDarkGray = Mathg.ColorTo8Bit(Color.DimGray.ToVector3());
         public static readonly byte colorGray = Mathg.ColorTo8Bit(Color.DarkGray.ToVector3());
         public static readonly byte colorLightGray = Mathg.ColorTo8Bit(Color.LightGray.ToVector3());
         public static readonly byte colorWhite = Mathg.ColorTo8Bit(Color.White.ToVector3());

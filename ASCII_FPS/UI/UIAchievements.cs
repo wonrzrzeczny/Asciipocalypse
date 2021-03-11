@@ -1,0 +1,71 @@
+﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ASCII_FPS.UI
+{
+    public class UIAchievements : UIElement
+    {
+        private int offset = 0;
+
+        public Action BackAction { private get; set; }
+
+
+        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        {
+            if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+            {
+                BackAction.Invoke();
+            }
+            else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+            {
+                offset--;
+            }
+            else if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+            {
+                offset++;
+            }
+        }
+
+        public override void Draw(Console console)
+        {
+            for (int x = 0; x < console.Width; x++)
+            {
+                for (int y = 0; y < console.Height; y++)
+                {
+                    console.Data[x, y] = ' ';
+                }
+            }
+
+            List<Achievements.Entry> achievements = Achievements.Entries;
+            achievements.Sort(new Comparison<Achievements.Entry>(
+                (Achievements.Entry e1, Achievements.Entry e2) =>
+                {
+                    if (e1.Progress == e2.Progress)
+                    {
+                        return e1.ID.CompareTo(e2.ID);
+                    }
+                    return e2.Progress.CompareTo(e1.Progress);
+                }
+            ));
+
+            int limit = (console.Height - 22) / 2;
+            offset = Math.Clamp(offset, 0, achievements.Count - limit);
+
+            int unlocked = achievements.Count((Achievements.Entry e) => e.Progress == 1);
+            int total = achievements.Count;
+
+            int xleft = console.Width / 5;
+
+            UIUtils.Text(console, console.Width / 2, 8, "Achievements - " + unlocked + " unlocked out of " + total, UIUtils.colorWhite);
+            UIUtils.Text(console, console.Width / 2, 12, "Back", UIUtils.colorLightBlue);
+            for (int i = offset; i < total && i < offset + limit; i++)
+            {
+                byte color = achievements[i].Progress == 1 ? UIUtils.colorLightGray : UIUtils.colorDarkGray;
+                UIUtils.Text(console, xleft, 16 + 2 * (i - offset), achievements[i].Description, color, UIAlignment.Left);
+            }
+        }
+    }
+}
