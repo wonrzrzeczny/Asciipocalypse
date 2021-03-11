@@ -91,7 +91,7 @@ namespace ASCII_FPS.UI
                 }
             }
 
-            int c = (end.X - start.X + 1) / 2;
+            int c = (end.X + start.X) / 2;
             foreach (MenuEntry entry in entries)
             {
                 if (!entry.IsHidden)

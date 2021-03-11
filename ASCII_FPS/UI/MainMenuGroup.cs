@@ -100,7 +100,7 @@ namespace ASCII_FPS.UI
 
             UIPosition resolutionsStart = new UIPosition(new Point(0, 24));
             UIPosition resolutionsEnd = new UIPosition(Vector2.One, new Point(0, -6));
-            UIMenu resolutionsMenu = new UIMenu(resolutionsStart, resolutionsEnd);
+            UIMenu resolutionsMenu = new UIScrollMenu(resolutionsStart, resolutionsEnd);
             for (int i = 0; i < ASCII_FPS.resolutions.Length; i++)
             {
                 int resX = ASCII_FPS.resolutions[i].Width;
