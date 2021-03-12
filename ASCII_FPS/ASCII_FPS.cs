@@ -39,7 +39,7 @@ namespace ASCII_FPS
         public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, projectileTexture, projectile2Texture, exitTexture;
         public static AsciiTexture monsterTexture, shotgunDudeTexture, spinnyBoiTexture, spooperTexture;
         public static OBJFile barrelModel, exitModel, spooperModel;
-        public static SoundEffect tsch, oof, ouch, theme;
+        public static SoundEffect tsch, oof, ouch, theme, btsch, beep;
 
         // DEBUG
         public static bool enableDebug = false;
@@ -131,6 +131,9 @@ namespace ASCII_FPS
             oof = Content.Load<SoundEffect>("audio/oof");
             ouch = Content.Load<SoundEffect>("audio/ouch");
             theme = Content.Load<SoundEffect>("audio/theme");
+            btsch = Content.Load<SoundEffect>("audio/btsch");
+            beep = Content.Load<SoundEffect>("audio/beep");
+
             theme.Play();
 
             SaveExists = File.Exists("./scene.sav");

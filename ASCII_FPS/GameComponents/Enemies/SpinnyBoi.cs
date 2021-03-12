@@ -22,7 +22,7 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected override void Attack(Vector3 towardsTarget)
         {
             counter++;
-            ASCII_FPS.tsch.Play();
+            ASCII_FPS.btsch.Play();
             float dispersion = (float)Math.Atan(0.75f);
             for (int i = 0; i < 16; i++)
             {
