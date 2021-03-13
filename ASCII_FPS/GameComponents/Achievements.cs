@@ -81,18 +81,22 @@ namespace ASCII_FPS.GameComponents
         }
 
 
-        public static void Unlock(string key)
+        public static void Unlock(string key, HUD hud)
         {
-            progress[key].Progress = 1;
-            Write();
+            if (progress[key].Progress == 0)
+            {
+                hud.AddNotification("You've unlocked an achievement!");
+                progress[key].Progress = 1;
+                Write();
+            }
         }
 
-        public static void UnlockLeveled(string key, int level)
+        public static void UnlockLeveled(string key, int level, HUD hud)
         {
             string fullKey = key + " " + level;
             if (progress.ContainsKey(fullKey))
             {
-                Unlock(fullKey);
+                Unlock(fullKey, hud);
             }
         }
 

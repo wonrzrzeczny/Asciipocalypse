@@ -1,6 +1,7 @@
 ﻿using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace ASCII_FPS.GameComponents
 {
@@ -17,7 +18,11 @@ namespace ASCII_FPS.GameComponents
         private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
         private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
 
-        public string Notification { get; set; } = "";
+        private readonly Queue<string> notifications = new Queue<string>();
+        private float notificationTimer = 0f;
+
+
+        public string Hint { get; set; } = "";
 
         public HUD(ASCII_FPS game, Console console)
         {
@@ -31,73 +36,21 @@ namespace ASCII_FPS.GameComponents
         public static bool skillPointMenu;
 
 
-        private void LineHorizontal(int y, int left, int right, byte color, char data)
+        public void Update(float deltaTime)
         {
-            if (left < 0) left += console.Width;
-            if (right < 0) right += console.Width;
-            if (y < 0) y += console.Height;
-
-            for (int i = left; i <= right; i++)
+            if (notifications.Count > 0)
             {
-                console.Data[i, y] = data;
-                console.Color[i, y] = color;
-            }
-        }
-
-        private void LineVertical(int x, int top, int bottom, byte color, char data)
-        {
-            if (top < 0) top += console.Height;
-            if (bottom < 0) bottom += console.Height;
-            if (x < 0) x += console.Width;
-
-            for (int i = top; i <= bottom; i++)
-            {
-                console.Data[x, i] = data;
-                console.Color[x, i] = color;
-            }
-        }
-
-        private void Border(int left, int top, int right, int bottom, byte color, char data)
-        {
-            LineHorizontal(top, left, right, color, data);
-            LineHorizontal(bottom, left, right, color, data);
-            LineVertical(left, top, bottom, color, data);
-            LineVertical(right, top, bottom, color, data);
-        }
-
-        private void Rectangle(int left, int top, int right, int bottom, byte color, char data)
-        {
-            if (left < 0) left += console.Width;
-            if (right < 0) right += console.Width;
-            if (top < 0) top += console.Height;
-            if (bottom < 0) bottom += console.Height;
-
-            for (int x = left; x <= right; x++)
-            {
-                for (int y = top; y <= bottom; y++)
+                notificationTimer -= deltaTime;
+                if (notificationTimer < 0f)
                 {
-                    console.Data[x, y] = data;
-                    console.Color[x, y] = color;
+                    notifications.Dequeue();
+                    if (notifications.Count > 0)
+                    {
+                        notificationTimer = 5f;
+                    }
                 }
             }
         }
-
-        private void Text(int x, int y, string text, byte color)
-        {
-            if (x < 0) x += console.Width;
-            if (y < 0) y += console.Height;
-
-            int start = x - text.Length / 2;
-            for (int xx = start; xx < start + text.Length; xx++)
-            {
-                if (xx >= 0 && xx < console.Width)
-                {
-                    console.Data[xx, y] = text[xx - start];
-                    console.Color[xx, y] = color;
-                }
-            }
-        }
-
 
         public void Draw()
         {
@@ -126,9 +79,9 @@ namespace ASCII_FPS.GameComponents
             if (armorDots >= barX) Rectangle(-barX - 1, -1 - armorDots / barX, -2, -2, colorForestGreen, '#');
             if (armorDots % barX > 0) Rectangle(-(1 + armorDots % barX), -2 - armorDots / barX, -2, -2 - armorDots / barX, colorForestGreen, '#');
 
-            // Floor + killed monsters + notification + skill points
-            int offset = (skillPointMenu ? 10 : 0) + (Notification != "" ? 2 : 0);
-            int width = Math.Max(30, Notification.Length + 4);
+            // Floor + killed monsters + hint + skill points
+            int offset = (skillPointMenu ? 10 : 0) + (Hint != "" ? 2 : 0);
+            int width = Math.Max(30, Hint.Length + 4);
             Rectangle(console.Width / 2 - width / 2, -7 - offset, console.Width / 2 + width / 2, -1, colorBlack, ' ');
             Border(console.Width / 2 - width / 2, -7 - offset, console.Width / 2 + width / 2, -1, colorGray, '@');
             Text(console.Width / 2, -5 - offset, "Floor " + game.PlayerStats.floor, colorWhite);
@@ -145,9 +98,17 @@ namespace ASCII_FPS.GameComponents
                 Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + game.PlayerStats.skillShootingSpeed, colorWhite);
             }
 
-            if (Notification != "")
+            if (Hint != "")
             {
-                Text(console.Width / 2, -1 - offset, Notification, colorWhite);
+                Text(console.Width / 2, -1 - offset, Hint, colorWhite);
+            }
+
+            // Notifications
+            if (notifications.Count > 0)
+            {
+                Rectangle(console.Width / 2 - 30, 3, console.Width / 2 + 30, 7, colorGray, '@');
+                Rectangle(console.Width / 2 - 29, 4, console.Width / 2 + 29, 6, colorBlack, ' ');
+                Text(console.Width / 2, 5, notifications.Peek(), colorWhite);
             }
         
             // Minimap
@@ -224,6 +185,83 @@ namespace ASCII_FPS.GameComponents
                 Text(console.Width / 2, console.Height / 2, "Monsters killed: " + game.PlayerStats.totalMonstersKilled, colorWhite);
                 Text(console.Width / 2, console.Height / 2 + 4, "Press Esc to return", colorWhite);
                 Text(console.Width / 2, console.Height / 2 + 5, "to the main menu", colorWhite);
+            }
+        }
+
+        public void AddNotification(string text)
+        {
+            if (notifications.Count == 0)
+            {
+                notificationTimer = 5f;
+            }
+            notifications.Enqueue(text);
+        }
+
+
+        private void LineHorizontal(int y, int left, int right, byte color, char data)
+        {
+            if (left < 0) left += console.Width;
+            if (right < 0) right += console.Width;
+            if (y < 0) y += console.Height;
+
+            for (int i = left; i <= right; i++)
+            {
+                console.Data[i, y] = data;
+                console.Color[i, y] = color;
+            }
+        }
+
+        private void LineVertical(int x, int top, int bottom, byte color, char data)
+        {
+            if (top < 0) top += console.Height;
+            if (bottom < 0) bottom += console.Height;
+            if (x < 0) x += console.Width;
+
+            for (int i = top; i <= bottom; i++)
+            {
+                console.Data[x, i] = data;
+                console.Color[x, i] = color;
+            }
+        }
+
+        private void Border(int left, int top, int right, int bottom, byte color, char data)
+        {
+            LineHorizontal(top, left, right, color, data);
+            LineHorizontal(bottom, left, right, color, data);
+            LineVertical(left, top, bottom, color, data);
+            LineVertical(right, top, bottom, color, data);
+        }
+
+        private void Rectangle(int left, int top, int right, int bottom, byte color, char data)
+        {
+            if (left < 0) left += console.Width;
+            if (right < 0) right += console.Width;
+            if (top < 0) top += console.Height;
+            if (bottom < 0) bottom += console.Height;
+
+            for (int x = left; x <= right; x++)
+            {
+                for (int y = top; y <= bottom; y++)
+                {
+                    console.Data[x, y] = data;
+                    console.Color[x, y] = color;
+                }
+            }
+        }
+
+        private void Text(int x, int y, string text, byte color)
+        {
+            if (x < 0) x += console.Width;
+            if (y < 0) y += console.Height;
+
+            int start = x - text.Length / 2;
+            for (int xx = start; xx < start + text.Length; xx++)
+            {
+                if (xx >= 0 && xx < console.Width)
+                {
+                    console.Data[xx, y] = text[xx - start];
+                    console.Color[xx, y] = color;
+                }
             }
         }
     }

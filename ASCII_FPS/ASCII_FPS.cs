@@ -22,12 +22,12 @@ namespace ASCII_FPS
 
         private Console console;
         private Rasterizer rasterizer;
-        private HUD hud;
 
         public bool SaveExists { get; private set; } = false;
 
         public Scene Scene { get; private set; }
         public PlayerStats PlayerStats { get; private set; }
+        public HUD HUD { get; private set; }
         private PlayerLogic playerLogic;
 
         private enum GameState { MainMenu, Tutorial, Options, Game }
@@ -77,7 +77,7 @@ namespace ASCII_FPS
             int charsY = (int)Math.Floor((double)graphics.PreferredBackBufferHeight / Console.FONT_SIZE);
             console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
-            hud = new HUD(this, console);
+            HUD = new HUD(this, console);
             menuGroup = new MainMenuGroup()
             {
                 NewGame = () =>
@@ -151,7 +151,7 @@ namespace ASCII_FPS
             int charsY = (int)Math.Floor((double)resY / Console.FONT_SIZE);
             console = new Console(charsX, charsY);
             rasterizer = new Rasterizer(console);
-            hud = new HUD(this, console);
+            HUD = new HUD(this, console);
             graphics.PreferredBackBufferWidth = resX;
             graphics.PreferredBackBufferHeight = resY;
             graphics.ApplyChanges();
@@ -180,7 +180,7 @@ namespace ASCII_FPS
             Scene = new SceneGenerator(this, 1).Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
-            hud.Scene = Scene;
+            HUD.Scene = Scene;
             playerLogic = new PlayerLogic(this);
         }
 
@@ -188,7 +188,7 @@ namespace ASCII_FPS
         {
             Scene = GameSave.LoadGameScene(this);
             PlayerStats = GameSave.LoadGameStats();
-            hud.Scene = Scene;
+            HUD.Scene = Scene;
             playerLogic = new PlayerLogic(this);
         }
 
@@ -228,37 +228,38 @@ namespace ASCII_FPS
                     theme.Play();
                     Scene = new SceneGenerator(this, PlayerStats.floor).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
-                    hud.Scene = Scene;
+                    HUD.Scene = Scene;
                     Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
                     GameSave.SaveGame(this);
                     playerLogic = new PlayerLogic(this);
                 }
 
-                hud.Notification = "";
+                HUD.Hint = "";
                 if (PlayerStats.skillPoints > 0)
                 {
-                    hud.Notification = "(" + Keybinds.skills + ") Skill points left: " + PlayerStats.skillPoints;
+                    HUD.Hint = "(" + Keybinds.skills + ") Skill points left: " + PlayerStats.skillPoints;
                 }
                 if (Vector3.Distance(Scene.Camera.CameraPos, new Vector3(PlayerStats.exitPosition.X, 0f, PlayerStats.exitPosition.Y)) < 7f)
                 {
                     if (2 * PlayerStats.monsters >= PlayerStats.totalMonsters)
                     {
-                        hud.Notification = "(" + Keybinds.action + ") Next level";
+                        HUD.Hint = "(" + Keybinds.action + ") Next level";
                     }
                     else
                     {
-                        hud.Notification = "Defeat more monsters to progress.";
+                        HUD.Hint = "Defeat more monsters to progress.";
                     }
                 }
                 foreach (GameObject gameObject in Scene.gameObjects)
                 {
                     if (gameObject is Collectible collectible && Vector3.Distance(Scene.Camera.CameraPos, collectible.Position) < 7f)
                     {
-                        hud.Notification = "(" + Keybinds.action + ") Pickup the bonus";
+                        HUD.Hint = "(" + Keybinds.action + ") Pickup the bonus";
                         break;
                     }
                 }
-                    
+
+                HUD.Update(deltaTime);
                 Scene.UpdateGameObjects(deltaTime);
             }
             else if (gameState == GameState.MainMenu)
@@ -288,7 +289,7 @@ namespace ASCII_FPS
             if (gameState == GameState.Game)
             {
                 rasterizer.Raster(Scene);
-                hud.Draw();
+                HUD.Draw();
             }
             else if (gameState == GameState.MainMenu)
             {

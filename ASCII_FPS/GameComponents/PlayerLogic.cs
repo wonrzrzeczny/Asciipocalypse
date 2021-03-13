@@ -97,11 +97,11 @@ namespace ASCII_FPS.GameComponents
                     }
 
                     playerStats.floor++;
-                    Achievements.UnlockLeveled("Level", playerStats.floor);
+                    Achievements.UnlockLeveled("Level", playerStats.floor, game.HUD);
 
                     if (playerStats.fullClear)
                     {
-                        Achievements.UnlockLeveled("100%", playerStats.floor - 1);
+                        Achievements.UnlockLeveled("100%", playerStats.floor - 1, game.HUD);
                     }
 
                     return true;
@@ -134,7 +134,7 @@ namespace ASCII_FPS.GameComponents
                     playerStats.skillMaxHealth++;
                     playerStats.maxHealth += 20f;
                     playerStats.AddHealth(20f);
-                    Achievements.UnlockLeveled("HP", playerStats.skillMaxHealth);
+                    Achievements.UnlockLeveled("HP", playerStats.skillMaxHealth, game.HUD);
                 }
                 else if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
                 {
@@ -142,20 +142,20 @@ namespace ASCII_FPS.GameComponents
                     playerStats.skillMaxArmor++;
                     playerStats.maxArmor += 20f;
                     playerStats.AddArmor(20f);
-                    Achievements.UnlockLeveled("Armor", playerStats.skillMaxArmor);
+                    Achievements.UnlockLeveled("Armor", playerStats.skillMaxArmor, game.HUD);
                 }
                 else if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
                 {
                     playerStats.skillPoints--;
                     playerStats.skillArmorProtection++;
                     playerStats.armorProtection += 0.02f;
-                    Achievements.UnlockLeveled("AP", playerStats.skillArmorProtection);
+                    Achievements.UnlockLeveled("AP", playerStats.skillArmorProtection, game.HUD);
                 }
                 else if (keyboard.IsKeyDown(Keys.D4) && !keyboardPrev.IsKeyDown(Keys.D4))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillShootingSpeed++;
-                    Achievements.UnlockLeveled("Speed", playerStats.skillShootingSpeed);
+                    Achievements.UnlockLeveled("Speed", playerStats.skillShootingSpeed, game.HUD);
                 }
             }
 

@@ -70,7 +70,11 @@ namespace ASCII_FPS.GameComponents.Enemies
             {
                 Game.PlayerStats.monsters++;
                 Game.PlayerStats.totalMonstersKilled++;
-                Achievements.UnlockLeveled("Monster", Game.PlayerStats.totalMonstersKilled);
+                Achievements.UnlockLeveled("Monster", Game.PlayerStats.totalMonstersKilled, Game.HUD);
+                if (Game.PlayerStats.monsters == (int)Math.Ceiling(Game.PlayerStats.totalMonsters / 2f))
+                {
+                    Game.HUD.AddNotification("Next floor has unlocked");
+                }
 
                 Destroy = true;
             }

@@ -23,7 +23,7 @@ namespace ASCII_FPS.GameComponents
         {
             Destroy = true;
             Game.PlayerStats.totalBarrels++;
-            Achievements.UnlockLeveled("Barrel", Game.PlayerStats.totalBarrels);
+            Achievements.UnlockLeveled("Barrel", Game.PlayerStats.totalBarrels, Game.HUD);
 
             Scene.Collectibles[roomX, roomY] = null;
             switch (type)
