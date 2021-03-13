@@ -64,6 +64,11 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         public void DealDamage(float amount)
         {
+            if (Destroy)
+            {
+                return;
+            }
+
             ASCII_FPS.oof.Play();
             health -= amount;
             if (health <= 0f)

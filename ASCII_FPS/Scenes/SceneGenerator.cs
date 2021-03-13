@@ -104,7 +104,7 @@ namespace ASCII_FPS.Scenes
                 {
                     int x = rand.Next(size);
                     int y = rand.Next(size);
-                    if ((x != size / 2 || y != size / 2) && generated[x, y] && scene.Collectibles[x, y] == null)
+                    if ((x != size / 2 || y != size / 2) && (x != exitRoom.X || y != exitRoom.Y) && generated[x, y] && scene.Collectibles[x, y] == null)
                     {
                         scene.Collectibles[x, y] = b < 3 ? Collectible.Type.Skill
                             : b < 5 ? Collectible.Type.Armor : Collectible.Type.Health;
