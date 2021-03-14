@@ -105,7 +105,7 @@ namespace ASCII_FPS.UI
             optionsMenu.AddEntry(new MenuEntry(22, "Resolution", UIUtils.colorWhite));
 
             UIPosition resolutionsStart = new UIPosition(new Point(0, 24));
-            UIPosition resolutionsEnd = new UIPosition(Vector2.One, new Point(0, -6));
+            UIPosition resolutionsEnd = new UIPosition(Vector2.One, new Point(0, -5));
             UIMenu resolutionsMenu = new UIScrollMenu(resolutionsStart, resolutionsEnd);
             for (int i = 0; i < ASCII_FPS.resolutions.Length; i++)
             {

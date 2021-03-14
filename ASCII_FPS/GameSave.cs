@@ -115,7 +115,6 @@ namespace ASCII_FPS
 
                     string key = line[0];
                     string data = line[1];
-                    System.Console.WriteLine(key);
 
                     if (key.StartsWith("Keybind"))
                     {
@@ -126,7 +125,6 @@ namespace ASCII_FPS
                     else switch(key)
                         {
                             case "Resolution Width":
-                                System.Console.WriteLine("Width");
                                 graphics.PreferredBackBufferWidth = int.Parse(data);
                                 break;
                             case "Resolution Height":
