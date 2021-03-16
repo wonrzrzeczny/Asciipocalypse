@@ -6,7 +6,7 @@
 
 Delve deep into the dark dungeon full of terrifying ascii monsters in this roguelike first person shooter game. Level up your character (no pun intended) and make your way down through the floors, that become progressively harder and harder.
 
-Asciipocalypse is my submission for [DOS Games Jam](https://itch.io/jam/dos-games-jam).
+[Asciipocalypse](https://wonrzrzeczny.itch.io/asciipocalypse) is my submission for [DOS Games Jam](https://itch.io/jam/dos-games-jam).
 
 
 The project
@@ -33,4 +33,4 @@ Sound effects created using [Magical 8bit VST plugin](http://www.ymck.net/en/dow
 
 Final remarks
 -------------
-The project started over a year ago and has already been through a major update. However, the game in terms of gameplay still lacks some content. I plan to keep working on the game (as long as I'll find time to do so :) ), to improve the its replay value and to make overall experience more diverse. Therefore, feel free to leave any suggestions for new content/improvements that could be introduced. The same goes for glitches and/or performance issues you've encountered during your play.
+The project started over a year ago and has already been through a major update. However, the game in terms of gameplay still lacks some content. I plan to keep working on the game (as long as I'll find time to do so :) ), to improve its replay value and to make overall experience more diverse. Therefore, feel free to leave any suggestions for new content/improvements that could be introduced. The same goes for glitches and/or performance issues you've encountered during your play.
