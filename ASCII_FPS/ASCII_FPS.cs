@@ -70,6 +70,7 @@ namespace ASCII_FPS
             {
                 graphics.PreferredBackBufferWidth = 1920;
                 graphics.PreferredBackBufferHeight = 1080;
+                graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
             }
 
