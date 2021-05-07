@@ -10,7 +10,7 @@
             int mask = 0;
             foreach (ObstacleLayer layer in layers)
             {
-                mask += 1 << (int)layer;
+                mask |= 1 << (int)layer;
             }
 
             return mask;
