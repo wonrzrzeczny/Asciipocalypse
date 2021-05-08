@@ -81,9 +81,9 @@ namespace ASCII_FPS
             HUD = new HUD(this, console);
             menuGroup = new MainMenuGroup()
             {
-                NewGame = () =>
+                NewGame = (int difficulty) =>
                 {
-                    ResetGame();
+                    ResetGame(difficulty);
                     gameState = GameState.Game;
                 },
                 LoadGame = () =>
@@ -164,10 +164,11 @@ namespace ASCII_FPS
             graphics.ApplyChanges();
         }
 
-        private void ResetGame()
+        private void ResetGame(int difficulty)
         {
             PlayerStats = new PlayerStats
             {
+                difficulty = difficulty,
                 health = 100f,
                 maxHealth = 100f,
                 maxArmor = 100f,

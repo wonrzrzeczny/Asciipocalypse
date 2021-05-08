@@ -11,13 +11,17 @@ namespace ASCII_FPS.UI
 
         private readonly UICollection mainTab;
         private readonly UIMenu mainMenu;
+        private readonly UIMenu difficultySelectionMenu;
         private readonly UICollection optionsTab;
         private readonly UIMenu tutorialMenu;
         private readonly UIKeybinds keybindsMenu;
         private readonly UIAchievements achievementsMenu;
 
+        private int selectedDifficulty = 0;
+
+
         public Action LoadGame { private get; set; }
-        public Action NewGame { private get; set; }
+        public Action<int> NewGame { private get; set; }
         public Action ExitGame { private get; set; }
         public Action ChangeFullScreen { private get; set; }
         public Action<int> ChangeResolution { private get; set; }
@@ -30,8 +34,9 @@ namespace ASCII_FPS.UI
         {
             mainTab = new UICollection();
             mainMenu = new UIMenu();
-            optionsTab = new UICollection();
+            difficultySelectionMenu = new UIMenu();
             tutorialMenu = new UIMenu();
+            optionsTab = new UICollection();
             keybindsMenu = new UIKeybinds();
             achievementsMenu = new UIAchievements();
 
@@ -42,6 +47,7 @@ namespace ASCII_FPS.UI
         {
             InitMainMenu();
             InitOptionsMenu();
+            InitDifficultySelection();
             InitTutorialMenu();
 
             keybindsMenu.BackAction = uiStack.Pop;
@@ -70,7 +76,7 @@ namespace ASCII_FPS.UI
                 HiddenPred = ContinueEntryPred
             };
             mainMenu.AddEntry(continueEntry);
-            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(difficultySelectionMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(34, "Achievements", () => { uiStack.Push(achievementsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(36, "Options", () => { uiStack.Push(optionsTab); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(38, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
@@ -89,6 +95,24 @@ namespace ASCII_FPS.UI
                 UIAlignment.Right,
                 "by wonrzrzeczny"
             ));
+        }
+
+        private void InitDifficultySelection()
+        {
+            Action SelectDifficultyAction(int diff)
+            {
+                return () =>
+                {
+                    selectedDifficulty = diff;
+                    uiStack.Push(tutorialMenu);
+                };
+            }
+
+            difficultySelectionMenu.AddEntry(new MenuEntry(12, "Select difficulty level", UIUtils.colorWhite));
+            difficultySelectionMenu.AddEntry(new MenuEntry(16, "Easy", SelectDifficultyAction(-1), UIUtils.colorGray, UIUtils.colorLightBlue));
+            difficultySelectionMenu.AddEntry(new MenuEntry(18, "Normal (recommended)", SelectDifficultyAction(0), UIUtils.colorGray, UIUtils.colorLightBlue));
+            difficultySelectionMenu.AddEntry(new MenuEntry(20, "Hard", SelectDifficultyAction(1), UIUtils.colorGray, UIUtils.colorLightBlue));
+            difficultySelectionMenu.AddEntry(new MenuEntry(24, "Back", uiStack.Pop, UIUtils.colorGray, UIUtils.colorLightBlue));
         }
 
         private void InitOptionsMenu()
@@ -144,7 +168,7 @@ namespace ASCII_FPS.UI
             tutorialMenu.AddEntry(new MenuEntry(40, "Press enter to start the game", UIUtils.colorWhite));
 
 
-            tutorialMenu.AddEntry(new MenuEntry(0, "dummy", NewGame, UIUtils.colorBlack, UIUtils.colorBlack));
+            tutorialMenu.AddEntry(new MenuEntry(0, "dummy", () => { NewGame(selectedDifficulty); }, UIUtils.colorBlack, UIUtils.colorBlack));
         }
 
 

@@ -8,6 +8,8 @@ namespace ASCII_FPS.GameComponents
     {
         public const float thickness = 1f;
 
+        public int difficulty;
+
         public float maxHealth;
         public float health;
 
@@ -37,6 +39,8 @@ namespace ASCII_FPS.GameComponents
 
         public void Save(BinaryWriter writer)
         {
+            writer.Write(difficulty);
+
             writer.Write(maxHealth);
             writer.Write(health);
 
@@ -61,6 +65,8 @@ namespace ASCII_FPS.GameComponents
 
         public void Load(BinaryReader reader)
         {
+            difficulty = reader.ReadInt32();
+
             maxHealth = reader.ReadSingle();
             health = reader.ReadSingle();
 
@@ -87,6 +93,8 @@ namespace ASCII_FPS.GameComponents
 
         public void DealDamage(float amount)
         {
+            amount *= MathF.Pow(2f, difficulty);
+
             ASCII_FPS.ouch.Play();
 
             hit = true;
