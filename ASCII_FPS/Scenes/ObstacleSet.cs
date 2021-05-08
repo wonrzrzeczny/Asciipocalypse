@@ -181,13 +181,30 @@ namespace ASCII_FPS.Scenes
         private List<(int, int)> GetCellsOnPath(Vector2 from, Vector2 to)
         {
             List<(int, int)> ret = new List<(int, int)>();
-            (int, int) fromCell = FindGridCell(from);
-            (int, int) toCell = FindGridCell(to);
-            ret.Add(fromCell);
-            if (toCell != fromCell)
+            (int, int) cell = FindGridCell(from);
+            (int, int) dest = FindGridCell(to);
+
+            int sx = Math.Sign(dest.Item1 - cell.Item1);
+            int sy = Math.Sign(dest.Item2 - cell.Item2);
+            while (cell != dest)
             {
-                ret.Add(toCell);
+                ret.Add(cell);
+                float nx = cell.Item1 * gridCellSize + (sx > 0 ? gridCellSize : 0f);
+                float ny = cell.Item2 * gridCellSize + (sy > 0 ? gridCellSize : 0f);
+                float xt = sx == 0 ? float.PositiveInfinity : (nx - from.X) / (to.X - from.X);
+                float yt = sy == 0 ? float.PositiveInfinity : (ny - from.Y) / (to.Y - from.Y);
+
+                if (xt < yt)
+                {
+                    cell.Item1 += sx;
+                }
+                else
+                {
+                    cell.Item2 += sy;
+                }
             }
+            ret.Add(dest);
+
             return ret;
         }
 
