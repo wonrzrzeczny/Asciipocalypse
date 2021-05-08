@@ -12,14 +12,14 @@ namespace ASCII_FPS.Scenes
         public const int size = 5;
         public const float tileSize = 100f;
 
-        private Random rand;
+        private readonly Random rand;
 
-        private ASCII_FPS game;
+        private readonly ASCII_FPS game;
 
-        private float monsterHP;
-        private float monsterDamage;
-        private int monstersPerRoom;
-        private float[] monsterChances;
+        private readonly float monsterHP;
+        private readonly float monsterDamage;
+        private readonly int monstersPerRoom;
+        private readonly float[] monsterChances;
 
         private Point exitRoom;
         private bool[,] generated;
@@ -328,65 +328,21 @@ namespace ASCII_FPS.Scenes
             int rng = rand.Next(6);
             if (flags.SingleEnemy)
             {
-                if (rng == 0 || rng == 1) // arena
+                if (rng == 0 || rng == 1)
                 {
-                    Vector2[] points = new Vector2[]
-                    {
-                        new Vector2(27.5f, -15f),
-                        new Vector2(32.5f, -15f),
-                        new Vector2(32.5f, 15f),
-                        new Vector2(27.5f, 15f),
-                        new Vector2(27.5f, -15f)
-                    };
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
-                        for (int j = 0; j < points.Length; j++)
-                        {
-                            points[j] = new Vector2(-points[j].Y, points[j].X);
-                        }
-                    }
+                    SceneStructures.Arena(scene, zone, roomCenter);
                 }
             }
             if (flags.ClearFloor)
             {
-                if (rng == 2 || rng == 3) // void
+                if (rng == 2 || rng == 3)
                 {
                     results.GenerateFloor = false;
+                    SceneStructures.Pit(scene, zone, roomCenter);
 
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X - 30f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, true));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X + 30f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, true));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z - 50f, roomCenter.Z - 30f, -4f, true));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z + 30f, roomCenter.Z + 50f, -4f, true));
-                    zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f, false));
-
-                    Vector2[] walls = new Vector2[]
+                    if (rng == 3 && flags.ClearCenter)
                     {
-                        new Vector2(-30f, -30f),
-                        new Vector2(-30f, 30f),
-                        new Vector2(30f, 30f),
-                        new Vector2(30f, -30f),
-                        new Vector2(-30f, -30f)
-                    };
-                    zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -28f, -4f, ASCII_FPS.texture1), roomCenter, 0f));
-                    Vector2 offset = new Vector2(roomCenter.X, roomCenter.Z);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        scene.AddObstacle(walls[i + 1] + offset, walls[i] + offset, ObstacleLayer.Gap);
-                    }
-
-                    if (rng == 3 && flags.ClearCenter) // pillar
-                    {
-                        Vector2[] pillar = new Vector2[]
-                        {
-                            new Vector2(-5f, -5f),
-                            new Vector2(5f, -5f),
-                            new Vector2(5f, 5f),
-                            new Vector2(-5f, 5f),
-                            new Vector2(-5f, -5f)
-                        };
-                        SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { pillar }, -20f, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
+                        SceneStructures.PitPillar(scene, zone, roomCenter);
                     }
                 }
             }
@@ -397,60 +353,20 @@ namespace ASCII_FPS.Scenes
             int rnd = rand.Next(4);
             if (flags.ClearCenter)
             {
-                if (rnd == 0) // square pillar
+                if (rnd == 0)
                 {
-                    Vector2[] points = new Vector2[]
-                    {
-                        new Vector2(-5f, -5f),
-                        new Vector2(5f, -5f),
-                        new Vector2(5f, 5f),
-                        new Vector2(-5f, 5f),
-                        new Vector2(-5f, -5f)
-                    };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
+                    SceneStructures.PillarSmall(scene, zone, roomCenter);
                 }
-                else if (rnd == 1) // oct pillar
+                else if (rnd == 1)
                 {
-                    Vector2[] points = new Vector2[]
-                    {
-                        new Vector2(-4f, -10f),
-                        new Vector2(4f, -10f),
-                        new Vector2(10f, -4f),
-                        new Vector2(10f, 4f),
-                        new Vector2(4f, 10f),
-                        new Vector2(-4f, 10f),
-                        new Vector2(-10f, 4f),
-                        new Vector2(-10f, -4f),
-                        new Vector2(-4f, -10f)
-                    };
-                    SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
+                    SceneStructures.PillarBig(scene, zone, roomCenter);
                 }
             }
             else
             {
-                if (rnd == 2) // 4 pillars
+                if (rnd == 2)
                 {
-                    Vector2[] points = new Vector2[]
-                    {
-                            new Vector2(-15f, -15f),
-                            new Vector2(-10f, -15f),
-                            new Vector2(-10f, -10f),
-                            new Vector2(-15f, -10f),
-                            new Vector2(-15f, -15f)
-                    };
-
-                    List<Vector2[]> walls = new List<Vector2[]>();
-                    for (int x = 0; x < 2; x++)
-                    {
-                        for (int y = 0; y < 2; y++)
-                        {
-                            Vector2 shift = new Vector2(x, y) * 25f;
-                            Vector2[] wall = points.Select((Vector2 v) => { return v + shift; }).ToArray();
-                            walls.Add(wall);
-                        }
-                    }
-
-                    SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
+                    SceneStructures.Pillars4Inner(scene, zone, roomCenter);
                 }
             }
         }
@@ -458,40 +374,13 @@ namespace ASCII_FPS.Scenes
         private void PopulateRoomWalls(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags, ref PopulateRoomResults results)
         {
             int rnd = rand.Next(4);
-            if (flags.NotJoint && rnd == 0) // cut corners
+            if (flags.NotJoint && rnd == 0)
             {
-                List<Vector2[]> walls = new List<Vector2[]>
-                {
-                    new Vector2[] { new Vector2(10f, 50f), new Vector2(50f, 10f) },
-                    new Vector2[] { new Vector2(-50f, 10f), new Vector2(-10f, 50f) },
-                    new Vector2[] { new Vector2(-10f, -50f), new Vector2(-50f, -10f) },
-                    new Vector2[] { new Vector2(50f, -10f), new Vector2(10f, -50f) }
-                };
-                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
+                SceneStructures.CutCorners(scene, zone, roomCenter);
             }
-            else if (rnd == 1) // 4 pillars
+            else if (rnd == 1)
             {
-                Vector2[] points = new Vector2[]
-                {
-                        new Vector2(-35f, -35f),
-                        new Vector2(-25f, -35f),
-                        new Vector2(-25f, -25f),
-                        new Vector2(-35f, -25f),
-                        new Vector2(-35f, -35f)
-                };
-
-                List<Vector2[]> walls = new List<Vector2[]>();
-                for (int x = 0; x < 2; x++)
-                {
-                    for (int y = 0; y < 2; y++)
-                    {
-                        Vector2 shift = new Vector2(x, y) * 60f;
-                        Vector2[] wall = points.Select((Vector2 v) => { return v + shift; }).ToArray();
-                        walls.Add(wall);
-                    }
-                }
-
-                SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, ASCII_FPS.texture1, roomCenter);
+                SceneStructures.Pillars4Outer(scene, zone, roomCenter);
             }
         }
 
