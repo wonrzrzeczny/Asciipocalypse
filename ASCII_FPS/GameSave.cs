@@ -69,6 +69,7 @@ namespace ASCII_FPS
             {
                 writer.WriteLine("Resolution Width=" + graphics.PreferredBackBufferWidth);
                 writer.WriteLine("Resolution Height=" + graphics.PreferredBackBufferHeight);
+                writer.WriteLine("Difficulty=" + ASCII_FPS.Difficulty);
                 writer.WriteLine("Fullscreen=" + graphics.IsFullScreen);
                 
                 // Reflections hacks once more
@@ -129,6 +130,9 @@ namespace ASCII_FPS
                                 break;
                             case "Resolution Height":
                                 graphics.PreferredBackBufferHeight = int.Parse(data);
+                                break;
+                            case "Difficulty":
+                                ASCII_FPS.Difficulty = int.Parse(data);
                                 break;
                             case "Fullscreen":
                                 graphics.IsFullScreen = bool.Parse(data);

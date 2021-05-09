@@ -30,6 +30,8 @@ namespace ASCII_FPS
         public HUD HUD { get; private set; }
         private PlayerLogic playerLogic;
 
+        public static int Difficulty { get; set; } = 0;
+
         private enum GameState { MainMenu, Tutorial, Options, Game }
         private GameState gameState = GameState.MainMenu;
         private MainMenuGroup menuGroup;
@@ -81,9 +83,9 @@ namespace ASCII_FPS
             HUD = new HUD(this, console);
             menuGroup = new MainMenuGroup()
             {
-                NewGame = (int difficulty) =>
+                NewGame = () =>
                 {
-                    ResetGame(difficulty);
+                    ResetGame(Difficulty);
                     gameState = GameState.Game;
                 },
                 LoadGame = () =>

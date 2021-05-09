@@ -11,17 +11,15 @@ namespace ASCII_FPS.UI
 
         private readonly UICollection mainTab;
         private readonly UIMenu mainMenu;
-        private readonly UIMenu difficultySelectionMenu;
         private readonly UICollection optionsTab;
         private readonly UIMenu tutorialMenu;
         private readonly UIKeybinds keybindsMenu;
+        private readonly UIMenu difficultySelectionMenu;
         private readonly UIAchievements achievementsMenu;
-
-        private int selectedDifficulty = 0;
 
 
         public Action LoadGame { private get; set; }
-        public Action<int> NewGame { private get; set; }
+        public Action NewGame { private get; set; }
         public Action ExitGame { private get; set; }
         public Action ChangeFullScreen { private get; set; }
         public Action<int> ChangeResolution { private get; set; }
@@ -34,10 +32,10 @@ namespace ASCII_FPS.UI
         {
             mainTab = new UICollection();
             mainMenu = new UIMenu();
-            difficultySelectionMenu = new UIMenu();
             tutorialMenu = new UIMenu();
             optionsTab = new UICollection();
             keybindsMenu = new UIKeybinds();
+            difficultySelectionMenu = new UIMenu();
             achievementsMenu = new UIAchievements();
 
             uiStack = new UIStack(mainTab);
@@ -76,7 +74,7 @@ namespace ASCII_FPS.UI
                 HiddenPred = ContinueEntryPred
             };
             mainMenu.AddEntry(continueEntry);
-            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(difficultySelectionMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            mainMenu.AddEntry(new MenuEntry(32, "New game", () => { uiStack.Push(tutorialMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(34, "Achievements", () => { uiStack.Push(achievementsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(36, "Options", () => { uiStack.Push(optionsTab); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             mainMenu.AddEntry(new MenuEntry(38, "Exit", ExitGame, UIUtils.colorGray, UIUtils.colorLightBlue));
@@ -103,8 +101,8 @@ namespace ASCII_FPS.UI
             {
                 return () =>
                 {
-                    selectedDifficulty = diff;
-                    uiStack.Push(tutorialMenu);
+                    ASCII_FPS.Difficulty = diff;
+                    uiStack.Pop();
                 };
             }
 
@@ -117,6 +115,7 @@ namespace ASCII_FPS.UI
 
         private void InitOptionsMenu()
         {
+            const int resolutionY = 24;
             UIMenu optionsMenu = new UIMenu();
 
             // Options main
@@ -124,11 +123,12 @@ namespace ASCII_FPS.UI
                 12, "Back to main menu", () => { uiStack.Pop(); SaveOptions.Invoke(); }, UIUtils.colorGray, UIUtils.colorLightBlue
             ));
             optionsMenu.AddEntry(new MenuEntry(16, "Keybinds", () => { uiStack.Push(keybindsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
-            optionsMenu.AddEntry(new MenuEntry(18, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
+            optionsMenu.AddEntry(new MenuEntry(18, "Difficulty", () => { uiStack.Push(difficultySelectionMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+            optionsMenu.AddEntry(new MenuEntry(20, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
 
-            optionsMenu.AddEntry(new MenuEntry(22, "Resolution", UIUtils.colorWhite));
+            optionsMenu.AddEntry(new MenuEntry(resolutionY, "Resolution", UIUtils.colorWhite));
 
-            UIPosition resolutionsStart = new UIPosition(new Point(0, 24));
+            UIPosition resolutionsStart = new UIPosition(new Point(0, resolutionY + 2));
             UIPosition resolutionsEnd = new UIPosition(Vector2.One, new Point(0, -5));
             UIMenu resolutionsMenu = new UIScrollMenu(resolutionsStart, resolutionsEnd);
             for (int i = 0; i < ASCII_FPS.resolutions.Length; i++)
@@ -138,7 +138,7 @@ namespace ASCII_FPS.UI
                 string line = resX + " x " + resY;
                 if (resX == 1920 && resY == 1080) line += " (recommended)";
                 int j = i; // manual closure :D
-                resolutionsMenu.AddEntry(new MenuEntry(24 + 2 * i, line, () => { ChangeResolution(j); }, UIUtils.colorGray, UIUtils.colorLightBlue));
+                resolutionsMenu.AddEntry(new MenuEntry(resolutionY + 2 + 2 * i, line, () => { ChangeResolution(j); }, UIUtils.colorGray, UIUtils.colorLightBlue));
             }
 
             optionsMenu.MoveBeforeFirstBehaviour = () => { optionsTab.PreviousTab(); resolutionsMenu.MoveToLast(); };
@@ -168,7 +168,7 @@ namespace ASCII_FPS.UI
             tutorialMenu.AddEntry(new MenuEntry(40, "Press enter to start the game", UIUtils.colorWhite));
 
 
-            tutorialMenu.AddEntry(new MenuEntry(0, "dummy", () => { NewGame(selectedDifficulty); }, UIUtils.colorBlack, UIUtils.colorBlack));
+            tutorialMenu.AddEntry(new MenuEntry(0, "dummy", NewGame, UIUtils.colorBlack, UIUtils.colorBlack));
         }
 
 
