@@ -96,7 +96,7 @@ namespace ASCII_FPS.Scenes
                         {
                             ClearCenter = true,
                             NotJoint = true,
-                            SingleEnemy = true,
+                            ClearPerimeter = true,
                             ClearFloor = true
                         };
 
@@ -134,7 +134,7 @@ namespace ASCII_FPS.Scenes
                         if (x == exitRoom.X && y == exitRoom.Y)
                         {
                             flags.ClearCenter = false;
-                            flags.SingleEnemy = false;
+                            flags.ClearPerimeter = false;
                             flags.ClearFloor = false;
 
                             MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
@@ -206,7 +206,7 @@ namespace ASCII_FPS.Scenes
         {
             public bool ClearCenter { get; set; }
             public bool NotJoint { get; set; }
-            public bool SingleEnemy { get; set; }
+            public bool ClearPerimeter { get; set; }
             public bool ClearFloor { get; set; }
 
             public uint Mask
@@ -214,10 +214,10 @@ namespace ASCII_FPS.Scenes
                 get
                 {
                     uint ret = 0;
-                    if (ClearCenter)    ret += 1;
-                    if (NotJoint)       ret += 2;
-                    if (SingleEnemy)    ret += 4;
-                    if (ClearFloor)     ret += 8;
+                    if (ClearCenter)    ret |= 1;
+                    if (NotJoint)       ret |= 2;
+                    if (ClearPerimeter) ret |= 4;
+                    if (ClearFloor)     ret |= 8;
                     return ret;
                 }
             }

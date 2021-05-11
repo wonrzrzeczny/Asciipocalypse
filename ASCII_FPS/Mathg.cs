@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ASCII_FPS
 {
@@ -71,6 +73,28 @@ namespace ASCII_FPS
             byte b = (byte)(Clamp(c.Z, 0, 0.8f) * 4);
 
             return (byte)(r + (g << 3) + (b << 6));
+        }
+
+
+        public static T DiscreteChoice<T>(Random rng, T[] elems, float[] weights)
+        {
+            float sum = weights.Sum();
+            float choice = (float)rng.NextDouble() * sum;
+
+            int pos = 0;
+            while (choice > weights[pos])
+            {
+                choice -= weights[pos];
+                pos++;
+            }
+
+            return elems[pos];
+        }
+
+        public static T DiscreteChoiceFn<T>(Random rng, Func<T>[] elemFuncs, float[] weights)
+        {
+            Func<T> elemFunc = DiscreteChoice(rng, elemFuncs, weights);
+            return elemFunc.Invoke();
         }
     }
 }

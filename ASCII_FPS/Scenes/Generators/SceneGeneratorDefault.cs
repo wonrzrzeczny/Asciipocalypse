@@ -18,11 +18,16 @@ namespace ASCII_FPS.Scenes.Generators
             monsterHP = 8f + floor * 2f;
             monsterDamage = 4f + floor;
             monstersPerRoom = 4 + (int)Math.Floor(floor / 3.0);
+
+            float monsterChanceShotgun = floor < 2 ? 0f : 0.3f * (1 - 1 / (0.7f * (floor - 1) + 1f));
+            float monsterChanceSpinny = floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f));
+            float monsterChanceSpooper = floor < 4 ? 0f : 0.2f * (1 - 1 / (0.4f * (floor - 3) + 1f));
             monsterChances = new float[]
             {
-                floor < 2 ? 0f : 0.3f * (1 - 1 / (0.7f * (floor - 1) + 1f)),
-                floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f)),
-                floor < 4 ? 0f : 0.2f * (1 - 1 / (0.4f * (floor - 3) + 1f))
+                1f - monsterChanceShotgun - monsterChanceSpinny - monsterChanceSpooper,
+                monsterChanceShotgun,
+                monsterChanceSpinny,
+                monsterChanceSpooper
             };
         }
 
@@ -110,29 +115,22 @@ namespace ASCII_FPS.Scenes.Generators
                 {
                     Vector2 position = new Vector2(roomCenter.X, roomCenter.Z);
                     position += Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
+                    Vector3 position3 = new Vector3(position.X, -1f, position.Y);
 
-                    float rnd = (float)rand.NextDouble();
-                    if (rnd < monsterChances[0])
+                    Monster monster = Mathg.DiscreteChoiceFn(rand, new Func<Monster>[]
                     {
-                        scene.AddGameObject(new ShotgunDude(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
-                    }
-                    else if (rnd < monsterChances[0] + monsterChances[1])
-                    {
-                        scene.AddGameObject(new SpinnyBoi(new Vector3(position.X, -1f, position.Y), monsterHP * 2, monsterDamage));
-                    }
-                    else if (rnd < monsterChances[0] + monsterChances[1] + monsterChances[2])
-                    {
-                        scene.AddGameObject(new Spooper(new Vector3(position.X, -1f, position.Y), monsterHP * 1.5f, monsterDamage));
-                    }
-                    else
-                    {
-                        scene.AddGameObject(new BasicMonster(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
-                    }
+                        () => new BasicMonster(position3, monsterHP, monsterDamage),
+                        () => new ShotgunDude(position3, monsterHP, monsterDamage),
+                        () => new SpinnyBoi(position3, monsterHP * 2, monsterDamage),
+                        () => new Spooper(position3, monsterHP * 1.5f, monsterDamage)
+                    }, monsterChances);
+
+                    scene.AddGameObject(monster);
                 }
 
                 if (monsterCount != 1)
                 {
-                    flags.SingleEnemy = false;
+                    flags.ClearPerimeter = false;
                 }
                 else
                 {
@@ -143,10 +141,10 @@ namespace ASCII_FPS.Scenes.Generators
             {
                 flags.ClearCenter = false;
                 flags.ClearFloor = false;
-                flags.SingleEnemy = false;
+                flags.ClearPerimeter = false;
             }
 
-            if (rand.Next(8) == 0 || (flags.SingleEnemy && rand.Next(2) == 0)) // special room
+            if (rand.Next(8) == 0 || (flags.ClearPerimeter && rand.Next(2) == 0)) // special room
             {
                 PopulateSpecialRoom(scene, zone, roomCenter, flags, ref results);
             }
@@ -162,7 +160,7 @@ namespace ASCII_FPS.Scenes.Generators
         protected void PopulateSpecialRoom(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags, ref PopulateRoomResults results)
         {
             int rng = rand.Next(6);
-            if (flags.SingleEnemy)
+            if (flags.ClearPerimeter)
             {
                 if (rng == 0 || rng == 1)
                 {
