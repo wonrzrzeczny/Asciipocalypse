@@ -1,45 +1,29 @@
 ﻿using ASCII_FPS.GameComponents;
-using ASCII_FPS.GameComponents.Enemies;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ASCII_FPS.Scenes
 {
-    public class SceneGenerator
+    public abstract class SceneGenerator
     {
         public const int size = 5;
         public const float tileSize = 100f;
 
-        private readonly Random rand;
+        protected readonly Random rand;
 
-        private readonly ASCII_FPS game;
+        protected readonly ASCII_FPS game;
 
-        private readonly float monsterHP;
-        private readonly float monsterDamage;
-        private readonly int monstersPerRoom;
-        private readonly float[] monsterChances;
-
-        private Point exitRoom;
-        private bool[,] generated;
-        private bool[,,] corridorLayout;
-        private float[,,] corridorWidths;
+        protected Point exitRoom;
+        protected bool[,] accessible;
+        protected bool[,,] corridorLayout;
+        protected float[,,] corridorWidths;
 
 
-        public SceneGenerator(ASCII_FPS game, int floor)
+        public SceneGenerator(ASCII_FPS game)
         {
             this.game = game;
             rand = new Random();
-            monsterHP = 8f + floor * 2f;
-            monsterDamage = 4f + floor;
-            monstersPerRoom = 4 + (int)Math.Floor(floor / 3.0);
-            monsterChances = new float[]
-            {
-                floor < 2 ? 0f : 0.3f * (1 - 1 / (0.7f * (floor - 1) + 1f)),
-                floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f)),
-                floor < 4 ? 0f : 0.2f * (1 - 1 / (0.4f * (floor - 3) + 1f))
-            };
         }
 
 
@@ -48,77 +32,37 @@ namespace ASCII_FPS.Scenes
             game.PlayerStats.totalMonsters = 0;
             game.PlayerStats.monsters = 0;
             Scene scene = new Scene(game);
-
-            corridorLayout = SceneGenUtils.GenerateCorridorLayout(size, size, out generated);
-            scene.CorridorLayout = corridorLayout;
-            scene.Visited = new bool[size, size];
-            
             Zone[,] zones = new Zone[size, size];
-            corridorWidths = new float[size, size, 4];
-            for (int x = 0; x < size; x++)
-            {
-                for (int y = 0; y < size; y++)
-                {
-                    for (int t = 0; t < 4; t++)
-                    {
-                        if (corridorLayout[x, y, t])
-                        {
-                            corridorWidths[x, y, t] = 10f;
-                        }
-                    }
-                }
-            }
+            scene.Visited = new bool[size, size];
 
-            // Select two rooms connected with a corridor to join (5 tries, max 1 joint pair)
-            for (int t = 0; t < 5; t++)
-            {
-                int x = rand.Next(size);
-                int y = rand.Next(size);
-                int d = rand.Next(4);
-                if (corridorLayout[x, y, d] && (x != size / 2 || y != size / 2))
-                {
-                    Point[] shift = new Point[4] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
-                    if (x + shift[d].X != size / 2 || y + shift[d].Y != size / 2)
-                    {
-                        corridorWidths[x, y, d] = 80f;
-                        corridorWidths[x + shift[d].X, y + shift[d].Y, d ^ 2] = 80f;
-                        break;
-                    }
-                }
-            }
+            GenerateLayout(out accessible, out corridorLayout, out corridorWidths);
+            scene.CorridorLayout = corridorLayout;
 
             // Select exit room
             exitRoom = new Point(rand.Next(size), rand.Next(size));
-            while (!generated[exitRoom.X, exitRoom.Y] || (exitRoom.X == size / 2 && exitRoom.Y == size / 2))
+            while (!accessible[exitRoom.X, exitRoom.Y] || (exitRoom.X == size / 2 && exitRoom.Y == size / 2))
             {
                 exitRoom = new Point(rand.Next(size), rand.Next(size));
             }
             scene.ExitRoom = exitRoom;
 
-            // Distribute collectibles (3 x skill point, 2 x armor refill, 1 x hp refill)
-            // 10 attempts per each collectible
-            scene.Collectibles = new Collectible.Type?[size, size];
-            for (int b = 0; b < 6; b++)
-            {
-                for (int t = 0; t < 10; t++)
-                {
-                    int x = rand.Next(size);
-                    int y = rand.Next(size);
-                    if ((x != size / 2 || y != size / 2) && (x != exitRoom.X || y != exitRoom.Y) && generated[x, y] && scene.Collectibles[x, y] == null)
-                    {
-                        scene.Collectibles[x, y] = b < 3 ? Collectible.Type.Skill
-                            : b < 5 ? Collectible.Type.Armor : Collectible.Type.Health;
-                        break;
-                    }
-                }
-            }
+            scene.Collectibles = DistributeCollectibles();
 
+            GenerateRooms(scene, zones);
+            GeneratePortals(scene, zones);
+
+            return scene;
+        }
+
+
+        private void GenerateRooms(Scene scene, Zone[,] zones)
+        {
             // Generating geometry and colliders
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
-                    if (generated[x, y])
+                    if (accessible[x, y])
                     {
                         float left = x * tileSize - size * tileSize / 2;
                         float right = left + tileSize;
@@ -148,7 +92,59 @@ namespace ASCII_FPS.Scenes
                         zones[x, y].AddMesh(wallObject);
 
 
-                        PopulateRoomResults results = PopulateRoom(scene, zones[x, y], x, y);
+                        PopulateSchemeFlags flags = new PopulateSchemeFlags
+                        {
+                            ClearCenter = true,
+                            NotJoint = true,
+                            SingleEnemy = true,
+                            ClearFloor = true
+                        };
+
+                        if (scene.Collectibles[x, y] != null)
+                        {
+                            flags.ClearCenter = false;
+                            flags.ClearFloor = false;
+
+                            Collectible.Type type = scene.Collectibles[x, y].Value;
+                            AsciiTexture texture = null;
+                            switch (type)
+                            {
+                                case Collectible.Type.Armor:
+                                    texture = ASCII_FPS.barrelGreenTexture;
+                                    break;
+                                case Collectible.Type.Health:
+                                    texture = ASCII_FPS.barrelRedTexture;
+                                    break;
+                                case Collectible.Type.Skill:
+                                    texture = ASCII_FPS.barrelBlueTexture;
+                                    break;
+                            }
+                            MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
+                            scene.AddGameObject(new Collectible(barrel, type, x, y));
+                        }
+
+                        for (int t = 0; t < 4; t++)
+                        {
+                            if (corridorLayout[x, y, t] && corridorWidths[x, y, t] > 15f)
+                            {
+                                flags.NotJoint = false;
+                            }
+                        }
+
+                        if (x == exitRoom.X && y == exitRoom.Y)
+                        {
+                            flags.ClearCenter = false;
+                            flags.SingleEnemy = false;
+                            flags.ClearFloor = false;
+
+                            MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
+                                new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                            zones[x, y].AddMesh(exit);
+                            game.PlayerStats.exitPosition = new Vector2(roomCenter.X, roomCenter.Y);
+                        }
+
+
+                        PopulateRoomResults results = PopulateRoom(scene, zones[x, y], x, y, flags);
 
                         if (results.GenerateFloor)
                         {
@@ -158,9 +154,10 @@ namespace ASCII_FPS.Scenes
                     }
                 }
             }
+        }
 
-
-            // Create portals between adjacent zones
+        private void GeneratePortals(Scene scene, Zone[,] zones)
+        {
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
@@ -196,196 +193,16 @@ namespace ASCII_FPS.Scenes
                     }
                 }
             }
-
-            return scene;
         }
 
 
-        private PopulateRoomResults PopulateRoom(Scene scene, Zone zone, int x, int y)
-        {
-            PopulateRoomResults results = new PopulateRoomResults
-            {
-                GenerateFloor = true
-            };
+        protected abstract void GenerateLayout(out bool[,] accessible, out bool[,,] corridorLayout, out float[,,] corridorWidths);
 
-            PopulateSchemeFlags flags = new PopulateSchemeFlags
-            {
-                ClearCenter = true,
-                NotJoint = true,
-                SingleEnemy = true,
-                ClearFloor = true
-            };
+        protected abstract Collectible.Type?[,] DistributeCollectibles();
 
-            for (int t = 0; t < 4; t++)
-            {
-                if (corridorLayout[x, y, t] && corridorWidths[x, y, t] > 15f)
-                {
-                    flags.NotJoint = false;
-                }
-            }
+        protected abstract PopulateRoomResults PopulateRoom(Scene scene, Zone zone, int x, int y, PopulateSchemeFlags flags);
 
-            float left = x * tileSize - size * tileSize / 2;
-            float right = left + tileSize;
-            float bottom = y * tileSize - size * tileSize / 2;
-            float top = bottom + tileSize;
-            Vector3 roomCenter = new Vector3((left + right) / 2, 0f, (top + bottom) / 2);
-
-            if (x == exitRoom.X && y == exitRoom.Y)
-            {
-                flags.ClearCenter = false;
-                flags.SingleEnemy = false;
-                flags.ClearFloor = false;
-
-                MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
-                    new Vector3(roomCenter.X, -2f, roomCenter.Z));
-                zone.AddMesh(exit);
-                game.PlayerStats.exitPosition = new Vector2(roomCenter.X, roomCenter.Z);
-            }
-            else if (x != size / 2 || y != size / 2)
-            {
-                int monsterCount = rand.Next(scene.Collectibles[x, y] == null ? 1 : 2, monstersPerRoom + 1);
-                game.PlayerStats.totalMonsters += monsterCount;
-                Vector2 shift = monsterCount == 1 ? Vector2.Zero : new Vector2(30f, 0f);
-                float angleOffset = (float)(rand.NextDouble() * Math.PI * 2f);
-                for (int i = 0; i < monsterCount; i++)
-                {
-                    Vector2 position = new Vector2(roomCenter.X, roomCenter.Z);
-                    position += Vector2.Transform(shift, Mathg.RotationMatrix2D(angleOffset + i * (float)Math.PI * 2f / monsterCount));
-
-                    float rnd = (float)rand.NextDouble();
-                    if (rnd < monsterChances[0])
-                    {
-                        scene.AddGameObject(new ShotgunDude(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
-                    }
-                    else if (rnd < monsterChances[0] + monsterChances[1])
-                    {
-                        scene.AddGameObject(new SpinnyBoi(new Vector3(position.X, -1f, position.Y), monsterHP * 2, monsterDamage));
-                    }
-                    else if (rnd < monsterChances[0] + monsterChances[1] + monsterChances[2])
-                    {
-                        scene.AddGameObject(new Spooper(new Vector3(position.X, -1f, position.Y), monsterHP * 1.5f, monsterDamage));
-                    }
-                    else
-                    {
-                        scene.AddGameObject(new BasicMonster(new Vector3(position.X, -1f, position.Y), monsterHP, monsterDamage));
-                    }
-                }
-
-                if (monsterCount != 1)
-                {
-                    flags.SingleEnemy = false;
-                }
-                else
-                {
-                    flags.ClearCenter = false;
-                }
-
-                if (scene.Collectibles[x, y] != null)
-                {
-                    flags.ClearCenter = false;
-                    flags.ClearFloor = false;
-
-                    Collectible.Type type = scene.Collectibles[x, y].Value;
-                    AsciiTexture texture = null;
-                    switch (type)
-                    {
-                        case Collectible.Type.Armor:
-                            texture = ASCII_FPS.barrelGreenTexture;
-                            break;
-                        case Collectible.Type.Health:
-                            texture = ASCII_FPS.barrelRedTexture;
-                            break;
-                        case Collectible.Type.Skill:
-                            texture = ASCII_FPS.barrelBlueTexture;
-                            break;
-                    }
-                    MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Z));
-                    scene.AddGameObject(new Collectible(barrel, type, x, y));
-                }
-            }
-            else
-            {
-                flags.ClearCenter = false;
-                flags.ClearFloor = false;
-                flags.SingleEnemy = false;
-            }
-
-            if (rand.Next(8) == 0 || (flags.SingleEnemy && rand.Next(2) == 0)) // special room
-            {
-                PopulateSpecialRoom(scene, zone, roomCenter, flags, ref results);
-            }
-            else
-            {
-                PopulateRoomCenter(scene, zone, roomCenter, flags, ref results);
-                PopulateRoomWalls(scene, zone, roomCenter, flags, ref results);
-            }
-
-            return results;
-        }
-
-        private void PopulateSpecialRoom(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags, ref PopulateRoomResults results)
-        {
-            int rng = rand.Next(6);
-            if (flags.SingleEnemy)
-            {
-                if (rng == 0 || rng == 1)
-                {
-                    SceneStructures.Arena(scene, zone, roomCenter);
-                }
-            }
-            if (flags.ClearFloor)
-            {
-                if (rng == 2 || rng == 3)
-                {
-                    results.GenerateFloor = false;
-                    SceneStructures.Pit(scene, zone, roomCenter);
-
-                    if (rng == 3 && flags.ClearCenter)
-                    {
-                        SceneStructures.PitPillar(scene, zone, roomCenter);
-                    }
-                }
-            }
-        }
-
-        private void PopulateRoomCenter(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags, ref PopulateRoomResults results)
-        {
-            int rnd = rand.Next(4);
-            if (flags.ClearCenter)
-            {
-                if (rnd == 0)
-                {
-                    SceneStructures.PillarSmall(scene, zone, roomCenter);
-                }
-                else if (rnd == 1)
-                {
-                    SceneStructures.PillarBig(scene, zone, roomCenter);
-                }
-            }
-            else
-            {
-                if (rnd == 2)
-                {
-                    SceneStructures.Pillars4Inner(scene, zone, roomCenter);
-                }
-            }
-        }
-
-        private void PopulateRoomWalls(Scene scene, Zone zone, Vector3 roomCenter, PopulateSchemeFlags flags, ref PopulateRoomResults results)
-        {
-            int rnd = rand.Next(4);
-            if (flags.NotJoint && rnd == 0)
-            {
-                SceneStructures.CutCorners(scene, zone, roomCenter);
-            }
-            else if (rnd == 1)
-            {
-                SceneStructures.Pillars4Outer(scene, zone, roomCenter);
-            }
-        }
-
-
-        private struct PopulateSchemeFlags
+        protected struct PopulateSchemeFlags
         {
             public bool ClearCenter { get; set; }
             public bool NotJoint { get; set; }
@@ -413,7 +230,7 @@ namespace ASCII_FPS.Scenes
             }
         }
 
-        private struct PopulateRoomResults
+        protected struct PopulateRoomResults
         {
             public bool GenerateFloor { get; set; }
         }

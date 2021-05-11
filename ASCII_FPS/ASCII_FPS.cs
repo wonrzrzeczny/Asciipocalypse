@@ -1,5 +1,6 @@
 ﻿using ASCII_FPS.GameComponents;
 using ASCII_FPS.Scenes;
+using ASCII_FPS.Scenes.Generators;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -181,7 +182,7 @@ namespace ASCII_FPS
                 floor = 1
             };
 
-            Scene = new SceneGenerator(this, 1).Generate();
+            Scene = new SceneGeneratorDefault(this, 1).Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
             HUD.Scene = Scene;
@@ -230,7 +231,7 @@ namespace ASCII_FPS
                 if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
                 {
                     theme.Play();
-                    Scene = new SceneGenerator(this, PlayerStats.floor).Generate();
+                    Scene = new SceneGeneratorDefault(this, PlayerStats.floor).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     HUD.Scene = Scene;
                     Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
