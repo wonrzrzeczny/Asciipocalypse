@@ -9,7 +9,7 @@ namespace ASCII_FPS.GameComponents
 {
     public class PlayerLogic
     {
-        private ASCII_FPS game;
+        private readonly ASCII_FPS game;
 
         public PlayerLogic(ASCII_FPS game)
         {
@@ -50,6 +50,15 @@ namespace ASCII_FPS.GameComponents
             int playerRoomX = (int)(scene.Camera.CameraPos.X / SceneGenerator.tileSize + SceneGenerator.size / 2f);
             int playerRoomY = (int)(scene.Camera.CameraPos.Z / SceneGenerator.tileSize + SceneGenerator.size / 2f);
             scene.Visited[playerRoomX, playerRoomY] = true;
+
+            if (playerStats.tempHealth > 0f)
+            {
+                playerStats.tempHealth -= deltaTime * 0.2f;
+                if (playerStats.tempHealth < 0f)
+                {
+                    playerStats.tempHealth = 0f;
+                }
+            }
 
             if (playerStats.shootTime > 0f)
             {

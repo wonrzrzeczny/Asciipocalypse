@@ -12,6 +12,7 @@ namespace ASCII_FPS.GameComponents
 
         public float maxHealth;
         public float health;
+        public float tempHealth;
 
         public float maxArmor;
         public float armor;
@@ -43,6 +44,7 @@ namespace ASCII_FPS.GameComponents
 
             writer.Write(maxHealth);
             writer.Write(health);
+            writer.Write(tempHealth);
 
             writer.Write(maxArmor);
             writer.Write(armor);
@@ -69,6 +71,7 @@ namespace ASCII_FPS.GameComponents
 
             maxHealth = reader.ReadSingle();
             health = reader.ReadSingle();
+            tempHealth = reader.ReadSingle();
 
             maxArmor = reader.ReadSingle();
             armor = reader.ReadSingle();
@@ -103,7 +106,17 @@ namespace ASCII_FPS.GameComponents
             float unblocked = amount - blocked;
 
             armor -= blocked;
-            health -= unblocked + blocked * (1f - armorProtection);
+            float realDamage = unblocked + blocked * (1f - armorProtection);
+
+            if (tempHealth >= realDamage)
+            {
+                tempHealth -= realDamage;
+                return;
+            }
+
+            tempHealth = 0f;
+            realDamage -= tempHealth;
+            health -= realDamage;
 
             if (health <= 0f)
             {
@@ -112,13 +125,27 @@ namespace ASCII_FPS.GameComponents
             }
         }
 
+        public void Poison(float amount)
+        {
+            amount *= MathF.Pow(2f, difficulty);
+            amount = Math.Min(amount, health - 1);
+            health -= amount;
+            tempHealth += amount;
+        }
+
         public void AddHealth(float amount)
         {
             if (!dead)
             {
                 health += amount;
                 if (health > maxHealth)
+                {
                     health = maxHealth;
+                }
+                if (health + tempHealth > maxHealth)
+                {
+                    tempHealth = maxHealth - health;
+                }
             }
         }
 

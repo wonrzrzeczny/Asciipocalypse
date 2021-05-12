@@ -17,6 +17,7 @@ namespace ASCII_FPS.GameComponents
         private readonly byte colorWhite = Mathg.ColorTo8Bit(Color.White.ToVector3());
         private readonly byte colorForestGreen = Mathg.ColorTo8Bit(Color.ForestGreen.ToVector3());
         private readonly byte colorLightBlue = Mathg.ColorTo8Bit(Color.LightBlue.ToVector3());
+        private readonly byte colorLightGreen = Mathg.ColorTo8Bit(Color.Lime.ToVector3());
 
         private readonly Queue<string> notifications = new Queue<string>();
         private float notificationTimer = 0f;
@@ -61,12 +62,18 @@ namespace ASCII_FPS.GameComponents
             Rectangle(0, -barY - 8, barX + 1, -1, colorBlack, ' ');
             Border(0, -barY - 8, barX + 1, -1, colorGray, '@');
             Text(1 + barX / 2, -barY - 6, "Health", colorWhite);
-            Text(1 + barX / 2, -barY - 4, (int)Math.Ceiling(game.PlayerStats.health) 
+            Text(1 + barX / 2, -barY - 4, (int)Math.Ceiling(game.PlayerStats.health + game.PlayerStats.tempHealth) 
                 + " / " + (int)Math.Ceiling(game.PlayerStats.maxHealth), colorWhite);
             LineHorizontal(-barY - 2, 0, barX + 1, colorGray, '@');
             int hpDots = (int)(barX * barY * game.PlayerStats.health / game.PlayerStats.maxHealth);
-            if (hpDots >= barX) Rectangle(1, -1 - hpDots / barX, barX, -2, colorRed, '%');
-            if (hpDots % barX > 0) Rectangle(1, -2 - hpDots / barX, 1 + hpDots % barX, -2 - hpDots / barX, colorRed, '%');
+            int tempHpDots = (int)(barX * barY * (game.PlayerStats.health + game.PlayerStats.tempHealth) / game.PlayerStats.maxHealth) - hpDots;
+            for (int d = 0; d < hpDots + tempHpDots; d++)
+            {
+                int cx = 1 + d % barX;
+                int cy = console.Height - 2 - (d / barX);
+                console.Data[cx, cy] = '%';
+                console.Color[cx, cy] = d < hpDots ? colorRed : colorLightGreen;
+            }
 
             // Armor bar
             Rectangle(-2 - barX, -barY - 8, -1, -1, colorBlack, ' ');
