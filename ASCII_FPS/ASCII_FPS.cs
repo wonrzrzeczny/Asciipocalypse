@@ -4,8 +4,6 @@ using ASCII_FPS.Scenes.Generators;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Audio;
-using OBJContentPipelineExtension;
 using System;
 using System.Linq;
 using System.IO;
@@ -105,32 +103,8 @@ namespace ASCII_FPS
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Assets.font = Content.Load<SpriteFont>("Font");
 
-            Assets.texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
-            Assets.texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
-            Assets.barrelRedTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_red"));
-            Assets.barrelGreenTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_green"));
-            Assets.barrelBlueTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_blue"));
-            Assets.projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
-            Assets.projectile2Texture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile2"));
-            Assets.exitTexture = new AsciiTexture(Content.Load<Texture2D>("textures/exit"));
-
-            Assets.monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
-            Assets.shotgunDudeTexture = new AsciiTexture(Content.Load<Texture2D>("textures/shotgun_dude"));
-            Assets.spinnyBoiTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spinny_boi"));
-            Assets.spooperTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spooper"));
-
-            Assets.barrelModel = Content.Load<OBJFile>("models/barrel");
-            Assets.exitModel = Content.Load<OBJFile>("models/exit");
-            Assets.spooperModel = Content.Load<OBJFile>("models/spooper");
-
-            Assets.tsch = Content.Load<SoundEffect>("audio/tsch");
-            Assets.oof = Content.Load<SoundEffect>("audio/oof");
-            Assets.ouch = Content.Load<SoundEffect>("audio/ouch");
-            Assets.theme = Content.Load<SoundEffect>("audio/theme");
-            Assets.btsch = Content.Load<SoundEffect>("audio/btsch");
-            Assets.beep = Content.Load<SoundEffect>("audio/beep");
+            Assets.LoadAssets(Content);
 
             Assets.theme.Play();
 

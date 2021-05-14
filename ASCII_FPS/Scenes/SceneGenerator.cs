@@ -85,7 +85,7 @@ namespace ASCII_FPS.Scenes
                         List<Triangle> wallTriangles = new List<Triangle>();
                         foreach (Vector2[] wall in walls)
                         {
-                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, Assets.texture1));
+                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, Assets.wallTexture));
                             scene.AddObstacle(wall[0] + roomCenter, wall[1] + roomCenter, ObstacleLayer.Wall);
                         }
                         MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
