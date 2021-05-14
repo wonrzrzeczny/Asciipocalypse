@@ -19,6 +19,9 @@ namespace ASCII_FPS.Scenes
         protected bool[,,] corridorLayout;
         protected float[,,] corridorWidths;
 
+        protected abstract AsciiTexture WallTexture { get; }
+        protected abstract AsciiTexture FloorTexture { get; }
+
 
         public SceneGenerator(ASCII_FPS game)
         {
@@ -85,7 +88,7 @@ namespace ASCII_FPS.Scenes
                         List<Triangle> wallTriangles = new List<Triangle>();
                         foreach (Vector2[] wall in walls)
                         {
-                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, Assets.wallTexture));
+                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, WallTexture));
                             scene.AddObstacle(wall[0] + roomCenter, wall[1] + roomCenter, ObstacleLayer.Wall);
                         }
                         MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
@@ -148,8 +151,8 @@ namespace ASCII_FPS.Scenes
 
                         if (results.GenerateFloor)
                         {
-                            zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, -4f, true));
-                            zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f, false));
+                            zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, -4f, FloorTexture, true));
+                            zones[x, y].AddMesh(SceneGenUtils.MakeFloor(left, right, bottom, top, 4f, FloorTexture, false));
                         }
                     }
                 }

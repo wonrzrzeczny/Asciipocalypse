@@ -150,7 +150,10 @@ namespace ASCII_FPS
                 floor = 1
             };
 
-            Scene = new SceneGeneratorDefault(this, 1).Generate();
+            // for testing
+            SceneGenerator generator = new Random().Next(2) == 0 ? new SceneGeneratorDefault(this, 1)
+                                                                 : new SceneGeneratorJungle(this, 1);
+            Scene = generator.Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
             HUD.Scene = Scene;

@@ -8,7 +8,7 @@ namespace ASCII_FPS.Scenes
     {
         public delegate void Generator(Scene scene, Zone zone, Vector3 roomCenter);
 
-        public static Generator PillarSmall => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator PillarSmall(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             Vector2[] points = new Vector2[]
             {
@@ -18,10 +18,10 @@ namespace ASCII_FPS.Scenes
                 new Vector2(-5f, 5f),
                 new Vector2(-5f, -5f)
             };
-            SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+            SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, texture, roomCenter);
         };
 
-        public static Generator PillarBig => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator PillarBig(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             Vector2[] points = new Vector2[]
             {
@@ -35,10 +35,10 @@ namespace ASCII_FPS.Scenes
                 new Vector2(-10f, -4f),
                 new Vector2(-4f, -10f)
             };
-            SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+            SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, texture, roomCenter);
         };
 
-        public static Generator Pillars4Inner => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator Pillars4Inner(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             Vector2[] points = new Vector2[]
             {
@@ -60,11 +60,11 @@ namespace ASCII_FPS.Scenes
                 }
             }
 
-            SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+            SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, texture, roomCenter);
         };
 
 
-        public static Generator CutCorners => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator CutCorners(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             List<Vector2[]> walls = new List<Vector2[]>
             {
@@ -73,10 +73,10 @@ namespace ASCII_FPS.Scenes
                 new Vector2[] { new Vector2(-10f, -50f), new Vector2(-50f, -10f) },
                 new Vector2[] { new Vector2(50f, -10f), new Vector2(10f, -50f) }
             };
-            SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+            SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, texture, roomCenter);
         };
 
-        public static Generator Pillars4Outer => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator Pillars4Outer(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             Vector2[] points = new Vector2[]
             {
@@ -98,11 +98,11 @@ namespace ASCII_FPS.Scenes
                 }
             }
 
-            SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+            SceneGenUtils.AddWalls(scene, zone, walls, 4f, ObstacleLayer.Wall, texture, roomCenter);
         };
 
 
-        public static Generator Arena => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator Arena(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             Vector2[] points = new Vector2[]
             {
@@ -115,7 +115,7 @@ namespace ASCII_FPS.Scenes
 
             for (int i = 0; i < 4; i++)
             {
-                SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+                SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { points }, 4f, ObstacleLayer.Wall, texture, roomCenter);
                 for (int j = 0; j < points.Length; j++)
                 {
                     points[j] = new Vector2(-points[j].Y, points[j].X);
@@ -123,13 +123,13 @@ namespace ASCII_FPS.Scenes
             }
         };
 
-        public static Generator Pit => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator Pit(AsciiTexture floorTexture, AsciiTexture wallTexture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
-            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X - 30f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, true));
-            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X + 30f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, true));
-            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z - 50f, roomCenter.Z - 30f, -4f, true));
-            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z + 30f, roomCenter.Z + 50f, -4f, true));
-            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f, false));
+            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X - 30f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, floorTexture, true));
+            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X + 30f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, -4f, floorTexture,  true));
+            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z - 50f, roomCenter.Z - 30f, -4f, floorTexture,  true));
+            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 30f, roomCenter.X + 30f, roomCenter.Z + 30f, roomCenter.Z + 50f, -4f, floorTexture,  true));
+            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f, floorTexture,  false));
 
             Vector2[] walls = new Vector2[]
             {
@@ -139,7 +139,7 @@ namespace ASCII_FPS.Scenes
                 new Vector2(30f, -30f),
                 new Vector2(-30f, -30f)
             };
-            zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -28f, -4f, Assets.wallTexture), roomCenter, 0f));
+            zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -28f, -4f, wallTexture), roomCenter, 0f));
             Vector2 offset = new Vector2(roomCenter.X, roomCenter.Z);
             for (int i = 0; i < 4; i++)
             {
@@ -147,7 +147,7 @@ namespace ASCII_FPS.Scenes
             }
         };
 
-        public static Generator PitPillar => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator PitPillar(AsciiTexture texture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             Vector2[] pillar = new Vector2[]
             {
@@ -157,7 +157,7 @@ namespace ASCII_FPS.Scenes
                 new Vector2(-5f, 5f),
                 new Vector2(-5f, -5f)
             };
-            SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { pillar }, -20f, 4f, ObstacleLayer.Wall, Assets.wallTexture, roomCenter);
+            SceneGenUtils.AddWalls(scene, zone, new List<Vector2[]> { pillar }, -20f, 4f, ObstacleLayer.Wall, texture, roomCenter);
         };
     }
 }

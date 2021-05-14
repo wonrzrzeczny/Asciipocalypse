@@ -12,6 +12,9 @@ namespace ASCII_FPS.Scenes.Generators
         private readonly int monstersPerRoom;
         private readonly float[] monsterChances;
 
+        protected override AsciiTexture WallTexture => Assets.wallTexture;
+        protected override AsciiTexture FloorTexture => Assets.floorTexture;
+
 
         public SceneGeneratorDefault(ASCII_FPS game, int floor) : base(game)
         {
@@ -164,7 +167,7 @@ namespace ASCII_FPS.Scenes.Generators
             {
                 if (rng == 0 || rng == 1)
                 {
-                    SceneStructures.Arena(scene, zone, roomCenter);
+                    SceneStructures.Arena(WallTexture)(scene, zone, roomCenter);
                 }
             }
             if (flags.ClearFloor)
@@ -172,11 +175,11 @@ namespace ASCII_FPS.Scenes.Generators
                 if (rng == 2 || rng == 3)
                 {
                     results.GenerateFloor = false;
-                    SceneStructures.Pit(scene, zone, roomCenter);
+                    SceneStructures.Pit(FloorTexture, WallTexture)(scene, zone, roomCenter);
 
                     if (rng == 3 && flags.ClearCenter)
                     {
-                        SceneStructures.PitPillar(scene, zone, roomCenter);
+                        SceneStructures.PitPillar(WallTexture)(scene, zone, roomCenter);
                     }
                 }
             }
@@ -189,18 +192,18 @@ namespace ASCII_FPS.Scenes.Generators
             {
                 if (rnd == 0)
                 {
-                    SceneStructures.PillarSmall(scene, zone, roomCenter);
+                    SceneStructures.PillarSmall(WallTexture)(scene, zone, roomCenter);
                 }
                 else if (rnd == 1)
                 {
-                    SceneStructures.PillarBig(scene, zone, roomCenter);
+                    SceneStructures.PillarBig(WallTexture)(scene, zone, roomCenter);
                 }
             }
             else
             {
                 if (rnd == 2)
                 {
-                    SceneStructures.Pillars4Inner(scene, zone, roomCenter);
+                    SceneStructures.Pillars4Inner(WallTexture)(scene, zone, roomCenter);
                 }
             }
         }
@@ -210,11 +213,11 @@ namespace ASCII_FPS.Scenes.Generators
             int rnd = rand.Next(4);
             if (flags.NotJoint && rnd == 0)
             {
-                SceneStructures.CutCorners(scene, zone, roomCenter);
+                SceneStructures.CutCorners(WallTexture)(scene, zone, roomCenter);
             }
             else if (rnd == 1)
             {
-                SceneStructures.Pillars4Outer(scene, zone, roomCenter);
+                SceneStructures.Pillars4Outer(WallTexture)(scene, zone, roomCenter);
             }
         }
     }

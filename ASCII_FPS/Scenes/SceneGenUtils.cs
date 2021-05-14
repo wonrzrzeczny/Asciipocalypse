@@ -49,7 +49,7 @@ namespace ASCII_FPS.Scenes
             }
         }
 
-        public static MeshObject MakeFloor(float left, float right, float bottom, float top, float height, bool floor, float uvDensity = 100f)
+        public static MeshObject MakeFloor(float left, float right, float bottom, float top, float height, AsciiTexture texture, bool floor, float uvDensity = 100f)
         {
             Vector3 tr = new Vector3(right, height, top);
             Vector3 tl = new Vector3(left, height, top);
@@ -64,13 +64,13 @@ namespace ASCII_FPS.Scenes
             List<Triangle> triangles = floor
                 ? new List<Triangle>
                 {
-                    new Triangle(tl, tr, br, Assets.floorTexture, uvtl, uvtr, uvbr),
-                    new Triangle(tl, br, bl, Assets.floorTexture, uvtl, uvbr, uvbl)
+                    new Triangle(tl, tr, br, texture, uvtl, uvtr, uvbr),
+                    new Triangle(tl, br, bl, texture, uvtl, uvbr, uvbl)
                 }
                 : new List<Triangle>
                 {
-                    new Triangle(tl, br, tr, Assets.floorTexture, uvtl, uvbr, uvtr),
-                    new Triangle(tl, bl, br, Assets.floorTexture, uvtl, uvbl, uvbr)
+                    new Triangle(tl, br, tr, texture, uvtl, uvbr, uvtr),
+                    new Triangle(tl, bl, br, texture, uvtl, uvbl, uvbr)
                 };
             return new MeshObject(triangles, Vector3.Zero, 0f);
         }
