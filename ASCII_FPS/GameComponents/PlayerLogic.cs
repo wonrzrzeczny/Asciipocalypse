@@ -81,9 +81,9 @@ namespace ASCII_FPS.GameComponents
                 if (playerStats.shootTime <= 0f)
                 {
                     playerStats.shootTime = 1f / (3f + playerStats.skillShootingSpeed * 0.5f);
-                    ASCII_FPS.tsch.Play();
+                    Assets.tsch.Play();
 
-                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, ASCII_FPS.projectileTexture);
+                    MeshObject projectileMesh = PrimitiveMeshes.Octahedron(scene.Camera.CameraPos + Vector3.Down, 0.4f, Assets.projectileTexture);
                     scene.AddGameObject(new Projectile(projectileMesh, scene.Camera.Forward, 75f, 2f));
                 }
             }

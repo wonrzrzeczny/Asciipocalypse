@@ -5,7 +5,7 @@ namespace ASCII_FPS.GameComponents.Enemies
     public class BasicMonster : Monster
     {
         public BasicMonster(Vector3 position, float health, float damage)
-            : base(PrimitiveMeshes.Tetrahedron(position, 3f, ASCII_FPS.monsterTexture), health, damage) { }
+            : base(PrimitiveMeshes.Tetrahedron(position, 3f, Assets.monsterTexture), health, damage) { }
 
 
         public override float HitRadius => 3f;
@@ -17,7 +17,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Attack(Vector3 towardsTarget)
         {
-            ASCII_FPS.tsch.Play();
+            Assets.tsch.Play();
             Fire(towardsTarget);
         }
     }

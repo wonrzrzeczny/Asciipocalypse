@@ -5,7 +5,7 @@ namespace ASCII_FPS.GameComponents.Enemies
     public class ShotgunDude : Monster
     {
         public ShotgunDude(Vector3 position, float health, float damage)
-            : base(PrimitiveMeshes.Octahedron(position, 3f, ASCII_FPS.shotgunDudeTexture), health, damage) { }
+            : base(PrimitiveMeshes.Octahedron(position, 3f, Assets.shotgunDudeTexture), health, damage) { }
 
 
         public override float HitRadius => 3f;
@@ -17,7 +17,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Attack(Vector3 towardsTarget)
         {
-            ASCII_FPS.tsch.Play();
+            Assets.tsch.Play();
             Vector3 orth = Vector3.Cross(towardsTarget, Vector3.Up);
             Vector3 left = towardsTarget - orth * 0.375f;
             Vector3 right = towardsTarget + orth * 0.375f;

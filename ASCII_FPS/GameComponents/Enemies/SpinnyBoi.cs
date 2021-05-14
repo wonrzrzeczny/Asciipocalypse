@@ -6,7 +6,7 @@ namespace ASCII_FPS.GameComponents.Enemies
     public class SpinnyBoi : Monster
     {
         public SpinnyBoi(Vector3 position, float health, float damage)
-            : base(PrimitiveMeshes.TetraStar(position, 3f, ASCII_FPS.spinnyBoiTexture), health, damage) { }
+            : base(PrimitiveMeshes.TetraStar(position, 3f, Assets.spinnyBoiTexture), health, damage) { }
 
 
         public override float HitRadius => 5f;
@@ -22,7 +22,7 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected override void Attack(Vector3 towardsTarget)
         {
             counter++;
-            ASCII_FPS.btsch.Play();
+            Assets.btsch.Play();
             float dispersion = (float)Math.Atan(0.75f);
             for (int i = 0; i < 16; i++)
             {
@@ -34,7 +34,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Fire(Vector3 direction, float projectileSpeed = 40f)
         {
-            MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectile2Texture);
+            MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, Assets.projectile2Texture);
             Scene.AddGameObject(new EnemyProjectile(projectileMesh, direction, projectileSpeed, damage));
         }
     }

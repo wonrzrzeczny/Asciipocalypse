@@ -37,12 +37,6 @@ namespace ASCII_FPS
         private GameState gameState = GameState.MainMenu;
         private MainMenuGroup menuGroup;
 
-        // Content
-        public static SpriteFont font;
-        public static AsciiTexture texture1, texture2, barrelRedTexture, barrelGreenTexture, barrelBlueTexture, projectileTexture, projectile2Texture, exitTexture;
-        public static AsciiTexture monsterTexture, shotgunDudeTexture, spinnyBoiTexture, spooperTexture;
-        public static OBJFile barrelModel, exitModel, spooperModel;
-        public static SoundEffect tsch, oof, ouch, theme, btsch, beep;
 
         // DEBUG
         public static bool enableDebug = false;
@@ -111,34 +105,34 @@ namespace ASCII_FPS
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            font = Content.Load<SpriteFont>("Font");
-            
-            texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
-            texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
-            barrelRedTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_red"));
-            barrelGreenTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_green"));
-            barrelBlueTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_blue"));
-            projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
-            projectile2Texture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile2"));
-            exitTexture = new AsciiTexture(Content.Load<Texture2D>("textures/exit"));
+            Assets.font = Content.Load<SpriteFont>("Font");
 
-            monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
-            shotgunDudeTexture = new AsciiTexture(Content.Load<Texture2D>("textures/shotgun_dude"));
-            spinnyBoiTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spinny_boi"));
-            spooperTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spooper"));
+            Assets.texture1 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks01"));
+            Assets.texture2 = new AsciiTexture(Content.Load<Texture2D>("textures/bricks02"));
+            Assets.barrelRedTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_red"));
+            Assets.barrelGreenTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_green"));
+            Assets.barrelBlueTexture = new AsciiTexture(Content.Load<Texture2D>("textures/barrel_blue"));
+            Assets.projectileTexture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile"));
+            Assets.projectile2Texture = new AsciiTexture(Content.Load<Texture2D>("textures/projectile2"));
+            Assets.exitTexture = new AsciiTexture(Content.Load<Texture2D>("textures/exit"));
 
-            barrelModel = Content.Load<OBJFile>("models/barrel");
-            exitModel = Content.Load<OBJFile>("models/exit");
-            spooperModel = Content.Load<OBJFile>("models/spooper");
+            Assets.monsterTexture = new AsciiTexture(Content.Load<Texture2D>("textures/monster"));
+            Assets.shotgunDudeTexture = new AsciiTexture(Content.Load<Texture2D>("textures/shotgun_dude"));
+            Assets.spinnyBoiTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spinny_boi"));
+            Assets.spooperTexture = new AsciiTexture(Content.Load<Texture2D>("textures/spooper"));
 
-            tsch = Content.Load<SoundEffect>("audio/tsch");
-            oof = Content.Load<SoundEffect>("audio/oof");
-            ouch = Content.Load<SoundEffect>("audio/ouch");
-            theme = Content.Load<SoundEffect>("audio/theme");
-            btsch = Content.Load<SoundEffect>("audio/btsch");
-            beep = Content.Load<SoundEffect>("audio/beep");
+            Assets.barrelModel = Content.Load<OBJFile>("models/barrel");
+            Assets.exitModel = Content.Load<OBJFile>("models/exit");
+            Assets.spooperModel = Content.Load<OBJFile>("models/spooper");
 
-            theme.Play();
+            Assets.tsch = Content.Load<SoundEffect>("audio/tsch");
+            Assets.oof = Content.Load<SoundEffect>("audio/oof");
+            Assets.ouch = Content.Load<SoundEffect>("audio/ouch");
+            Assets.theme = Content.Load<SoundEffect>("audio/theme");
+            Assets.btsch = Content.Load<SoundEffect>("audio/btsch");
+            Assets.beep = Content.Load<SoundEffect>("audio/beep");
+
+            Assets.theme.Play();
 
             SaveExists = File.Exists("./scene.sav");
         }
@@ -230,7 +224,7 @@ namespace ASCII_FPS
 
                 if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
                 {
-                    theme.Play();
+                    Assets.theme.Play();
                     Scene = new SceneGeneratorDefault(this, PlayerStats.floor).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     HUD.Scene = Scene;
@@ -317,7 +311,7 @@ namespace ASCII_FPS
                     int r = ((color & 0b111) * 0b1001001) >> 1;
                     int g = (((color >> 3) & 0b111) * 0b1001001) >> 1;
                     int b = ((color >> 6) & 0b11) * 0b1010101;
-                    spriteBatch.DrawString(font, console.Data[i, j].ToString(), new Vector2(i, j) * Console.FONT_SIZE, new Color(r, g, b));
+                    spriteBatch.DrawString(Assets.font, console.Data[i, j].ToString(), new Vector2(i, j) * Console.FONT_SIZE, new Color(r, g, b));
                 }
             }
 
@@ -339,7 +333,7 @@ namespace ASCII_FPS
                                      "\n" + additionalDebug +
                                      "\nHealth: " + (int)PlayerStats.health;
 
-                spriteBatch.DrawString(font, debug, Vector2.Zero, Color.White);
+                spriteBatch.DrawString(Assets.font, debug, Vector2.Zero, Color.White);
             }
 
             spriteBatch.End();

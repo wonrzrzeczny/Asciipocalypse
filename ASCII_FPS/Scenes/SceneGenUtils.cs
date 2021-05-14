@@ -64,13 +64,13 @@ namespace ASCII_FPS.Scenes
             List<Triangle> triangles = floor
                 ? new List<Triangle>
                 {
-                    new Triangle(tl, tr, br, ASCII_FPS.texture2, uvtl, uvtr, uvbr),
-                    new Triangle(tl, br, bl, ASCII_FPS.texture2, uvtl, uvbr, uvbl)
+                    new Triangle(tl, tr, br, Assets.texture2, uvtl, uvtr, uvbr),
+                    new Triangle(tl, br, bl, Assets.texture2, uvtl, uvbr, uvbl)
                 }
                 : new List<Triangle>
                 {
-                    new Triangle(tl, br, tr, ASCII_FPS.texture2, uvtl, uvbr, uvtr),
-                    new Triangle(tl, bl, br, ASCII_FPS.texture2, uvtl, uvbl, uvbr)
+                    new Triangle(tl, br, tr, Assets.texture2, uvtl, uvbr, uvtr),
+                    new Triangle(tl, bl, br, Assets.texture2, uvtl, uvbl, uvbr)
                 };
             return new MeshObject(triangles, Vector3.Zero, 0f);
         }

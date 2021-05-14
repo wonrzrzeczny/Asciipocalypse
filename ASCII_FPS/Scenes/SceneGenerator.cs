@@ -85,7 +85,7 @@ namespace ASCII_FPS.Scenes
                         List<Triangle> wallTriangles = new List<Triangle>();
                         foreach (Vector2[] wall in walls)
                         {
-                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, ASCII_FPS.texture1));
+                            wallTriangles.AddRange(SceneGenUtils.MakeWall(wall, -4f, 4f, Assets.texture1));
                             scene.AddObstacle(wall[0] + roomCenter, wall[1] + roomCenter, ObstacleLayer.Wall);
                         }
                         MeshObject wallObject = new MeshObject(wallTriangles, new Vector3(roomCenter.X, 0f, roomCenter.Y), 0f);
@@ -110,16 +110,16 @@ namespace ASCII_FPS.Scenes
                             switch (type)
                             {
                                 case Collectible.Type.Armor:
-                                    texture = ASCII_FPS.barrelGreenTexture;
+                                    texture = Assets.barrelGreenTexture;
                                     break;
                                 case Collectible.Type.Health:
-                                    texture = ASCII_FPS.barrelRedTexture;
+                                    texture = Assets.barrelRedTexture;
                                     break;
                                 case Collectible.Type.Skill:
-                                    texture = ASCII_FPS.barrelBlueTexture;
+                                    texture = Assets.barrelBlueTexture;
                                     break;
                             }
-                            MeshObject barrel = new MeshObject(ASCII_FPS.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
+                            MeshObject barrel = new MeshObject(Assets.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
                             scene.AddGameObject(new Collectible(barrel, type, x, y));
                         }
 
@@ -137,7 +137,7 @@ namespace ASCII_FPS.Scenes
                             flags.ClearPerimeter = false;
                             flags.ClearFloor = false;
 
-                            MeshObject exit = new MeshObject(ASCII_FPS.exitModel, ASCII_FPS.exitTexture,
+                            MeshObject exit = new MeshObject(Assets.exitModel, Assets.exitTexture,
                                 new Vector3(roomCenter.X, -2f, roomCenter.Y));
                             zones[x, y].AddMesh(exit);
                             game.PlayerStats.exitPosition = new Vector2(roomCenter.X, roomCenter.Y);

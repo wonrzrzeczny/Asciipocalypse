@@ -69,7 +69,7 @@ namespace ASCII_FPS.GameComponents.Enemies
                 return;
             }
 
-            ASCII_FPS.oof.Play();
+            Assets.oof.Play();
             health -= amount;
             if (health <= 0f)
             {
@@ -92,7 +92,7 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected virtual void Fire(Vector3 direction, float projectileSpeed = 40f)
         {
-            MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, ASCII_FPS.projectileTexture);
+            MeshObject projectileMesh = PrimitiveMeshes.Octahedron(Position, 0.5f, Assets.projectileTexture);
             Scene.AddGameObject(new EnemyProjectile(projectileMesh, direction, projectileSpeed, damage));
         }
 

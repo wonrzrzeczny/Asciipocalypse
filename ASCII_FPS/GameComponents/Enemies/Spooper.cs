@@ -6,7 +6,7 @@ namespace ASCII_FPS.GameComponents.Enemies
     public class Spooper : Monster
     {
         public Spooper(Vector3 position, float health, float damage)
-            : base(new MeshObject(ASCII_FPS.spooperModel, ASCII_FPS.spooperTexture, position), health, damage)
+            : base(new MeshObject(Assets.spooperModel, Assets.spooperTexture, position), health, damage)
         {
             random = new Random();
         }
@@ -25,7 +25,7 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected override void Attack(Vector3 towardsTarget)
         {
             float volume = 1f - Vector3.Distance(Position, Camera.CameraPos) / 100f;
-            ASCII_FPS.beep.Play(volume, (float)random.NextDouble(), 0f);
+            Assets.beep.Play(volume, (float)random.NextDouble(), 0f);
             if (Vector3.Distance(Position, Camera.CameraPos) < AttackDistance)
             {
                 Game.PlayerStats.DealDamage(damage);
