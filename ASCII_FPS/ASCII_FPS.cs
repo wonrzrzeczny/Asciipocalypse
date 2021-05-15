@@ -151,8 +151,8 @@ namespace ASCII_FPS
             };
 
             // for testing
-            SceneGenerator generator = new Random().Next(2) == 0 ? new SceneGeneratorDefault(this, 1)
-                                                                 : new SceneGeneratorJungle(this, 1);
+            SceneGenerator generator = new Random().Next(2) == 0 ? (SceneGenerator)new SceneGeneratorDefault(this, 1)
+                                                                 : (SceneGenerator)new SceneGeneratorJungle(this, 1);
             Scene = generator.Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;

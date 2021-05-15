@@ -76,25 +76,38 @@ namespace ASCII_FPS
         }
 
 
-        public static T DiscreteChoice<T>(Random rng, T[] elems, float[] weights)
+        public static T DiscreteChoice<T>(Random rng, IEnumerable<T> elems, IEnumerable<float> weights)
         {
             float sum = weights.Sum();
             float choice = (float)rng.NextDouble() * sum;
 
             int pos = 0;
-            while (choice > weights[pos])
+            while (choice > weights.ElementAt(pos))
             {
-                choice -= weights[pos];
+                choice -= weights.ElementAt(pos);
                 pos++;
             }
 
-            return elems[pos];
+            return elems.ElementAt(pos);
         }
 
-        public static T DiscreteChoiceFn<T>(Random rng, Func<T>[] elemFuncs, float[] weights)
+        public static T DiscreteChoiceFn<T>(Random rng, IEnumerable<Func<T>> elemFuncs, IEnumerable<float> weights)
         {
             Func<T> elemFunc = DiscreteChoice(rng, elemFuncs, weights);
             return elemFunc.Invoke();
+        }
+
+        public static void Shuffle<T>(Random rng, List<T> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                int x = rng.Next(list.Count);
+                int y = rng.Next(list.Count);
+
+                T tmp = list[x];
+                list[x] = list[y];
+                list[y] = tmp;
+            }
         }
     }
 }

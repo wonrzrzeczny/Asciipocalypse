@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.GameComponents;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -168,6 +169,28 @@ namespace ASCII_FPS.Scenes
             }
 
             return corridorLayout;
+        }
+
+        public static Collectible.Type?[,] DistributeCollectibles(Random rand, int size, Point exitRoom, bool[,] accessible)
+        {
+            // Distribute collectibles (3 x skill point, 2 x armor refill, 1 x hp refill)
+            // 10 attempts per each collectible
+            Collectible.Type?[,] collectibles = new Collectible.Type?[size, size];
+            for (int b = 0; b < 6; b++)
+            {
+                for (int t = 0; t < 10; t++)
+                {
+                    int x = rand.Next(size);
+                    int y = rand.Next(size);
+                    if ((x != size / 2 || y != size / 2) && (x != exitRoom.X || y != exitRoom.Y) && accessible[x, y] && collectibles[x, y] == null)
+                    {
+                        collectibles[x, y] = b < 3 ? Collectible.Type.Skill
+                            : b < 5 ? Collectible.Type.Armor : Collectible.Type.Health;
+                        break;
+                    }
+                }
+            }
+            return collectibles;
         }
     }
 }
