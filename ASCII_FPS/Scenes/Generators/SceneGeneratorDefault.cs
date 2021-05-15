@@ -91,9 +91,9 @@ namespace ASCII_FPS.Scenes.Generators
             float top = bottom + tileSize;
             Vector3 roomCenter = new Vector3((left + right) / 2, 0f, (top + bottom) / 2);
 
-            if ((x != exitRoom.X || y != exitRoom.Y) && (x != size / 2 || y != size / 2))
+            if (!flags.IsSpecial)
             {
-                int monsterCount = rand.Next(scene.Collectibles[x, y] == null ? 1 : 2, monstersPerRoom + 1);
+                int monsterCount = rand.Next(flags.ClearCenter ? 1 : 2, monstersPerRoom + 1);
                 game.PlayerStats.totalMonsters += monsterCount;
                 Vector2 shift = monsterCount == 1 ? Vector2.Zero : new Vector2(30f, 0f);
                 float angleOffset = (float)(rand.NextDouble() * Math.PI * 2f);
@@ -122,11 +122,6 @@ namespace ASCII_FPS.Scenes.Generators
                 {
                     flags.ClearCenter = false;
                 }
-            }
-            else
-            {
-                flags.ClearCenter = false;
-                flags.ClearFloor = false;
             }
 
             if (rand.Next(8) == 0 || (flags.ClearPerimeter && rand.Next(2) == 0)) // special room

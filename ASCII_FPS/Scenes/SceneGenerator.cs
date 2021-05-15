@@ -1,6 +1,7 @@
 ﻿using ASCII_FPS.GameComponents;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ASCII_FPS.Scenes
@@ -52,7 +53,7 @@ namespace ASCII_FPS.Scenes
             scene.Collectibles = DistributeCollectibles();
 
             GenerateRooms(scene, zones);
-            GeneratePortals(scene, zones);
+            GeneratePortals(zones);
 
             return scene;
         }
@@ -74,13 +75,7 @@ namespace ASCII_FPS.Scenes
                         zones[x, y] = new Zone(new RectangleF(left, bottom, tileSize, tileSize));
                         scene.AddZone(zones[x, y]);
 
-                        float[] roomCorridors = new float[4]
-                        {
-                            corridorWidths[x, y, 0],
-                            corridorWidths[x, y, 1],
-                            corridorWidths[x, y, 2],
-                            corridorWidths[x, y, 3]
-                        };
+                        float[] roomCorridors = Enumerable.Range(0, 4).Select(t => corridorWidths[x, y, t]).ToArray();
 
                         // Walls
                         List<Vector2[]> walls = SceneGenUtils.MakeRoomWalls(tileSize, tileSize, roomCorridors, 2f);
@@ -95,19 +90,27 @@ namespace ASCII_FPS.Scenes
                         zones[x, y].AddMesh(wallObject);
 
 
+                        bool flagIsSpecial = (x == exitRoom.X && y == exitRoom.Y) || (x == size / 2 && y == size / 2);
                         PopulateSchemeFlags flags = new PopulateSchemeFlags
                         {
-                            ClearCenter = true,
+                            IsSpecial = flagIsSpecial,
+                            ClearCenter = scene.Collectibles[x, y] == null && !flagIsSpecial,
                             NotJoint = true,
                             ClearPerimeter = true,
-                            ClearFloor = true
+                            ClearFloor = scene.Collectibles[x, y] == null && !flagIsSpecial
                         };
+
+                        for (int t = 0; t < 4; t++)
+                        {
+                            if (corridorLayout[x, y, t] && corridorWidths[x, y, t] > 15f)
+                            {
+                                flags.NotJoint = false;
+                            }
+                        }
+
 
                         if (scene.Collectibles[x, y] != null)
                         {
-                            flags.ClearCenter = false;
-                            flags.ClearFloor = false;
-
                             Collectible.Type type = scene.Collectibles[x, y].Value;
                             AsciiTexture texture = null;
                             switch (type)
@@ -124,14 +127,6 @@ namespace ASCII_FPS.Scenes
                             }
                             MeshObject barrel = new MeshObject(Assets.barrelModel, texture, new Vector3(roomCenter.X, -3f, roomCenter.Y));
                             scene.AddGameObject(new Collectible(barrel, type, x, y));
-                        }
-
-                        for (int t = 0; t < 4; t++)
-                        {
-                            if (corridorLayout[x, y, t] && corridorWidths[x, y, t] > 15f)
-                            {
-                                flags.NotJoint = false;
-                            }
                         }
 
                         if (x == exitRoom.X && y == exitRoom.Y)
@@ -159,7 +154,7 @@ namespace ASCII_FPS.Scenes
             }
         }
 
-        private void GeneratePortals(Scene scene, Zone[,] zones)
+        private void GeneratePortals(Zone[,] zones)
         {
             for (int x = 0; x < size; x++)
             {
@@ -207,30 +202,11 @@ namespace ASCII_FPS.Scenes
 
         protected struct PopulateSchemeFlags
         {
+            public bool IsSpecial { get; set; }
             public bool ClearCenter { get; set; }
             public bool NotJoint { get; set; }
             public bool ClearPerimeter { get; set; }
             public bool ClearFloor { get; set; }
-
-            public uint Mask
-            {
-                get
-                {
-                    uint ret = 0;
-                    if (ClearCenter)    ret |= 1;
-                    if (NotJoint)       ret |= 2;
-                    if (ClearPerimeter) ret |= 4;
-                    if (ClearFloor)     ret |= 8;
-                    return ret;
-                }
-            }
-
-
-            public bool Fulfills(PopulateSchemeFlags pred)
-            {
-                uint mask = Mask;
-                return (mask | pred.Mask) == mask;
-            }
         }
 
         protected struct PopulateRoomResults

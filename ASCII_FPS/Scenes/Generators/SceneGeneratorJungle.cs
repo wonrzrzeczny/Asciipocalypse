@@ -103,13 +103,6 @@ namespace ASCII_FPS.Scenes.Generators
 
                     scene.AddGameObject(monster);
                 }
-
-                flags.ClearPerimeter = false;
-            }
-            else
-            {
-                flags.ClearCenter = false;
-                flags.ClearFloor = false;
             }
 
             return results;
