@@ -91,10 +91,22 @@ namespace ASCII_FPS
             return elems.ElementAt(pos);
         }
 
+        public static T DiscreteChoice<T>(Random rng, IEnumerable<T> elems)
+        {
+            IEnumerable<float> weights = elems.Select((T _) => 1f);
+            return DiscreteChoice(rng, elems, weights);
+        }
+
         public static T DiscreteChoiceFn<T>(Random rng, IEnumerable<Func<T>> elemFuncs, IEnumerable<float> weights)
         {
             Func<T> elemFunc = DiscreteChoice(rng, elemFuncs, weights);
             return elemFunc.Invoke();
+        }
+
+        public static T DiscreteChoiceFn<T>(Random rng, IEnumerable<Func<T>> elemFuncs)
+        {
+            IEnumerable<float> weights = elemFuncs.Select((Func<T> _) => 1f);
+            return DiscreteChoiceFn(rng, elemFuncs, weights);
         }
 
         public static void Shuffle<T>(Random rng, List<T> list)

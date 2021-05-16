@@ -32,6 +32,7 @@ namespace ASCII_FPS
         [AssetPath("textures/barrel_red")] public static AsciiTexture barrelRedTexture;
         [AssetPath("textures/barrel_green")] public static AsciiTexture barrelGreenTexture;
         [AssetPath("textures/barrel_blue")] public static AsciiTexture barrelBlueTexture;
+        [AssetPath("textures/bush")] public static AsciiTexture bushTexture;
 
         [AssetPath("textures/projectile")] public static AsciiTexture projectileTexture;
         [AssetPath("textures/projectile2")] public static AsciiTexture projectile2Texture;
@@ -44,6 +45,7 @@ namespace ASCII_FPS
         [AssetPath("models/barrel")] public static OBJFile barrelModel;
         [AssetPath("models/exit")] public static OBJFile exitModel;
         [AssetPath("models/spooper")] public static OBJFile spooperModel;
+        [AssetPath("models/bush")] public static OBJFile bushModel;
 
         [AssetPath("audio/tsch")] public static SoundEffect tsch;
         [AssetPath("audio/oof")] public static SoundEffect oof;

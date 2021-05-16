@@ -1,8 +1,11 @@
 ﻿using ASCII_FPS.GameComponents;
 using ASCII_FPS.GameComponents.Enemies;
 using Microsoft.Xna.Framework;
+
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Generator = ASCII_FPS.Scenes.SceneStructures.Generator;
 
 namespace ASCII_FPS.Scenes.Generators
 {
@@ -72,6 +75,7 @@ namespace ASCII_FPS.Scenes.Generators
             float bottom = y * tileSize - size * tileSize / 2;
             float top = bottom + tileSize;
             Vector3 roomCenter = new Vector3((left + right) / 2, 0f, (top + bottom) / 2);
+            float[] roomCorridors = Enumerable.Range(0, 4).Select(t => corridorWidths[x, y, t]).ToArray();
 
             if ((x != exitRoom.X || y != exitRoom.Y) && (x != size / 2 || y != size / 2))
             {
@@ -103,6 +107,22 @@ namespace ASCII_FPS.Scenes.Generators
 
                     scene.AddGameObject(monster);
                 }
+
+
+                List<Generator> generators = new List<Generator>
+                {
+                    SceneStructures.Pillars4Inner(WallTexture),
+                    SceneStructures.JungleBushes()
+                };
+
+                if (flags.ClearCenter)
+                {
+                    generators.Add(SceneStructures.PillarBig(WallTexture));
+                    generators.Add(SceneStructures.PillarSmall(WallTexture));
+                }
+
+                Mathg.DiscreteChoice(rand, generators).Invoke(scene, zone, roomCenter);
+                SceneStructures.JungleWalls(Assets.jungleWallTexture).Invoke(scene, zone, roomCenter);
             }
 
             return results;

@@ -76,6 +76,16 @@ namespace ASCII_FPS.Scenes
             return new MeshObject(triangles, Vector3.Zero, 0f);
         }
 
+        public static void AddFloor(Zone zone, Vector2 v0, Vector2 v1, float height, AsciiTexture texture, bool floor, Vector3 offset, float uvDensity = 100f)
+        {
+            float left = offset.X + Math.Min(v0.X, v1.X);
+            float right = offset.X + Math.Max(v0.X, v1.X);
+            float bottom = offset.Z + Math.Min(v0.Y, v1.Y);
+            float top = offset.Z + Math.Max(v0.Y, v1.Y);
+            MeshObject mesh = MakeFloor(left, right, bottom, top, height + offset.Y, texture, floor, uvDensity);
+            zone.AddMesh(mesh);
+        }
+
         public static List<Vector2[]> MakeRoomWalls(float width, float height, float[] corridors, float wallThickness)
         {
             List<Vector2[]> result = new List<Vector2[]>();
