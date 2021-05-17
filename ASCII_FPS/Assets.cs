@@ -26,6 +26,7 @@ namespace ASCII_FPS
         [AssetPath("textures/bricks02")] public static AsciiTexture floorTexture;
         [AssetPath("textures/jungle_bricks")] public static AsciiTexture jungleWallTexture;
         [AssetPath("textures/jungle_bricks_vines")] public static AsciiTexture jungleWallVinesTexture;
+        [AssetPath("textures/jungle_ground")] public static AsciiTexture jungleFloorTexture;
 
         [AssetPath("textures/exit")] public static AsciiTexture exitTexture;
 

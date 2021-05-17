@@ -128,6 +128,21 @@ namespace ASCII_FPS.Scenes
             return result;
         }
 
+        public static List<Vector2[]> MakeRect(float left, float right, float bottom, float top)
+        {
+            return new List<Vector2[]>
+            {
+                new Vector2[]
+                {
+                    new Vector2(left, top),
+                    new Vector2(left, bottom),
+                    new Vector2(right, bottom),
+                    new Vector2(right, top),
+                    new Vector2(left, top)
+                }
+            };
+        }
+
         public static bool[,,] GenerateCorridorLayout(int sizeX, int sizeY, out bool[,] visited)
         {
             float loopChance = 2f / (sizeX * sizeY);

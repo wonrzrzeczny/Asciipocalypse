@@ -17,7 +17,7 @@ namespace ASCII_FPS.Scenes.Generators
         private readonly float[] monsterChances;
 
         protected override AsciiTexture WallTexture => Assets.jungleWallVinesTexture;
-        protected override AsciiTexture FloorTexture => Assets.floorTexture;
+        protected override AsciiTexture FloorTexture => Assets.jungleFloorTexture;
 
         public SceneGeneratorJungle(ASCII_FPS game, int floor) : base(game)
         {
@@ -111,18 +111,23 @@ namespace ASCII_FPS.Scenes.Generators
 
                 List<Generator> generators = new List<Generator>
                 {
-                    SceneStructures.Pillars4Inner(WallTexture),
+                    SceneStructures.Pillars4Inner(Assets.jungleWallTexture),
+                    SceneStructures.FancyPillars2(Assets.jungleWallTexture, rand.Next(2)),
                     SceneStructures.JungleBushes()
                 };
 
                 if (flags.ClearCenter)
                 {
-                    generators.Add(SceneStructures.PillarBig(WallTexture));
-                    generators.Add(SceneStructures.PillarSmall(WallTexture));
+                    generators.Add(SceneStructures.PillarBig(Assets.jungleWallTexture));
+                    generators.Add(SceneStructures.PillarSmall(Assets.jungleWallTexture));
+                    generators.Add(SceneStructures.FancyPillar(Assets.jungleWallTexture));
                 }
 
                 Mathg.DiscreteChoice(rand, generators).Invoke(scene, zone, roomCenter);
-                SceneStructures.JungleWalls(Assets.jungleWallTexture).Invoke(scene, zone, roomCenter);
+                if (rand.Next(5) == 0)
+                {
+                    SceneStructures.JungleWalls(Assets.jungleWallTexture, 15f, 10f, roomCorridors).Invoke(scene, zone, roomCenter);
+                }
             }
 
             return results;
