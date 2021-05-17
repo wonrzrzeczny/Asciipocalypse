@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.IO;
 using ASCII_FPS.UI;
+using System.Collections.Generic;
 
 namespace ASCII_FPS
 {
@@ -150,8 +151,7 @@ namespace ASCII_FPS
                 floor = 1
             };
 
-            // for testing
-            SceneGenerator generator = new SceneGeneratorJungle(this, 1);
+            SceneGenerator generator = new SceneGeneratorDefault(this, 1);
             Scene = generator.Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
@@ -165,6 +165,18 @@ namespace ASCII_FPS
             PlayerStats = GameSave.LoadGameStats();
             HUD.Scene = Scene;
             playerLogic = new PlayerLogic(this);
+        }
+
+
+        public SceneGenerator SelectGenerator(int floor, int seed)
+        {
+            List<Func<SceneGenerator>> gens = new List<Func<SceneGenerator>>
+            {
+                () => new SceneGeneratorJungle(this, floor)
+            };
+            Mathg.Shuffle(new Random(seed), gens);
+            gens.Insert(0, () => new SceneGeneratorDefault(this, floor));
+            return gens[((floor - 1) / 4) % gens.Count].Invoke();
         }
 
 
@@ -201,7 +213,7 @@ namespace ASCII_FPS
                 if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
                 {
                     Assets.theme.Play();
-                    Scene = new SceneGeneratorDefault(this, PlayerStats.floor).Generate();
+                    Scene = SelectGenerator(PlayerStats.floor, 0).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     HUD.Scene = Scene;
                     Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
