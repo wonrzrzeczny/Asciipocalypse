@@ -11,8 +11,9 @@ namespace ASCII_FPS.GameComponents.Loaders
             Vector3 direction = GameSave.ReadVector3(reader);
             float speed = reader.ReadSingle();
             float damage = reader.ReadSingle();
+            bool poison = reader.ReadBoolean();
 
-            return new EnemyProjectile(meshObject, direction, speed, damage);
+            return new EnemyProjectile(meshObject, direction, speed, damage, poison);
         }
     }
 }

@@ -221,6 +221,18 @@
 /processorParam:TextureFormat=Color
 /build:textures/monster.png
 
+#begin textures/poison_monster.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/poison_monster.png
+
 #begin textures/projectile.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -244,6 +256,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:textures/projectile2.png
+
+#begin textures/projectile3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/projectile3.png
 
 #begin textures/shotgun_dude.png
 /importer:TextureImporter

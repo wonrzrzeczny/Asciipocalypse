@@ -9,20 +9,29 @@ namespace ASCII_FPS.GameComponents
         private readonly Vector3 direction;
         private readonly float speed;
         private readonly float damage;
+        private readonly bool poison;
 
 
-        public EnemyProjectile(MeshObject meshObject, Vector3 direction, float speed, float damage) : base(meshObject)
+        public EnemyProjectile(MeshObject meshObject, Vector3 direction, float speed, float damage, bool poison) : base(meshObject)
         {
             this.direction = Vector3.Normalize(direction);
             this.speed = speed;
             this.damage = damage;
+            this.poison = poison;
         }
+
+        public EnemyProjectile(MeshObject meshObject, Vector3 direction, float speed, float damage)
+            : this(meshObject, direction, speed, damage, false) { }
 
         public override void Update(float deltaTime)
         {
             if (Vector3.Distance(Position, Camera.CameraPos) < PlayerStats.thickness)
             {
                 Game.PlayerStats.DealDamage(damage);
+                if (poison)
+                {
+                    Game.PlayerStats.Poison(damage);
+                }
                 Destroy = true;
             }
 
@@ -44,6 +53,7 @@ namespace ASCII_FPS.GameComponents
             GameSave.WriteVector3(writer, direction);
             writer.Write(speed);
             writer.Write(damage);
+            writer.Write(poison);
         }
     }
 }

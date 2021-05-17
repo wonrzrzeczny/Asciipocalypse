@@ -37,11 +37,13 @@ namespace ASCII_FPS
 
         [AssetPath("textures/projectile")] public static AsciiTexture projectileTexture;
         [AssetPath("textures/projectile2")] public static AsciiTexture projectile2Texture;
+        [AssetPath("textures/projectile3")] public static AsciiTexture projectile3Texture;
 
         [AssetPath("textures/monster")] public static AsciiTexture monsterTexture;
         [AssetPath("textures/shotgun_dude")] public static AsciiTexture shotgunDudeTexture;
         [AssetPath("textures/spinny_boi")] public static AsciiTexture spinnyBoiTexture;
         [AssetPath("textures/spooper")] public static AsciiTexture spooperTexture;
+        [AssetPath("textures/poison_monster")] public static AsciiTexture poisonMonsterTexture;
 
         [AssetPath("models/barrel")] public static OBJFile barrelModel;
         [AssetPath("models/exit")] public static OBJFile exitModel;

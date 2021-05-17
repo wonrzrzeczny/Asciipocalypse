@@ -30,7 +30,8 @@ namespace ASCII_FPS.Scenes.Generators
             float monsterChanceSpooper = floor < 4 ? 0f : 0.2f * (1 - 1 / (0.4f * (floor - 3) + 1f));
             monsterChances = new float[]
             {
-                1f - monsterChanceShotgun - monsterChanceSpinny - monsterChanceSpooper,
+                0.5f * (1f - monsterChanceShotgun - monsterChanceSpinny - monsterChanceSpooper),
+                0.5f * (1f - monsterChanceShotgun - monsterChanceSpinny - monsterChanceSpooper),
                 monsterChanceShotgun,
                 monsterChanceSpinny,
                 monsterChanceSpooper
@@ -100,6 +101,7 @@ namespace ASCII_FPS.Scenes.Generators
                     Monster monster = Mathg.DiscreteChoiceFn(rand, new Func<Monster>[]
                     {
                         () => new BasicMonster(position, monsterHP, monsterDamage),
+                        () => new PoisonMonster(position, monsterHP, monsterDamage * 0.75f),
                         () => new ShotgunDude(position, monsterHP, monsterDamage),
                         () => new SpinnyBoi(position, monsterHP * 2, monsterDamage),
                         () => new Spooper(position, monsterHP * 1.5f, monsterDamage)
