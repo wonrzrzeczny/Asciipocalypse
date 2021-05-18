@@ -151,7 +151,7 @@ namespace ASCII_FPS
                 floor = 1
             };
 
-            SceneGenerator generator = new SceneGeneratorDefault(this, 1);
+            SceneGenerator generator = SelectGenerator(1, 0);
             Scene = generator.Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
@@ -170,9 +170,13 @@ namespace ASCII_FPS
 
         public SceneGenerator SelectGenerator(int floor, int seed)
         {
+            // for testing
+            return new SceneGeneratorLava(this, floor);
+
             List<Func<SceneGenerator>> gens = new List<Func<SceneGenerator>>
             {
-                () => new SceneGeneratorJungle(this, floor)
+                () => new SceneGeneratorJungle(this, floor),
+                () => new SceneGeneratorLava(this, floor),
             };
             Mathg.Shuffle(new Random(seed), gens);
             gens.Insert(0, () => new SceneGeneratorDefault(this, floor));

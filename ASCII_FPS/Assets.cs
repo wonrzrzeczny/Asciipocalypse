@@ -22,11 +22,15 @@ namespace ASCII_FPS
     {
         [AssetPath("font")] public static SpriteFont font;
 
+
         [AssetPath("textures/bricks01")] public static AsciiTexture wallTexture;
         [AssetPath("textures/bricks02")] public static AsciiTexture floorTexture;
         [AssetPath("textures/jungle_bricks")] public static AsciiTexture jungleWallTexture;
         [AssetPath("textures/jungle_bricks_vines")] public static AsciiTexture jungleWallVinesTexture;
         [AssetPath("textures/jungle_ground")] public static AsciiTexture jungleFloorTexture;
+        [AssetPath("textures/lava_walls")] public static AsciiTexture lavaWallsTexture;
+        [AssetPath("textures/lava_ground")] public static AsciiTexture lavaFloorTexture;
+        [AssetPath("textures/lava")] public static AsciiTexture lavaTexture;
 
         [AssetPath("textures/exit")] public static AsciiTexture exitTexture;
 
@@ -45,10 +49,12 @@ namespace ASCII_FPS
         [AssetPath("textures/spooper")] public static AsciiTexture spooperTexture;
         [AssetPath("textures/poison_monster")] public static AsciiTexture poisonMonsterTexture;
 
+
         [AssetPath("models/barrel")] public static OBJFile barrelModel;
         [AssetPath("models/exit")] public static OBJFile exitModel;
         [AssetPath("models/spooper")] public static OBJFile spooperModel;
         [AssetPath("models/bush")] public static OBJFile bushModel;
+
 
         [AssetPath("audio/tsch")] public static SoundEffect tsch;
         [AssetPath("audio/oof")] public static SoundEffect oof;
