@@ -94,7 +94,7 @@ namespace ASCII_FPS.Scenes.Generators
                     Monster monster = Mathg.DiscreteChoiceFn(rand, new Func<Monster>[]
                     {
                         () => new BasicMonster(position3, monsterHP, monsterDamage),
-                        () => new PoisonMonster(position3, monsterHP, monsterDamage * 0.75f),
+                        () => new BasicMonster(position3, monsterHP, monsterDamage),
                         () => new ShotgunDude(position3, monsterHP, monsterDamage),
                         () => new SpinnyBoi(position3, monsterHP * 2, monsterDamage),
                         () => new Spooper(position3, monsterHP * 1.5f, monsterDamage)
@@ -103,11 +103,17 @@ namespace ASCII_FPS.Scenes.Generators
                     scene.AddGameObject(monster);
                 }
 
+                Vector2 roomCenter2 = new Vector2(roomCenter.X, roomCenter.Z);
+                scene.AddGameObject(LavaPool.Create(roomCenter2 - 10f * Vector2.One, roomCenter2 + 10f * Vector2.One));
+            }
 
+
+            if (rand.Next(3) == 0)
+            {
                 List<Generator> generators = new List<Generator>
                 {
                     SceneStructures.Pillars4Inner(WallTexture),
-                    SceneStructures.Pillars4Outer(WallTexture),
+                    SceneStructures.Pillars4Outer(WallTexture)
                 };
 
                 if (flags.ClearCenter)
@@ -117,8 +123,6 @@ namespace ASCII_FPS.Scenes.Generators
                 }
 
                 Mathg.DiscreteChoice(rand, generators).Invoke(scene, zone, roomCenter);
-
-                SceneGenUtils.AddFloor(zone, -10f * Vector2.One, 10f * Vector2.One, -3.9f, Assets.lavaTexture, true, roomCenter, 50f);
             }
 
             return results;

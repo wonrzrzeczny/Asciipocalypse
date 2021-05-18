@@ -98,7 +98,10 @@ namespace ASCII_FPS.GameComponents
         {
             amount *= MathF.Pow(2f, difficulty);
 
-            Assets.ouch.Play();
+            if (!hit)
+            {
+                Assets.ouch.Play();
+            }
 
             hit = true;
             hitTime = 0.1f;
