@@ -136,7 +136,7 @@ namespace ASCII_FPS.Scenes
                             flags.ClearFloor = false;
 
                             MeshObject exit = new MeshObject(Assets.exitModel, Assets.exitTexture,
-                                new Vector3(roomCenter.X, -2f, roomCenter.Y));
+                                new Vector3(roomCenter.X, -3.25f, roomCenter.Y));
                             zones[x, y].AddMesh(exit);
                             game.PlayerStats.exitPosition = new Vector2(roomCenter.X, roomCenter.Y);
                         }

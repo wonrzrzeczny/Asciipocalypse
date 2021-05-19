@@ -52,7 +52,7 @@ namespace ASCII_FPS.Scenes.Generators
                     {
                         if (corridorLayout[x, y, t])
                         {
-                            corridorWidths[x, y, t] = 10f;
+                            corridorWidths[x, y, t] = 20f;
                         }
                     }
                 }
@@ -102,11 +102,12 @@ namespace ASCII_FPS.Scenes.Generators
 
                     scene.AddGameObject(monster);
                 }
-
-                Vector2 roomCenter2 = new Vector2(roomCenter.X, roomCenter.Z);
-                scene.AddGameObject(LavaPool.Create(roomCenter2 - 10f * Vector2.One, roomCenter2 + 10f * Vector2.One));
             }
 
+            if (x != size / 2 || y != size / 2)
+            {
+                SpawnPools(scene, x, y, roomCenter, flags);
+            }
 
             if (rand.Next(3) == 0)
             {
@@ -126,6 +127,60 @@ namespace ASCII_FPS.Scenes.Generators
             }
 
             return results;
+        }
+
+
+        private void SpawnPools(Scene scene, int x, int y, Vector3 roomCenter, PopulateSchemeFlags flags)
+        {
+            List<Func<(Vector2, Vector2)[]>> lavaFormations = new List<Func<(Vector2, Vector2)[]>>
+            {
+                () => new (Vector2, Vector2)[]
+                {
+                    (new Vector2(-20f, -20f), new Vector2(-10f, 20f)),
+                    (new Vector2(-10f, -20f), new Vector2(10f, -10f)),
+                    (new Vector2(-10f, 10f), new Vector2(10f, 20f)),
+                    (new Vector2(10f, -20f), new Vector2(20f, 20f))
+                },
+                () => new (Vector2, Vector2)[]
+                {
+                    (new Vector2(-50f, -50f), new Vector2(-15f, -15f)),
+                    (new Vector2(-50f, 15f), new Vector2(-15f, 50f)),
+                    (new Vector2(15f, -50f), new Vector2(50f, -15f)),
+                    (new Vector2(15f, 15f), new Vector2(50f, 50f))
+                },
+                () => new (Vector2, Vector2) []
+                {
+                    (new Vector2(-30f, -30f), new Vector2(-10f, -10f)),
+                    (new Vector2(-30f, 10f), new Vector2(-10f, 30f)),
+                    (new Vector2(10f, -30f), new Vector2(30f, -10f)),
+                    (new Vector2(10f, 10f), new Vector2(30f, 30f))
+                }
+            };
+
+            if (flags.ClearCenter)
+            {
+                lavaFormations.Add(() => new (Vector2, Vector2)[] { (new Vector2(-20f, -20f), new Vector2(20f, 20f)) });
+                lavaFormations.Add(() => new (Vector2, Vector2)[]
+                {
+                    (new Vector2(-12f, -25f), new Vector2(12f, 25f)),
+                    (new Vector2(-25f, -12f), new Vector2(-12f, 12f)),
+                    (new Vector2(12f, -12f), new Vector2(25f, 12f))
+                });
+
+                if (!corridorLayout[x, y, 0] && !corridorLayout[x, y, 2])
+                {
+                    lavaFormations.Add(() => new (Vector2, Vector2)[] { (new Vector2(-50f, -15f), new Vector2(50f, 15f)) });
+                }
+                if (!corridorLayout[x, y, 1] && !corridorLayout[x, y, 3])
+                {
+                    lavaFormations.Add(() => new (Vector2, Vector2)[] { (new Vector2(-15f, -50f), new Vector2(15f, 50f)) });
+                }
+            }
+
+            Vector2 roomCenter2 = new Vector2(roomCenter.X, roomCenter.Z);
+            Mathg.DiscreteChoiceFn(rand, lavaFormations).ToList()
+                .ForEach(((Vector2, Vector2) p)
+                    => scene.AddGameObject(LavaPool.Create(p.Item1 + roomCenter2, p.Item2 + roomCenter2)));
         }
     }
 }
