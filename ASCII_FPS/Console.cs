@@ -9,7 +9,7 @@
         public char[,] Data { get; set; }
         public byte[,] Color { get; set; }
 
-        public enum ColorEffect { None, Grayscale, Red }
+        public enum ColorEffect { None, Grayscale, Red, Fire }
         public ColorEffect Effect { get; set; } = ColorEffect.None;
 
         public Console(int width, int height)
@@ -41,6 +41,11 @@
                 case ColorEffect.Red:
                     sum = (color & 0b111) + ((color >> 3) & 0b111) + ((color >> 5) & 0b110);
                     color = (byte)(sum >> 1);
+                    break;
+                case ColorEffect.Fire:
+                    byte r = (byte)(color & 0b111);
+                    byte g = (byte)((color >> 3) & 0b111);
+                    color = (byte)((r + 1 > 7 ? 7 : r + 1) | ((g >> 1) << 3));
                     break;
             }
 

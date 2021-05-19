@@ -26,6 +26,7 @@ namespace ASCII_FPS.GameComponents
 
         public bool dead;
         public bool hit;
+        public bool onFire;
         public float hitTime;
 
         public float shootTime;
@@ -94,17 +95,17 @@ namespace ASCII_FPS.GameComponents
         }
 
 
-        public void DealDamage(float amount)
+        public void DealDamage(float amount, bool effects = true)
         {
             amount *= MathF.Pow(2f, difficulty);
 
-            if (!hit)
+            if (effects)
             {
                 Assets.ouch.Play();
+                hit = true;
+                hitTime = 0.1f;
             }
 
-            hit = true;
-            hitTime = 0.1f;
             float blocked = Math.Min(amount, armor);
             float unblocked = amount - blocked;
 

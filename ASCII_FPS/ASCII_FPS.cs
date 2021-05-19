@@ -270,6 +270,10 @@ namespace ASCII_FPS
             {
                 console.Effect = Console.ColorEffect.Red;
             }
+            else if (gameState == GameState.Game && PlayerStats.onFire)
+            {
+                console.Effect = Console.ColorEffect.Fire;
+            }
             else
             {
                 console.Effect = Console.ColorEffect.None;

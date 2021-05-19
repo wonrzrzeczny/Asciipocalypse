@@ -38,7 +38,8 @@ namespace ASCII_FPS.GameComponents
             Vector2 camPos = new Vector2(Camera.CameraPos.X, Camera.CameraPos.Z);
             if (bounds.TestPoint(camPos))
             {
-                Game.PlayerStats.DealDamage(deltaTime * 5f);
+                Game.PlayerStats.DealDamage(5f * deltaTime, false);
+                Game.PlayerStats.onFire = true;
             }
         }
     }

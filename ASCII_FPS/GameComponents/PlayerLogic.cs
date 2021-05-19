@@ -75,6 +75,7 @@ namespace ASCII_FPS.GameComponents
                 }
             }
 
+            playerStats.onFire = false;
 
             if (keyboard.IsKeyDown(Keybinds.fire))
             {
