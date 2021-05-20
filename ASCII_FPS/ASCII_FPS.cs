@@ -171,7 +171,7 @@ namespace ASCII_FPS
         public SceneGenerator SelectGenerator(int floor, int seed)
         {
             // for testing
-            return new SceneGeneratorLava(this, floor);
+            return new SceneGeneratorIce(this, floor);
 
             List<Func<SceneGenerator>> gens = new List<Func<SceneGenerator>>
             {

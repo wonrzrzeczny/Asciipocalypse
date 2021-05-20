@@ -31,6 +31,9 @@ namespace ASCII_FPS
         [AssetPath("textures/lava_walls")] public static AsciiTexture lavaWallsTexture;
         [AssetPath("textures/lava_ground")] public static AsciiTexture lavaFloorTexture;
         [AssetPath("textures/lava")] public static AsciiTexture lavaTexture;
+        [AssetPath("textures/ice_walls")] public static AsciiTexture iceWallsTexture;
+        [AssetPath("textures/ice_floor")] public static AsciiTexture iceFloorTexture;
+        [AssetPath("textures/ice")] public static AsciiTexture iceTexture;
 
         [AssetPath("textures/exit")] public static AsciiTexture exitTexture;
 
