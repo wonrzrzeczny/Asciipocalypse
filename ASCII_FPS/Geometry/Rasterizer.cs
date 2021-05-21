@@ -8,6 +8,8 @@ namespace ASCII_FPS
 {
     public class Rasterizer
     {
+        public static bool EyeEasy { get; set; } = false;
+
         private Console console;
         private float[,] offset; // depth offset
 
@@ -111,12 +113,22 @@ namespace ASCII_FPS
                         float z = zBuffer[i, j];
                         Vector3 bar = bBuffer[i, j];
 
-                        int fogId = (z < 0) ? 0 : Math.Min((int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]), fogString.Length - 1);
-                        console.Data[i, j] = fogString[fogId];
 
                         // Sample from texture
                         Vector2 uv = bar.X * triangle.UV0 + bar.Y * triangle.UV1 + bar.Z * triangle.UV2;
-                        console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv));
+
+                        if (EyeEasy)
+                        {
+                            float d = Math.Clamp(1f - (float)Math.Pow(z, 25), 0f, 1f);
+                            console.Data[i, j] = '@';
+                            console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv) * d);
+                        }
+                        else
+                        {
+                            int fogId = (z < 0) ? 0 : Math.Min((int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]), fogString.Length - 1);
+                            console.Data[i, j] = fogString[fogId];
+                            console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv));
+                        }
                     }
                 }
             }
