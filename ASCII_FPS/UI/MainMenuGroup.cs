@@ -17,6 +17,10 @@ namespace ASCII_FPS.UI
         private readonly UIMenu difficultySelectionMenu;
         private readonly UIAchievements achievementsMenu;
 
+        private readonly UIMenu badVersionPopup;
+
+        private string badVersionPopupVersionID = "";
+
 
         public Action LoadGame { private get; set; }
         public Action NewGame { private get; set; }
@@ -37,6 +41,7 @@ namespace ASCII_FPS.UI
             keybindsMenu = new UIKeybinds();
             difficultySelectionMenu = new UIMenu();
             achievementsMenu = new UIAchievements();
+            badVersionPopup = new UIMenu();
 
             uiStack = new UIStack(mainTab);
         }
@@ -93,6 +98,13 @@ namespace ASCII_FPS.UI
                 UIAlignment.Right,
                 "by wonrzrzeczny"
             ));
+
+
+            badVersionPopup.AddEntry(new MenuEntry(22, "Couldn't load save file created on a different version of the game.", UIUtils.colorWhite));
+            badVersionPopup.AddEntry(new MenuEntry(26, "You're playing on version " + ASCII_FPS.VERSION + ".", UIUtils.colorWhite));
+            badVersionPopup.AddEntry(new MenuEntry(28, () => "The save was created on version " + badVersionPopupVersionID + ".", UIUtils.colorWhite));
+            badVersionPopup.AddEntry(new MenuEntry(30, "Start a new game or load the file on an appropriate game version.", UIUtils.colorWhite));
+            badVersionPopup.AddEntry(new MenuEntry(34, "Ok", uiStack.Pop, UIUtils.colorGray, UIUtils.colorLightBlue));
         }
 
         private void InitDifficultySelection()
@@ -186,6 +198,13 @@ namespace ASCII_FPS.UI
         {
             uiStack.Clear();
             mainMenu.MoveToFirst();
+        }
+
+
+        public void ToggleBadVersionPopup(string saveVersionID)
+        {
+            badVersionPopupVersionID = saveVersionID;
+            uiStack.Push(badVersionPopup);
         }
     }
 }

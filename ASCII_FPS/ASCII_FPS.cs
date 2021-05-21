@@ -84,8 +84,15 @@ namespace ASCII_FPS
                 },
                 LoadGame = () =>
                 {
-                    LoadGame();
-                    gameState = GameState.Game;
+                    try
+                    {
+                        LoadGame();
+                        gameState = GameState.Game;
+                    }
+                    catch (GameSave.BadVersionException e)
+                    {
+                        menuGroup.ToggleBadVersionPopup(e.SaveVersionID);
+                    }
                 },
                 ExitGame = Exit,
                 ChangeFullScreen = ChangeFullScreen,

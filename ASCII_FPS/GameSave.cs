@@ -10,6 +10,17 @@ namespace ASCII_FPS
 {
     public static class GameSave
     {
+        public class BadVersionException : Exception
+        {
+            public BadVersionException(string saveVersionID)
+            {
+                SaveVersionID = saveVersionID;
+            }
+
+            public string SaveVersionID { get; }
+        }
+
+
         public static void WriteVector3(BinaryWriter writer, Vector3 vector)
         {
             writer.Write(vector.X);
@@ -54,11 +65,13 @@ namespace ASCII_FPS
         {
             using (BinaryWriter writer = new BinaryWriter(File.Open("./scene.sav", FileMode.Create)))
             {
+                writer.Write(ASCII_FPS.VERSION);
                 game.Scene.Save(writer);
             }
 
             using (BinaryWriter writer = new BinaryWriter(File.Open("./player.sav", FileMode.Create)))
             {
+                writer.Write(ASCII_FPS.VERSION);
                 game.PlayerStats.Save(writer);
             }
         }
@@ -86,6 +99,12 @@ namespace ASCII_FPS
             Scene scene;
             using (BinaryReader reader = new BinaryReader(File.Open("./scene.sav", FileMode.Open)))
             {
+                string saveVersionID = reader.ReadString();
+                if (saveVersionID != ASCII_FPS.VERSION)
+                {
+                    throw new BadVersionException(saveVersionID);
+                }
+
                 scene = Scene.Load(reader, game);
             }
             return scene;
@@ -96,6 +115,12 @@ namespace ASCII_FPS
             PlayerStats playerStats = new PlayerStats();
             using (BinaryReader reader = new BinaryReader(File.Open("./player.sav", FileMode.Open)))
             {
+                string saveVersionID = reader.ReadString();
+                if (saveVersionID != ASCII_FPS.VERSION)
+                {
+                    throw new BadVersionException(saveVersionID);
+                }
+
                 playerStats.Load(reader);
             }
             return playerStats;
