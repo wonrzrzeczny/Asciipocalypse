@@ -10,12 +10,12 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected float health;
         protected readonly float damage;
 
-        private enum BehaviourState { Idle, Chasing, Attacking, Searching }
-        private BehaviourState behaviourState;
-        private float behaviourCheckTime = 0.2f;
-        private Vector3 targetPosition;
+        protected enum BehaviourState { Idle, Chasing, Attacking, Searching }
+        protected BehaviourState behaviourState;
+        protected float behaviourCheckTime = 0.2f;
+        protected Vector3 targetPosition;
 
-        private float shootTime = 0f;
+        protected float shootTime = 0f;
 
 
         public abstract float HitRadius { get; }
@@ -97,7 +97,7 @@ namespace ASCII_FPS.GameComponents.Enemies
         }
 
 
-        private BehaviourState StateCheck()
+        protected BehaviourState StateCheck()
         {
             float distance = Vector3.Distance(Position, Camera.CameraPos);
             if (distance < AlertDistance && Scene.CheckMovement(Position, Camera.CameraPos - Position, 0f, ObstacleLayerMask.GetMask(ObstacleLayer.Wall)))
