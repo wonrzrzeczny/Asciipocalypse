@@ -3,9 +3,6 @@ using ASCII_FPS.GameComponents.Enemies;
 using Microsoft.Xna.Framework;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Generator = ASCII_FPS.Scenes.SceneStructures.Generator;
 
 namespace ASCII_FPS.Scenes.Generators
 {
@@ -28,11 +25,13 @@ namespace ASCII_FPS.Scenes.Generators
             float monsterChanceShotgun = floor < 2 ? 0f : 0.3f * (1 - 1 / (0.7f * (floor - 1) + 1f));
             float monsterChanceSpinny = floor < 3 ? 0f : 0.1f * (1 - 1 / (0.3f * (floor - 2) + 1f));
             float monsterChanceSpooper = floor < 4 ? 0f : 0.2f * (1 - 1 / (0.4f * (floor - 3) + 1f));
+            float iceShotgunChance = Math.Clamp((floor - 1) / 4 * 0.16f, 0f, 1f);
             monsterChances = new float[]
             {
                 0.5f * (1f - monsterChanceShotgun - monsterChanceSpinny - monsterChanceSpooper),
                 0.5f * (1f - monsterChanceShotgun - monsterChanceSpinny - monsterChanceSpooper),
-                monsterChanceShotgun,
+                (1 - iceShotgunChance) * monsterChanceShotgun,
+                iceShotgunChance * monsterChanceShotgun,
                 monsterChanceSpinny,
                 monsterChanceSpooper
             };
@@ -92,8 +91,9 @@ namespace ASCII_FPS.Scenes.Generators
                     Monster monster = Mathg.DiscreteChoiceFn(rand, new Func<Monster>[]
                     {
                         () => new BasicMonster(position3, monsterHP, monsterDamage),
-                        () => new BasicMonster(position3, monsterHP, monsterDamage),
+                        () => new IceMonster(position3, monsterHP, monsterDamage * 0.3f),
                         () => new ShotgunDude(position3, monsterHP, monsterDamage),
+                        () => new IceShotgunDude(position3, monsterHP, monsterDamage * 0.3f),
                         () => new SpinnyBoi(position3, monsterHP * 2, monsterDamage),
                         () => new Spooper(position3, monsterHP * 1.5f, monsterDamage)
                     }, monsterChances);
