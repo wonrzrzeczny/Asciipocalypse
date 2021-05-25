@@ -14,7 +14,6 @@ namespace ASCII_FPS.UI
         private readonly UICollection optionsTab;
         private readonly UIMenu tutorialMenu;
         private readonly UIKeybinds keybindsMenu;
-        private readonly UIMenu difficultySelectionMenu;
         private readonly UIAchievements achievementsMenu;
 
         private readonly UIMenu badVersionPopup;
@@ -39,19 +38,22 @@ namespace ASCII_FPS.UI
             tutorialMenu = new UIMenu();
             optionsTab = new UICollection();
             keybindsMenu = new UIKeybinds();
-            difficultySelectionMenu = new UIMenu();
             achievementsMenu = new UIAchievements();
             badVersionPopup = new UIMenu();
 
             uiStack = new UIStack(mainTab);
         }
 
-        public void Init()
+        public void Init(bool firstRun)
         {
             InitMainMenu();
             InitOptionsMenu();
-            InitDifficultySelection();
             InitTutorialMenu();
+
+            if (firstRun)
+            {
+                InitFirstTimeOptions();
+            }
 
             keybindsMenu.BackAction = uiStack.Pop;
             achievementsMenu.BackAction = uiStack.Pop;
@@ -107,22 +109,39 @@ namespace ASCII_FPS.UI
             badVersionPopup.AddEntry(new MenuEntry(34, "Ok", uiStack.Pop, UIUtils.colorGray, UIUtils.colorLightBlue));
         }
 
-        private void InitDifficultySelection()
+        private void InitFirstTimeOptions()
         {
-            Action SelectDifficultyAction(int diff)
-            {
-                return () =>
-                {
-                    ASCII_FPS.Difficulty = diff;
-                    uiStack.Pop();
-                };
-            }
+            UIMenu difficultyMenu = new UIMenu();
 
-            difficultySelectionMenu.AddEntry(new MenuEntry(12, "Select difficulty level", UIUtils.colorWhite));
-            difficultySelectionMenu.AddEntry(new MenuEntry(16, "Easy", SelectDifficultyAction(-1), UIUtils.colorGray, UIUtils.colorLightBlue));
-            difficultySelectionMenu.AddEntry(new MenuEntry(18, "Normal (recommended)", SelectDifficultyAction(0), UIUtils.colorGray, UIUtils.colorLightBlue));
-            difficultySelectionMenu.AddEntry(new MenuEntry(20, "Hard", SelectDifficultyAction(1), UIUtils.colorGray, UIUtils.colorLightBlue));
-            difficultySelectionMenu.AddEntry(new MenuEntry(24, "Back", uiStack.Pop, UIUtils.colorGray, UIUtils.colorLightBlue));
+            Action SelectDifficultyAction(int diff) => () =>
+            {
+                ASCII_FPS.Difficulty = diff;
+                uiStack.Pop();
+            };
+
+            difficultyMenu.AddEntry(new MenuEntry(12, "Select difficulty level", UIUtils.colorWhite));
+            difficultyMenu.AddEntry(new MenuEntry(16, "Easy", SelectDifficultyAction(-1), UIUtils.colorGray, UIUtils.colorLightBlue));
+            difficultyMenu.AddEntry(new MenuEntry(18, "Normal (recommended)", SelectDifficultyAction(0), UIUtils.colorGray, UIUtils.colorLightBlue));
+            difficultyMenu.AddEntry(new MenuEntry(20, "Hard", SelectDifficultyAction(1), UIUtils.colorGray, UIUtils.colorLightBlue));
+
+
+            UIMenu eyeEasyNotice = new UIMenu();
+            eyeEasyNotice.AddEntry(new MenuEntry(12, "! Warning !", UIUtils.colorWhite));
+            eyeEasyNotice.AddEntry(new MenuEntry(16, "The Asciipocalypse's environment is rendered using ascii characters,", UIUtils.colorGray));
+            eyeEasyNotice.AddEntry(new MenuEntry(17, "which sometimes results in a very high-contrast image,", UIUtils.colorGray));
+            eyeEasyNotice.AddEntry(new MenuEntry(18, "which in turn could be tiring for your eyes.", UIUtils.colorGray));
+
+            eyeEasyNotice.AddEntry(new MenuEntry(20, "If that's the case, you can turn on the experimental 'eye-easy'", UIUtils.colorGray));
+            eyeEasyNotice.AddEntry(new MenuEntry(21, "rendering mode in the options menu.", UIUtils.colorGray));
+
+            eyeEasyNotice.AddEntry(new MenuEntry(24, "If you experience headache or any other worrisome symptoms", UIUtils.colorGray));
+            eyeEasyNotice.AddEntry(new MenuEntry(25, "during your gameplay, turn the video game off and take some rest.", UIUtils.colorGray));
+
+            eyeEasyNotice.AddEntry(new MenuEntry(27, "K", () => { uiStack.Pop(); SaveOptions(); }, UIUtils.colorWhite, UIUtils.colorLightBlue));
+
+
+            uiStack.Push(eyeEasyNotice);
+            uiStack.Push(difficultyMenu);
         }
 
         private void InitOptionsMenu()

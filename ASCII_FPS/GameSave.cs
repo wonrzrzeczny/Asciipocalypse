@@ -80,6 +80,8 @@ namespace ASCII_FPS
         {
             using (StreamWriter writer = new StreamWriter(File.Open("./options.dat", FileMode.Create)))
             {
+                writer.WriteLine(ASCII_FPS.VERSION);
+
                 writer.WriteLine("Resolution Width=" + graphics.PreferredBackBufferWidth);
                 writer.WriteLine("Resolution Height=" + graphics.PreferredBackBufferHeight);
                 writer.WriteLine("Difficulty=" + ASCII_FPS.Difficulty);
@@ -134,6 +136,11 @@ namespace ASCII_FPS
             
             using (StreamReader reader = new StreamReader(File.Open("./options.dat", FileMode.Open)))
             {
+                if (reader.ReadLine() != ASCII_FPS.VERSION)
+                {
+                    return false;
+                }
+
                 while (!reader.EndOfStream)
                 {
                     string[] line = reader.ReadLine().Split('=');

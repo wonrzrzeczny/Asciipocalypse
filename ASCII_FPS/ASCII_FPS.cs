@@ -62,12 +62,14 @@ namespace ASCII_FPS
             resolutions = GraphicsAdapter.DefaultAdapter.SupportedDisplayModes
                 .Where((DisplayMode dm) => dm.Width >= 1000 && dm.Height >= 400).ToArray();
 
+            bool firstRun = false;
             if (!GameSave.LoadOptions(graphics))
             {
                 graphics.PreferredBackBufferWidth = 1920;
                 graphics.PreferredBackBufferHeight = 1080;
                 graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
+                firstRun = true;
             }
 
             int charsX = (int)Math.Floor((double)graphics.PreferredBackBufferWidth / Console.FONT_SIZE);
@@ -103,7 +105,7 @@ namespace ASCII_FPS
                 ContinueEntryPred = () => { return !SaveExists; },
                 SaveOptions = () => { GameSave.SaveOptions(graphics); }
             };
-            menuGroup.Init();
+            menuGroup.Init(firstRun);
 
             base.Initialize();
         }
