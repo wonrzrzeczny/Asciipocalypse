@@ -26,6 +26,24 @@
 /processorParam:Quality=Best
 /build:audio/btsch.wav
 
+#begin audio/burn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/burn.wav
+
+#begin audio/ding.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/ding.wav
+
+#begin audio/dingding.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/dingding.wav
+
 #begin audio/oof.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -37,6 +55,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:audio/ouch.wav
+
+#begin audio/pew.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/pew.wav
 
 #begin audio/theme.wav
 /importer:WavImporter

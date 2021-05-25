@@ -1,5 +1,6 @@
 ﻿using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.IO;
 
@@ -10,6 +11,7 @@ namespace ASCII_FPS.GameComponents
         private LavaPool(MeshObject meshObject) : base(meshObject) { }
 
         private RectangleF bounds;
+        private float soundTimer = 0.25f;
 
         public static LavaPool Create(Vector2 v0, Vector2 v1)
         {
@@ -38,6 +40,13 @@ namespace ASCII_FPS.GameComponents
             Vector2 camPos = new Vector2(Camera.CameraPos.X, Camera.CameraPos.Z);
             if (bounds.TestPoint(camPos))
             {
+                soundTimer -= deltaTime;
+                if (soundTimer < 0f)
+                {
+                    soundTimer = 0.25f;
+                    Assets.burn.Play();
+                }
+
                 Game.PlayerStats.DealDamage(5f * deltaTime, false);
                 Game.PlayerStats.onFire = true;
             }

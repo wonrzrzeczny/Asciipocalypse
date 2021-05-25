@@ -70,6 +70,10 @@ namespace ASCII_FPS
         [AssetPath("audio/theme")] public static SoundEffect theme;
         [AssetPath("audio/btsch")] public static SoundEffect btsch;
         [AssetPath("audio/beep")] public static SoundEffect beep;
+        [AssetPath("audio/ding")] public static SoundEffect ding;
+        [AssetPath("audio/dingding")] public static SoundEffect dingDing;
+        [AssetPath("audio/burn")] public static SoundEffect burn;
+        [AssetPath("audio/pew")] public static SoundEffect pew;
 
 
         // More reflection hacks -- starting to feel bad about it xD

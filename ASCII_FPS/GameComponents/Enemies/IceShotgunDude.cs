@@ -17,7 +17,9 @@ namespace ASCII_FPS.GameComponents.Enemies
 
         protected override void Attack(Vector3 towardsTarget)
         {
-            Assets.tsch.Play();
+            Assets.pew.Play(1f, 0f, 0f);
+            Assets.pew.Play(1f, -0.5f, 0f);
+            Assets.pew.Play(1f, -1f, 0f);
 
             for (int i = -5; i <= 5; i++)
             {

@@ -21,6 +21,7 @@ namespace ASCII_FPS.GameComponents
 
         public void PickUp(PlayerStats playerStats)
         {
+            Assets.dingDing.Play();
             Destroy = true;
             Game.PlayerStats.totalBarrels++;
             Achievements.UnlockLeveled("Barrel", Game.PlayerStats.totalBarrels, Game.HUD);

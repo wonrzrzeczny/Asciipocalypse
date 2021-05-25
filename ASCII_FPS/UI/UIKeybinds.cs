@@ -31,6 +31,7 @@ namespace ASCII_FPS.UI
                 if (keys.Length > 0 && !keyboardPrev.IsKeyDown(keys[0]))
                 {
                     fields[option - 1].SetValue(null, keys[0]);
+                    Assets.dingDing.Play();
                     waitingForKey = false;
                 }
             }
@@ -38,16 +39,19 @@ namespace ASCII_FPS.UI
             {
                 if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
                 {
+                    Assets.ding.Play();
                     option = (option + 1) % (fields.Length + 1);
                 }
                 else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
                 {
+                    Assets.ding.Play();
                     option = (option + fields.Length) % (fields.Length + 1);
                 }
                 else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
                 {
                     if (option == 0)
                     {
+                        Assets.ding.Play();
                         BackAction.Invoke();
                     }
                     else

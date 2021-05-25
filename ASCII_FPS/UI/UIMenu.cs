@@ -51,6 +51,7 @@ namespace ASCII_FPS.UI
 
             if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
             {
+                Assets.ding.Play();
                 int? next = GetNextSlot(option);
                 if (next == null)
                 {
@@ -63,6 +64,7 @@ namespace ASCII_FPS.UI
             }
             else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
             {
+                Assets.ding.Play();
                 int? prev = GetPreviousSlot(option);
                 if (prev == null)
                 {
@@ -75,6 +77,7 @@ namespace ASCII_FPS.UI
             }
             else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
             {
+                Assets.dingDing.Play();
                 entries[option].Call();
             }
         }

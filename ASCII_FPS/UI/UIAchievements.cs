@@ -17,6 +17,7 @@ namespace ASCII_FPS.UI
         {
             if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
             {
+                Assets.dingDing.Play();
                 BackAction.Invoke();
             }
             else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))

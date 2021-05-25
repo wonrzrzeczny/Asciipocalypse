@@ -36,7 +36,7 @@ namespace ASCII_FPS.GameComponents.Enemies
                 burstTimer -= deltaTime;
                 if (burstTimer <= 0f)
                 {
-                    Assets.tsch.Play();
+                    Assets.pew.Play(1f, (float)rand.NextDouble() - 0.5f, 0f);
 
                     Vector3 direction = Vector3.Normalize(Camera.CameraPos - Position);
                     float delta = (float)rand.NextDouble() * 0.125f - 0.0625f;

@@ -134,7 +134,7 @@ namespace ASCII_FPS.UI
             eyeEasyNotice.AddEntry(new MenuEntry(20, "If that's the case, you can turn on the experimental 'eye-easy'", UIUtils.colorGray));
             eyeEasyNotice.AddEntry(new MenuEntry(21, "rendering mode in the options menu.", UIUtils.colorGray));
 
-            eyeEasyNotice.AddEntry(new MenuEntry(24, "If you experience headache or any other worrisome symptoms", UIUtils.colorGray));
+            eyeEasyNotice.AddEntry(new MenuEntry(24, "If you are experiencing headaches or any other worrisome symptoms", UIUtils.colorGray));
             eyeEasyNotice.AddEntry(new MenuEntry(25, "during your gameplay, turn the video game off and take some rest.", UIUtils.colorGray));
 
             eyeEasyNotice.AddEntry(new MenuEntry(27, "K", () => { uiStack.Pop(); SaveOptions(); }, UIUtils.colorWhite, UIUtils.colorLightBlue));
