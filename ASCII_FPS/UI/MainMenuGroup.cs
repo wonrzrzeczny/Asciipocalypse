@@ -127,7 +127,7 @@ namespace ASCII_FPS.UI
 
         private void InitOptionsMenu()
         {
-            const int resolutionY = 24;
+            const int resolutionY = 26;
             UIMenu optionsMenu = new UIMenu();
 
             // Options main
@@ -135,8 +135,37 @@ namespace ASCII_FPS.UI
                 12, "Back to main menu", () => { uiStack.Pop(); SaveOptions.Invoke(); }, UIUtils.colorGray, UIUtils.colorLightBlue
             ));
             optionsMenu.AddEntry(new MenuEntry(16, "Keybinds", () => { uiStack.Push(keybindsMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
-            optionsMenu.AddEntry(new MenuEntry(18, "Difficulty", () => { uiStack.Push(difficultySelectionMenu); }, UIUtils.colorGray, UIUtils.colorLightBlue));
-            optionsMenu.AddEntry(new MenuEntry(20, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
+            optionsMenu.AddEntry(new MenuEntry(
+                18, () =>
+                {
+                    string ret = "Difficulty: ";
+                    switch (ASCII_FPS.Difficulty)
+                    {
+                        case -1:
+                            ret += "Easy";
+                            break;
+                        case 0:
+                            ret += "Normal";
+                            break;
+                        case 1:
+                            ret += "Hard";
+                            break;
+                    }
+                    return ret;
+                },
+                () =>
+                {
+                    ASCII_FPS.Difficulty = (ASCII_FPS.Difficulty + 2) % 3 - 1;
+                },
+                UIUtils.colorGray, UIUtils.colorLightBlue
+            ));
+            optionsMenu.AddEntry(new MenuEntry(
+                20,
+                () => "Eye-easy rendering: " + (Rasterizer.EyeEasy ? "On" : "Off"),
+                () => Rasterizer.EyeEasy = !Rasterizer.EyeEasy,
+                UIUtils.colorGray, UIUtils.colorLightBlue
+            ));
+            optionsMenu.AddEntry(new MenuEntry(22, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
 
             optionsMenu.AddEntry(new MenuEntry(resolutionY, "Resolution", UIUtils.colorWhite));
 
