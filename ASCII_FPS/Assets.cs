@@ -52,6 +52,7 @@ namespace ASCII_FPS
         [AssetPath("textures/spinny_boi")] public static AsciiTexture spinnyBoiTexture;
         [AssetPath("textures/spooper")] public static AsciiTexture spooperTexture;
         [AssetPath("textures/poison_monster")] public static AsciiTexture poisonMonsterTexture;
+        [AssetPath("textures/bush_monster")] public static AsciiTexture bushMonsterTexture;
         [AssetPath("textures/ice_monster")] public static AsciiTexture iceMonsterTexture;
         [AssetPath("textures/ice_shotgun_dude")] public static AsciiTexture iceShotgunDudeTexture;
 
@@ -60,6 +61,7 @@ namespace ASCII_FPS
         [AssetPath("models/exit")] public static OBJFile exitModel;
         [AssetPath("models/spooper")] public static OBJFile spooperModel;
         [AssetPath("models/bush")] public static OBJFile bushModel;
+        [AssetPath("models/bush_monster")] public static OBJFile bushMonsterModel;
 
 
         [AssetPath("audio/tsch")] public static SoundEffect tsch;

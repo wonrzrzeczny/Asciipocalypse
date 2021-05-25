@@ -23,7 +23,7 @@ namespace ASCII_FPS.GameComponents
             // This is extremely inefficient, but let's hope that it's sufficient :p
             foreach (GameObject gameObject in Scene.gameObjects)
             {
-                if (gameObject is Monster monster)
+                if (gameObject is Monster monster && !monster.Invincible)
                 {
                     if (Vector3.Distance(Position, monster.Position) < monster.HitRadius)
                     {

@@ -15,6 +15,7 @@ namespace ASCII_FPS.Scenes.Generators
         private readonly float monsterDamage;
         private readonly int monstersPerRoom;
         private readonly float[] monsterChances;
+        private readonly float bushMonsterChance;
 
         protected override AsciiTexture WallTexture => Assets.jungleWallVinesTexture;
         protected override AsciiTexture FloorTexture => Assets.jungleFloorTexture;
@@ -36,6 +37,7 @@ namespace ASCII_FPS.Scenes.Generators
                 monsterChanceSpinny,
                 monsterChanceSpooper
             };
+            bushMonsterChance = Math.Min(1f, 0.2f + floor / 20f);
         }
 
 
@@ -115,7 +117,7 @@ namespace ASCII_FPS.Scenes.Generators
                 {
                     SceneStructures.Pillars4Inner(Assets.jungleWallTexture),
                     SceneStructures.FancyPillars2(Assets.jungleWallTexture, rand.Next(2)),
-                    SceneStructures.JungleBushes()
+                    SceneStructures.JungleBushes(game, rand, bushMonsterChance)
                 };
 
                 if (flags.ClearCenter)

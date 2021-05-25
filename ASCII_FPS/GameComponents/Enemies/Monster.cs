@@ -24,6 +24,8 @@ namespace ASCII_FPS.GameComponents.Enemies
         protected abstract float Speed { get; }
         protected abstract float ShootSpeed { get; }
 
+        public bool Invincible { get; protected set; } = false;
+
 
         public Monster(MeshObject meshObject, float health, float damage) : base(meshObject)
         {

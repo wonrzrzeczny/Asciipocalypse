@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.GameComponents.Enemies;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -124,13 +126,19 @@ namespace ASCII_FPS.Scenes
 
 
 
-        public static Generator JungleBushes() => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator JungleBushes(ASCII_FPS game, Random rng, float monsterChance) => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             new List<(int, int)> { (-1, -1), (-1, 1), (1, -1), (1, 1) }
                 .ForEach(((int, int) p) =>
                 {
                     Vector3 position = roomCenter + new Vector3(p.Item1 * 10f, -4f, p.Item2 * 10f);
                     zone.AddMesh(new MeshObject(Assets.bushModel, Assets.bushTexture, position));
+
+                    if (rng.NextDouble() < monsterChance)
+                    {
+                        scene.AddGameObject(new BushMonster(position + new Vector3(0f, -3.25f, 0f), 10f, 5f));
+                        game.PlayerStats.totalMonsters++;
+                    }
                 });
         };
 
