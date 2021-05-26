@@ -76,7 +76,7 @@ namespace ASCII_FPS.Scenes.Generators
             float bottom = y * tileSize - size * tileSize / 2;
             float top = bottom + tileSize;
             Vector3 roomCenter = new Vector3((left + right) / 2, 0f, (top + bottom) / 2);
-            float[] roomCorridors = Enumerable.Range(0, 4).Select(t => corridorWidths[x, y, t]).ToArray();
+            bool[] roomCorridors = Enumerable.Range(0, 4).Select(t => corridorLayout[x, y, t]).ToArray();
 
             if ((x != exitRoom.X || y != exitRoom.Y) && (x != size / 2 || y != size / 2))
             {
@@ -104,13 +104,21 @@ namespace ASCII_FPS.Scenes.Generators
                 }
             }
 
-            if (x != size / 2 || y != size / 2)
-            {
-                SpawnPools(scene, x, y, roomCenter, flags);
-            }
+            
 
-            if (rand.Next(3) == 0)
+            if (rand.Next(7) == 0)
             {
+                SceneStructures.PitWithBridges(FloorTexture, WallTexture, FloorTexture, roomCorridors).Invoke(scene, zone, roomCenter);
+                SceneGenUtils.AddFloor(zone, -50f * Vector2.One, 50f * Vector2.One, -10f, Assets.lavaTexture, true, roomCenter, 75f);
+                results.GenerateFloor = false;
+            }
+            else if (rand.Next(3) == 0)
+            {
+                if (x != size / 2 || y != size / 2)
+                {
+                    SpawnPools(scene, x, y, roomCenter, flags);
+                }
+
                 List<Generator> generators = new List<Generator>
                 {
                     SceneStructures.Pillars4Inner(WallTexture),

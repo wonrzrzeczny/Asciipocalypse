@@ -140,12 +140,18 @@ namespace ASCII_FPS.Scenes.Generators
                 {
                     results.GenerateFloor = false;
                     SceneStructures.Pit(FloorTexture, WallTexture)(scene, zone, roomCenter);
+                    SceneStructures.PitFloor(Assets.iceTexture)(scene, zone, roomCenter);
 
                     if (rng < 3 && flags.ClearCenter)
                     {
                         SceneStructures.PitPillar(WallTexture)(scene, zone, roomCenter);
                     }
                 }
+            }
+
+            if (rand.Next(2) == 0)
+            {
+                SceneStructures.IceCutCorners(Assets.iceTexture)(scene, zone, roomCenter);
             }
         }
 
@@ -182,6 +188,11 @@ namespace ASCII_FPS.Scenes.Generators
             else if (rnd == 1)
             {
                 SceneStructures.Pillars4Outer(WallTexture)(scene, zone, roomCenter);
+            }
+
+            if (rand.Next(2) == 0 && rnd != 0)
+            {
+                SceneStructures.IceCutCorners(Assets.iceTexture)(scene, zone, roomCenter);
             }
         }
     }

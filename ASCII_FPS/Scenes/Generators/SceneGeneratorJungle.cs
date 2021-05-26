@@ -113,6 +113,15 @@ namespace ASCII_FPS.Scenes.Generators
                 }
 
 
+                if (rand.Next(9) == 0)
+                {
+                    results.GenerateFloor = false;
+                    bool[] corridors = roomCorridors.Select(t => t > 0f).ToArray();
+                    SceneStructures.PitWithBridges(FloorTexture, Assets.jungleWallTexture, FloorTexture, corridors)
+                        .Invoke(scene, zone, roomCenter);
+                    return results;
+                }
+                
                 List<Generator> generators = new List<Generator>
                 {
                     SceneStructures.Pillars4Inner(Assets.jungleWallTexture),

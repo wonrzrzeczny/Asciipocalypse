@@ -198,5 +198,139 @@ namespace ASCII_FPS.Scenes
             FancyPillar(texture, c0, sizeBase, sizeCenter).Invoke(scene, zone, roomCenter);
             FancyPillar(texture, c1, sizeBase, sizeCenter).Invoke(scene, zone, roomCenter);
         };
+
+
+        public static Generator PitWithBridges(AsciiTexture floorTexture, AsciiTexture wallTexture, AsciiTexture bridgeTexture, bool[] platforms)
+            => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        {
+            Vector2 roomCenter2 = new Vector2(roomCenter.X, roomCenter.Z);
+            zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 50f, roomCenter.X + 50f, roomCenter.Z - 50f, roomCenter.Z + 50f, 4f, floorTexture, false));
+            Vector2[] outerWalls = new Vector2[]
+            {
+                new Vector2(-50f, -50f),
+                new Vector2(-50f, 50f),
+                new Vector2(50f, 50f),
+                new Vector2(50f, -50f),
+                new Vector2(-50f, -50f)
+            };
+            zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(outerWalls, -16f, -4f, wallTexture), roomCenter, 0f));
+            zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(outerWalls, -28f, -16f, wallTexture), roomCenter, 0f));
+
+
+            void AddIsland(float angle)
+            {
+                const float radius = 7.5f;
+
+                Vector3 offset = roomCenter + Vector3.Transform(new Vector3(50f - radius, 0f, 0f), Mathg.RotationMatrix(angle));
+                zone.AddMesh(SceneGenUtils.MakeFloor(offset.X - radius, offset.X + radius, offset.Z - radius, offset.Z + radius, -4f, floorTexture, true));
+
+                Vector2[] walls = new Vector2[]
+                {
+                    new Vector2(radius, radius),
+                    new Vector2(-radius, radius),
+                    new Vector2(-radius, -radius),
+                    new Vector2(radius, -radius)
+                };
+                zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -16f, -4f, wallTexture), offset, angle));
+                zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -28f, -16f, wallTexture), offset, angle));
+
+                Matrix rot2DMatrix = Mathg.RotationMatrix2D(angle);
+                SceneGenUtils.AddFloor(
+                    zone, Vector2.Transform(new Vector2(radius, -4f), rot2DMatrix), Vector2.Transform(new Vector2(50f - radius, 4f), rot2DMatrix),
+                    -4.5f, floorTexture, true, roomCenter, 25f
+                );
+
+                Vector2 wall00 = Vector2.Transform(new Vector2(50f, -radius), rot2DMatrix) + roomCenter2;
+                Vector2 wall01 = Vector2.Transform(new Vector2(50f - 2f * radius, -radius), rot2DMatrix) + roomCenter2;
+                Vector2 bridgeStart0 = Vector2.Transform(new Vector2(50f - 2f * radius, -4f), rot2DMatrix) + roomCenter2;
+                Vector2 bridgeEnd0 = Vector2.Transform(new Vector2(10f, -4f), rot2DMatrix) + roomCenter2;
+                Vector2 bridgeStart1 = Vector2.Transform(new Vector2(50f - 2f * radius, 4f), rot2DMatrix) + roomCenter2;
+                Vector2 bridgeEnd1 = Vector2.Transform(new Vector2(10f, 4f), rot2DMatrix) + roomCenter2;
+                Vector2 wall11 = Vector2.Transform(new Vector2(50f - 2f * radius, radius), rot2DMatrix) + roomCenter2;
+                Vector2 wall10 = Vector2.Transform(new Vector2(50f, radius), rot2DMatrix) + roomCenter2;
+
+                scene.AddObstacle(wall00, wall01, ObstacleLayer.Gap);
+                scene.AddObstacle(wall01, bridgeStart0, ObstacleLayer.Gap);
+                scene.AddObstacle(bridgeStart0, bridgeEnd0, ObstacleLayer.Gap);
+
+                scene.AddObstacle(bridgeEnd1, bridgeStart1, ObstacleLayer.Gap);
+                scene.AddObstacle(bridgeStart1, wall11, ObstacleLayer.Gap);
+                scene.AddObstacle(wall11, wall10, ObstacleLayer.Gap);
+
+                zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(new Vector2[] { bridgeEnd0, bridgeStart0 }, -6f, -4.5f, wallTexture)));
+                zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(new Vector2[] { bridgeStart1, bridgeEnd1 }, -6f, -4.5f, wallTexture)));
+            }
+            void AddCenterIsland()
+            {
+                zone.AddMesh(SceneGenUtils.MakeFloor(roomCenter.X - 10f, roomCenter.X + 10f, roomCenter.Z - 10f, roomCenter.Z + 10f, -4f, floorTexture, true));
+                Vector2[] walls = new Vector2[]
+                {
+                    new Vector2(10f, -10f),
+                    new Vector2(10f, 10f),
+                    new Vector2(-10f, 10f),
+                    new Vector2(-10f, -10f),
+                    new Vector2(10f, -10f)
+                };
+                zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -16f, -4f, wallTexture), roomCenter, 0f));
+                zone.AddMesh(new MeshObject(SceneGenUtils.MakeWall(walls, -28f, -16f, wallTexture), roomCenter, 0f));
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (!platforms[i])
+                    {
+                        scene.AddObstacle(walls[i + 1] + roomCenter2, walls[i] + roomCenter2, ObstacleLayer.Gap);
+                    }
+                    else
+                    {
+                        Vector2 mid = (walls[i] + walls[i + 1]) / 2f;
+                        Vector2 diff = (walls[i + 1] - mid) / 7.5f;
+                        scene.AddObstacle(walls[i + 1] + roomCenter2, mid + 4f * diff + roomCenter2, ObstacleLayer.Gap);
+                        scene.AddObstacle(mid - 4f * diff + roomCenter2, walls[i] + roomCenter2, ObstacleLayer.Gap);
+                    }
+                }
+            }
+
+            AddCenterIsland();
+            for (int i = 0; i < 4; i++)
+            {
+                if (platforms[i])
+                {
+                    float angle = -i * MathF.PI / 2f;
+                    AddIsland(angle);
+                }
+            }
+        };
+
+
+        public static Generator PitFloor(AsciiTexture pitFloorTexture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        {
+            SceneGenUtils.AddFloor(zone, -30f * Vector2.One, 30f * Vector2.One, -8f, pitFloorTexture, true, roomCenter, 25f);
+        };
+
+        public static Generator IceCutCorners(AsciiTexture iceTexture) => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                float offsetX = roomCenter.X + new float[] { -1f, -1f, 1f, 1f }[i] * 50f;
+                float offsetZ = roomCenter.Z + new float[] { -1f, 1f, 1f, -1f }[i] * 50f;
+                Vector3 offset = new Vector3(offsetX, 0f, offsetZ);
+                float angle = i * MathF.PI / 2f;
+
+                Triangle triangle1 = new Triangle(
+                    new Vector3(1f, 4f, 13f), new Vector3(1f, -4f, 16f), new Vector3(16f, -4f, 1f),
+                    iceTexture, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f)
+                );
+                Triangle triangle2 = new Triangle(
+                     new Vector3(13f, 4f, 1f), new Vector3(1f, 4f, 13f), new Vector3(16f, -4f, 1f),
+                     iceTexture, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 1f)
+                );
+                zone.AddMesh(new MeshObject(new List<Triangle> { triangle1, triangle2 }, offset, angle));
+
+                Vector2 roomCenter2 = new Vector2(roomCenter.X, roomCenter.Z);
+                Vector2 wallV0 = Vector2.Transform(new Vector2(-35f, -50f), Mathg.RotationMatrix2D(angle)) + roomCenter2;
+                Vector2 wallV1 = Vector2.Transform(new Vector2(-50f, -35f), Mathg.RotationMatrix2D(angle)) + roomCenter2;
+                scene.AddObstacle(wallV0, wallV1, ObstacleLayer.Wall);
+            }
+        };
     }
 }
