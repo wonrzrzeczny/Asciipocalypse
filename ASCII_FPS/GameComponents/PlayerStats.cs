@@ -39,6 +39,8 @@ namespace ASCII_FPS.GameComponents
         public int totalBarrels;
         public Vector2 exitPosition;
 
+        public int seed;
+
         public void Save(BinaryWriter writer)
         {
             writer.Write(difficulty);
@@ -64,6 +66,8 @@ namespace ASCII_FPS.GameComponents
             writer.Write(fullClear);
             writer.Write(totalBarrels);
             GameSave.WriteVector2(writer, exitPosition);
+
+            writer.Write(seed);
         }
 
         public void Load(BinaryReader reader)
@@ -92,6 +96,8 @@ namespace ASCII_FPS.GameComponents
             totalBarrels = reader.ReadInt32();
 
             exitPosition = GameSave.ReadVector2(reader);
+
+            seed = reader.ReadInt32();
         }
 
 

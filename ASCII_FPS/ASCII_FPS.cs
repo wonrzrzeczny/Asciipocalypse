@@ -157,10 +157,11 @@ namespace ASCII_FPS
                 armorProtection = 0.3f,
                 dead = false,
                 hit = false,
-                floor = 1
+                floor = 1,
+                seed = new Random().Next()
             };
 
-            SceneGenerator generator = SelectGenerator(1, 0);
+            SceneGenerator generator = SelectGenerator(1, PlayerStats.seed);
             Scene = generator.Generate();
             Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
             Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
@@ -180,7 +181,7 @@ namespace ASCII_FPS
         public SceneGenerator SelectGenerator(int floor, int seed)
         {
             // for testing
-            return new SceneGeneratorIce(this, floor);
+            //return new SceneGeneratorIce(this, floor);
 
             List<Func<SceneGenerator>> gens = new List<Func<SceneGenerator>>
             {
@@ -226,7 +227,7 @@ namespace ASCII_FPS
                 if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
                 {
                     Assets.theme.Play();
-                    Scene = SelectGenerator(PlayerStats.floor, 0).Generate();
+                    Scene = SelectGenerator(PlayerStats.floor, PlayerStats.seed).Generate();
                     Scene.Camera = new Camera(0.5f, 1000f, (float)Math.PI / 2.5f, 16f / 9f);
                     HUD.Scene = Scene;
                     Scene.Visited[SceneGenerator.size / 2, SceneGenerator.size / 2] = true;
