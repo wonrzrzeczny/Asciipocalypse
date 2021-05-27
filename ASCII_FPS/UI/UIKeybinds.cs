@@ -1,4 +1,4 @@
-﻿using ASCII_FPS.Controls;
+﻿using ASCII_FPS.Input;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Reflection;
@@ -22,12 +22,12 @@ namespace ASCII_FPS.UI
         }
 
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
             if (waitingForKey)
             {
-                Keys[] keys = keyboard.GetPressedKeys();
-                if (keys.Length > 0 && !keyboardPrev.IsKeyDown(keys[0]))
+                Keys[] keys = Keyboard.GetState().GetPressedKeys();
+                if (keys.Length > 0 && Controls.IsPressed(keys[0]))
                 {
                     fields[option - 1].SetValue(null, keys[0]);
                     Assets.dingDing.Play();
@@ -36,21 +36,21 @@ namespace ASCII_FPS.UI
             }
             else
             {
-                if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+                if (Controls.IsPressed(Keys.Down))
                 {
                     Assets.ding.Play();
                     option = (option + 1) % (fields.Length + 1);
                 }
-                else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+                else if (Controls.IsPressed(Keys.Up))
                 {
                     Assets.ding.Play();
                     option = (option + fields.Length) % (fields.Length + 1);
                 }
-                else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+                else if (Controls.IsPressed(Keys.Enter))
                 {
                     if (option == 0)
                     {
-                        Assets.ding.Play();
+                        Assets.dingDing.Play();
                         BackAction.Invoke();
                     }
                     else

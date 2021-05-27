@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace ASCII_FPS.Controls
+namespace ASCII_FPS.Input
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class KeyNameAttribute : Attribute

@@ -51,7 +51,7 @@ namespace ASCII_FPS.UI
             }
         }
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
         }
     }

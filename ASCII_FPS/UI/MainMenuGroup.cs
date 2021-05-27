@@ -1,4 +1,4 @@
-﻿using ASCII_FPS.Controls;
+﻿using ASCII_FPS.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -232,9 +232,9 @@ namespace ASCII_FPS.UI
         }
 
 
-        public void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public void Update()
         {
-            uiStack.Update(keyboard, keyboardPrev);
+            uiStack.Update();
         }
 
         public void Draw(Console console)

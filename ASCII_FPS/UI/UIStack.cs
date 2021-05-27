@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using ASCII_FPS.Input;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,15 +22,15 @@ namespace ASCII_FPS.UI
             stack.Peek().Draw(console);
         }
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
-            if (keyboard.IsKeyDown(Keys.Escape) && !keyboardPrev.IsKeyDown(Keys.Escape))
+            if (Controls.IsPressed(Keys.Escape))
             {
                 Pop();
             }
             else
             {
-                stack.Peek().Update(keyboard, keyboardPrev);
+                stack.Peek().Update();
             }
         }
 

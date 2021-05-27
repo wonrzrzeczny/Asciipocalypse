@@ -1,4 +1,5 @@
 ﻿using ASCII_FPS.GameComponents;
+using ASCII_FPS.Input;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,18 @@ namespace ASCII_FPS.UI
         public Action BackAction { private get; set; }
 
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
-            if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+            if (Controls.IsPressed(Keys.Enter))
             {
                 Assets.dingDing.Play();
                 BackAction.Invoke();
             }
-            else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+            else if (Controls.IsPressed(Keys.Up))
             {
                 offset--;
             }
-            else if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+            else if (Controls.IsPressed(Keys.Down))
             {
                 offset++;
             }
