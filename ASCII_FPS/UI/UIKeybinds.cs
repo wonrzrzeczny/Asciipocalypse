@@ -27,9 +27,10 @@ namespace ASCII_FPS.UI
             if (waitingForKey)
             {
                 Keys[] keys = Keyboard.GetState().GetPressedKeys();
+
                 if (keys.Length > 0 && Controls.IsPressed(keys[0]))
                 {
-                    ((Keybind)fields[option - 1].GetValue(null)).Update(keys[0]);
+                    ((Keybind)fields[option - 2].GetValue(null)).Update(keys[0]);
                     Assets.dingDing.Play();
                     waitingForKey = false;
                 }
@@ -39,12 +40,12 @@ namespace ASCII_FPS.UI
                 if (Controls.IsPressed(Keys.Down))
                 {
                     Assets.ding.Play();
-                    option = (option + 1) % (fields.Length + 1);
+                    option = (option + 1) % (fields.Length + 2);
                 }
                 else if (Controls.IsPressed(Keys.Up))
                 {
                     Assets.ding.Play();
-                    option = (option + fields.Length) % (fields.Length + 1);
+                    option = (option + fields.Length + 1) % (fields.Length + 2);
                 }
                 else if (Controls.IsPressed(Keys.Enter))
                 {
@@ -52,6 +53,11 @@ namespace ASCII_FPS.UI
                     {
                         Assets.dingDing.Play();
                         BackAction.Invoke();
+                    }
+                    else if (option == 1)
+                    {
+                        Assets.dingDing.Play();
+                        Controls.Scheme = (ControlScheme)(((int)Controls.Scheme + 1) % 3);
                     }
                     else
                     {
@@ -74,13 +80,14 @@ namespace ASCII_FPS.UI
             int c = console.Width / 2;
 
             UIUtils.Text(console, c, 12, "Back", option == 0 ? UIUtils.colorLightBlue : UIUtils.colorGray);
+            UIUtils.Text(console, c, 16, "Input mode - " + Controls.Scheme, option == 1 ? UIUtils.colorLightBlue : UIUtils.colorGray);
             for (int i = 0; i < fields.Length; i++)
             {
                 string keyName = fields[i].GetCustomAttribute<KeyNameAttribute>().Name;
-                string currentBind = ((Keybind)fields[i].GetValue(null)).Display(Controls.Scheme);
-                string text = keyName + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : currentBind);
-                byte color = option == i + 1 ? UIUtils.colorLightBlue : UIUtils.colorGray;
-                UIUtils.Text(console, c, 16 + 2 * i, text, color);
+                string currentBind = fields[i].GetValue(null).ToString();
+                string text = keyName + " - " + (waitingForKey && option == i + 2 ? "< Press key >" : currentBind);
+                byte color = option == i + 2 ? UIUtils.colorLightBlue : UIUtils.colorGray;
+                UIUtils.Text(console, c, 19 + 2 * i, text, color);
             }
         }
     }

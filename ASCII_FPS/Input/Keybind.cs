@@ -72,6 +72,11 @@ namespace ASCII_FPS.Input
             };
         }
 
+        public override string ToString()
+        {
+            return Display(Controls.Scheme);
+        }
+
         public static bool TryParse(string s, out Keybind keybind)
         {
             keybind = null;
