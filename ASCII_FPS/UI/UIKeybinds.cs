@@ -29,7 +29,7 @@ namespace ASCII_FPS.UI
                 Keys[] keys = Keyboard.GetState().GetPressedKeys();
                 if (keys.Length > 0 && Controls.IsPressed(keys[0]))
                 {
-                    fields[option - 1].SetValue(null, keys[0]);
+                    ((Keybind)fields[option - 1].GetValue(null)).Update(keys[0]);
                     Assets.dingDing.Play();
                     waitingForKey = false;
                 }
@@ -77,7 +77,8 @@ namespace ASCII_FPS.UI
             for (int i = 0; i < fields.Length; i++)
             {
                 string keyName = fields[i].GetCustomAttribute<KeyNameAttribute>().Name;
-                string text = keyName + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : fields[i].GetValue(null));
+                string currentBind = ((Keybind)fields[i].GetValue(null)).Display(Controls.Scheme);
+                string text = keyName + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : currentBind);
                 byte color = option == i + 1 ? UIUtils.colorLightBlue : UIUtils.colorGray;
                 UIUtils.Text(console, c, 16 + 2 * i, text, color);
             }

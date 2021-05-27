@@ -92,7 +92,7 @@ namespace ASCII_FPS
                 // Reflections hacks once more
                 foreach (FieldInfo fieldInfo in typeof(Keybinds).GetFields())
                 {
-                    writer.WriteLine("Keybind " + fieldInfo.Name + "=" + fieldInfo.GetValue(null));
+                    writer.WriteLine("Keybind " + fieldInfo.Name + "=" + ((Keybind)fieldInfo.GetValue(null)).Serialize());
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace ASCII_FPS
                     if (key.StartsWith("Keybind"))
                     {
                         string name = key.Substring(8);
-                        if (Enum.TryParse(data, out Keys keybind))
+                        if (Keybind.TryParse(data, out Keybind keybind))
                             typeof(Keybinds).GetField(name).SetValue(null, keybind);
                     }
                     else switch(key)
