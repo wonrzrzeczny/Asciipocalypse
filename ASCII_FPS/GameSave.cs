@@ -1,4 +1,5 @@
-﻿using ASCII_FPS.GameComponents;
+﻿using ASCII_FPS.Controls;
+using ASCII_FPS.GameComponents;
 using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;

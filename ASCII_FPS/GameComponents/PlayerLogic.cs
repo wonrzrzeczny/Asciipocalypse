@@ -1,9 +1,8 @@
-﻿using ASCII_FPS.Scenes;
+﻿using ASCII_FPS.Controls;
+using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ASCII_FPS.GameComponents
 {

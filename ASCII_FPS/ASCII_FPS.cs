@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using ASCII_FPS.UI;
 using System.Collections.Generic;
+using ASCII_FPS.Controls;
 
 namespace ASCII_FPS
 {
