@@ -26,7 +26,7 @@ namespace ASCII_FPS.Input
         [Keybind("Strafe right")] public static Keybind strafeRight = new Keybind(Keys.X, Keys.D, Buttons.LeftThumbstickRight);
         [Keybind("Sprint")] public static Keybind sprint = new Keybind(Keys.LeftShift, Keys.LeftShift, Buttons.LeftTrigger);
         [Keybind("Fire", true)] public static Keybind fire = new Keybind(Keys.Space, null, Buttons.RightTrigger);
-        [Keybind("Action")] public static Keybind action = new Keybind(Keys.Enter, Keys.E, Buttons.A);
-        [Keybind("Skill menu")] public static Keybind skills = new Keybind(Keys.P, Keys.Tab, Buttons.B);
+        [Keybind("Action")] public static Keybind action = new Keybind(Keys.Enter, Keys.Space, Buttons.A);
+        [Keybind("Skill menu")] public static Keybind skills = new Keybind(Keys.P, Keys.E, Buttons.B);
     }
 }

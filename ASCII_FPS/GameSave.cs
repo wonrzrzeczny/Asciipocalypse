@@ -88,7 +88,8 @@ namespace ASCII_FPS
                 writer.WriteLine("Difficulty=" + ASCII_FPS.Difficulty);
                 writer.WriteLine("EyeEasy=" + Rasterizer.EyeEasy);
                 writer.WriteLine("Fullscreen=" + graphics.IsFullScreen);
-                
+                writer.WriteLine("InputMode=" + Controls.Scheme);
+
                 // Reflections hacks once more
                 foreach (FieldInfo fieldInfo in typeof(Keybinds).GetFields())
                 {
@@ -173,6 +174,10 @@ namespace ASCII_FPS
                                 break;
                             case "Fullscreen":
                                 graphics.IsFullScreen = bool.Parse(data);
+                                break;
+                            case "InputMode":
+                                if (Enum.TryParse(data, out ControlScheme scheme))
+                                    Controls.Scheme = scheme;
                                 break;
                         }
                 }
