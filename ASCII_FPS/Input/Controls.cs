@@ -73,5 +73,13 @@ namespace ASCII_FPS.Input
         public static float MouseDelta() => mouseDelta;
         public static bool IsLMBDown() => mState.LeftButton == ButtonState.Pressed;
 
+        public static bool IsMenuDownPressed() => IsPressed(Keys.Down) || IsPressed(Buttons.DPadDown)
+            || IsPressed(Buttons.LeftThumbstickDown) || IsPressed(Buttons.RightThumbstickDown);
+        public static bool IsMenuUpPressed() => IsPressed(Keys.Up) || IsPressed(Buttons.DPadUp)
+            || IsPressed(Buttons.LeftThumbstickUp) || IsPressed(Buttons.RightThumbstickUp);
+        public static bool IsMenuAcceptPressed() => IsPressed(Keys.Enter) || IsPressed(Keys.Space) || IsPressed(Buttons.A);
+        public static bool IsMenuBackPressed() => IsPressed(Keys.Escape) || IsPressed(Buttons.Back) || IsPressed(Buttons.B);
+        public static bool IsInGameBackPressed() => IsPressed(Keys.Escape) || IsPressed(Buttons.Back);
+
     }
 }

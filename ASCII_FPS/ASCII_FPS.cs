@@ -207,7 +207,7 @@ namespace ASCII_FPS
                 if (Controls.IsDown(Keys.OemCloseBrackets) && Controls.IsDown(Keys.OemOpenBrackets) && Controls.IsDown(Keys.LeftShift))
                     enableDebug = !enableDebug;
 
-                if (Controls.IsDown(Keys.Escape))
+                if (Controls.IsInGameBackPressed())
                 {
                     if (PlayerStats.dead)
                     {

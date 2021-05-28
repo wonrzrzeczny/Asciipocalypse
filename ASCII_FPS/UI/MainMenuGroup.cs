@@ -34,14 +34,13 @@ namespace ASCII_FPS.UI
         public MainMenuGroup()
         {
             mainTab = new UICollection();
+            uiStack = new UIStack(mainTab);
             mainMenu = new UIMenu();
             tutorialMenu = new UIMenu();
             optionsTab = new UICollection();
-            keybindsMenu = new UIKeybinds();
+            keybindsMenu = new UIKeybinds(uiStack);
             achievementsMenu = new UIAchievements();
             badVersionPopup = new UIMenu();
-
-            uiStack = new UIStack(mainTab);
         }
 
         public void Init(bool firstRun)

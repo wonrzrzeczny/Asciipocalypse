@@ -50,7 +50,7 @@ namespace ASCII_FPS.UI
                 }
             }
 
-            if (Controls.IsPressed(Keys.Down))
+            if (Controls.IsMenuDownPressed())
             {
                 Assets.ding.Play();
                 int? next = GetNextSlot(option);
@@ -63,7 +63,7 @@ namespace ASCII_FPS.UI
                     option = next.Value;
                 }
             }
-            else if (Controls.IsPressed(Keys.Up))
+            else if (Controls.IsMenuUpPressed())
             {
                 Assets.ding.Play();
                 int? prev = GetPreviousSlot(option);
@@ -76,7 +76,7 @@ namespace ASCII_FPS.UI
                     option = prev.Value;
                 }
             }
-            else if (Controls.IsPressed(Keys.Enter))
+            else if (Controls.IsMenuAcceptPressed())
             {
                 Assets.dingDing.Play();
                 entries[option].Call();

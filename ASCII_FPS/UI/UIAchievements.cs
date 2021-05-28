@@ -16,16 +16,16 @@ namespace ASCII_FPS.UI
 
         public override void Update()
         {
-            if (Controls.IsPressed(Keys.Enter))
+            if (Controls.IsMenuAcceptPressed())
             {
                 Assets.dingDing.Play();
                 BackAction.Invoke();
             }
-            else if (Controls.IsPressed(Keys.Up))
+            else if (Controls.IsMenuUpPressed())
             {
                 offset--;
             }
-            else if (Controls.IsPressed(Keys.Down))
+            else if (Controls.IsMenuDownPressed())
             {
                 offset++;
             }

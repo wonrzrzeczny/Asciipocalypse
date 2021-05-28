@@ -10,6 +10,8 @@ namespace ASCII_FPS.UI
     {
         private Stack<UIElement> stack;
 
+        public bool MenuBackPops { get; set; } = true;
+
         public UIStack(UIElement root)
         {
             stack = new Stack<UIElement>();
@@ -24,10 +26,13 @@ namespace ASCII_FPS.UI
 
         public override void Update()
         {
-            stack.Peek().Update();
-            if (Controls.IsPressed(Keys.Escape))
+            if (MenuBackPops && Controls.IsMenuBackPressed())
             {
                 Pop();
+            }
+            else
+            {
+                stack.Peek().Update();
             }
         }
 

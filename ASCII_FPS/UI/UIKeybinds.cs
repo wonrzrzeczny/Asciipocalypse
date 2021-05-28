@@ -9,6 +9,7 @@ namespace ASCII_FPS.UI
 {
     public class UIKeybinds : UIElement
     {
+        private UIStack stack;
         private readonly FieldInfo[] fields;
         private bool waitingForKey = false;
         private int option = 0;
@@ -17,8 +18,9 @@ namespace ASCII_FPS.UI
         public Action BackAction { private get; set; }
 
 
-        public UIKeybinds()
+        public UIKeybinds(UIStack stack)
         {
+            this.stack = stack;
             fields = typeof(Keybinds).GetFields();
         }
 
@@ -37,8 +39,11 @@ namespace ASCII_FPS.UI
                     {
                         if (Controls.IsPressed(button))
                         {
-                            ((Keybind)filteredFields[option - 2].GetValue(null)).Update(button);
-                            Assets.dingDing.Play();
+                            if (button != Buttons.Back)
+                            {
+                                ((Keybind)filteredFields[option - 2].GetValue(null)).Update(button);
+                                Assets.dingDing.Play();
+                            }
                             waitingForKey = false;
                             break;
                         }
@@ -59,25 +64,39 @@ namespace ASCII_FPS.UI
                         if (keys[0] != Keys.Escape)
                         {
                             ((Keybind)filteredFields[option - 2].GetValue(null)).Update(keys[0]);
+                            Assets.dingDing.Play();
                         }
-                        Assets.dingDing.Play();
                         waitingForKey = false;
                     }
+
+                    foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
+                    {
+                        if (Controls.IsPressed(button))
+                        {
+                            waitingForKey = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!waitingForKey)
+                {
+                    stack.MenuBackPops = true;
                 }
             }
             else
             {
-                if (Controls.IsPressed(Keys.Down))
+                if (Controls.IsMenuDownPressed())
                 {
                     Assets.ding.Play();
                     option = (option + 1) % (filteredFields.Length + 2);
                 }
-                else if (Controls.IsPressed(Keys.Up))
+                else if (Controls.IsMenuUpPressed())
                 {
                     Assets.ding.Play();
                     option = (option + filteredFields.Length + 1) % (filteredFields.Length + 2);
                 }
-                else if (Controls.IsPressed(Keys.Enter))
+                else if (Controls.IsMenuAcceptPressed())
                 {
                     if (option == 0)
                     {
@@ -91,6 +110,7 @@ namespace ASCII_FPS.UI
                     }
                     else
                     {
+                        stack.MenuBackPops = false;
                         waitingForKey = true;
                     }
                 }
