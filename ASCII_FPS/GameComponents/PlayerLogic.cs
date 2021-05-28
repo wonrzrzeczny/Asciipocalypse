@@ -37,10 +37,17 @@ namespace ASCII_FPS.GameComponents
                 shift -= 15f * deltaTime * scene.Camera.Right;
 
             float rotation = 0f;
-            if (Controls.IsDown(Keybinds.turnLeft))
-                rotation -= 0.5f * (float)Math.PI * deltaTime * sprintMultiplier;
-            if (Controls.IsDown(Keybinds.turnRight))
-                rotation += 0.5f * (float)Math.PI * deltaTime * sprintMultiplier;
+            if (Controls.Scheme == ControlScheme.MouseKeyboard)
+            {
+                rotation += MathF.PI * 100f * deltaTime * Controls.MouseDelta();
+            }
+            else
+            {
+                if (Controls.IsDown(Keybinds.turnLeft))
+                    rotation -= 0.5f * MathF.PI * deltaTime * sprintMultiplier;
+                if (Controls.IsDown(Keybinds.turnRight))
+                    rotation += 0.5f * MathF.PI * deltaTime * sprintMultiplier;
+            }
 
             Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
             scene.Camera.CameraPos += realShift;
@@ -76,7 +83,7 @@ namespace ASCII_FPS.GameComponents
 
             playerStats.onFire = false;
 
-            if (Controls.IsDown(Keybinds.fire))
+            if (Controls.IsDown(Keybinds.fire) || (Controls.Scheme == ControlScheme.MouseKeyboard && Controls.IsLMBDown()))
             {
                 if (playerStats.shootTime <= 0f)
                 {

@@ -198,7 +198,7 @@ namespace ASCII_FPS
         protected override void Update(GameTime gameTime)
         {
             additionalDebug = "";
-            Controls.UpdateState();
+            Controls.UpdateState(this, graphics);
 
             float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
 
