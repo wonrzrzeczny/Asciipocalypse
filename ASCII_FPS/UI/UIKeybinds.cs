@@ -1,7 +1,7 @@
-﻿using ASCII_FPS.GameComponents;
-using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.Input;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq;
 using System.Reflection;
 
 
@@ -9,6 +9,7 @@ namespace ASCII_FPS.UI
 {
     public class UIKeybinds : UIElement
     {
+        private UIStack stack;
         private readonly FieldInfo[] fields;
         private bool waitingForKey = false;
         private int option = 0;
@@ -17,45 +18,99 @@ namespace ASCII_FPS.UI
         public Action BackAction { private get; set; }
 
 
-        public UIKeybinds()
+        public UIKeybinds(UIStack stack)
         {
+            this.stack = stack;
             fields = typeof(Keybinds).GetFields();
         }
 
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
+            FieldInfo[] filteredFields =
+                   Controls.Scheme == ControlScheme.MouseKeyboard
+                   ? fields.Where(f => !f.GetCustomAttribute<KeybindAttribute>().MouseInput).ToArray()
+                   : fields;
             if (waitingForKey)
             {
-                Keys[] keys = keyboard.GetPressedKeys();
-                if (keys.Length > 0 && !keyboardPrev.IsKeyDown(keys[0]))
+                if (Controls.Scheme == ControlScheme.GamePad)
                 {
-                    fields[option - 1].SetValue(null, keys[0]);
-                    Assets.dingDing.Play();
-                    waitingForKey = false;
+                    foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
+                    {
+                        if (Controls.IsPressed(button))
+                        {
+                            if (button != Buttons.Back)
+                            {
+                                ((Keybind)filteredFields[option - 2].GetValue(null)).Update(button);
+                                Assets.dingDing.Play();
+                            }
+                            waitingForKey = false;
+                            break;
+                        }
+                    }
+
+                    Keys[] keys = Keyboard.GetState().GetPressedKeys();
+                    if (keys.Length > 0 && Controls.IsPressed(keys[0]))
+                    {
+                        waitingForKey = false;
+                    }
+                }
+                else
+                {
+                    Keys[] keys = Keyboard.GetState().GetPressedKeys();
+
+                    if (keys.Length > 0 && Controls.IsPressed(keys[0]))
+                    {
+                        if (keys[0] != Keys.Escape)
+                        {
+                            ((Keybind)filteredFields[option - 2].GetValue(null)).Update(keys[0]);
+                            Assets.dingDing.Play();
+                        }
+                        waitingForKey = false;
+                    }
+
+                    foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
+                    {
+                        if (Controls.IsPressed(button))
+                        {
+                            waitingForKey = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!waitingForKey)
+                {
+                    stack.MenuBackPops = true;
                 }
             }
             else
             {
-                if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+                if (Controls.IsMenuDownPressed())
                 {
                     Assets.ding.Play();
-                    option = (option + 1) % (fields.Length + 1);
+                    option = (option + 1) % (filteredFields.Length + 2);
                 }
-                else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+                else if (Controls.IsMenuUpPressed())
                 {
                     Assets.ding.Play();
-                    option = (option + fields.Length) % (fields.Length + 1);
+                    option = (option + filteredFields.Length + 1) % (filteredFields.Length + 2);
                 }
-                else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+                else if (Controls.IsMenuAcceptPressed())
                 {
                     if (option == 0)
                     {
-                        Assets.ding.Play();
+                        Assets.dingDing.Play();
                         BackAction.Invoke();
+                    }
+                    else if (option == 1)
+                    {
+                        Assets.dingDing.Play();
+                        Controls.Scheme = (ControlScheme)(((int)Controls.Scheme + 1) % 3);
                     }
                     else
                     {
+                        stack.MenuBackPops = false;
                         waitingForKey = true;
                     }
                 }
@@ -75,12 +130,19 @@ namespace ASCII_FPS.UI
             int c = console.Width / 2;
 
             UIUtils.Text(console, c, 12, "Back", option == 0 ? UIUtils.colorLightBlue : UIUtils.colorGray);
-            for (int i = 0; i < fields.Length; i++)
+            UIUtils.Text(console, c, 16, "Input mode - " + Controls.Scheme, option == 1 ? UIUtils.colorLightBlue : UIUtils.colorGray);
+
+            FieldInfo[] filteredFields =
+                Controls.Scheme == ControlScheme.MouseKeyboard
+                ? fields.Where(f => !f.GetCustomAttribute<KeybindAttribute>().MouseInput).ToArray()
+                : fields;
+            for (int i = 0; i < filteredFields.Length; i++)
             {
-                string keyName = fields[i].GetCustomAttribute<KeyNameAttribute>().Name;
-                string text = keyName + " - " + (waitingForKey && option == i + 1 ? "< Press key >" : fields[i].GetValue(null));
-                byte color = option == i + 1 ? UIUtils.colorLightBlue : UIUtils.colorGray;
-                UIUtils.Text(console, c, 16 + 2 * i, text, color);
+                string keyName = filteredFields[i].GetCustomAttribute<KeybindAttribute>().Name;
+                string currentBind = filteredFields[i].GetValue(null).ToString();
+                string text = keyName + " - " + (waitingForKey && option == i + 2 ? "< Press key >" : currentBind);
+                byte color = option == i + 2 ? UIUtils.colorLightBlue : UIUtils.colorGray;
+                UIUtils.Text(console, c, 19 + 2 * i, text, color);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using ASCII_FPS.Input;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 namespace ASCII_FPS.UI
@@ -46,15 +47,15 @@ namespace ASCII_FPS.UI
             }
         }
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
             if (AllowSwitching)
             {
-                if (keyboard.IsKeyDown(KeyNextTab) && !keyboardPrev.IsKeyDown(KeyNextTab))
+                if (Controls.IsPressed(KeyNextTab))
                 {
                     NextTab();
                 }
-                else if (keyboard.IsKeyDown(KeyPreviousTab) && !keyboardPrev.IsKeyDown(KeyPreviousTab))
+                else if (Controls.IsPressed(KeyPreviousTab))
                 {
                     PreviousTab();
                 }
@@ -71,7 +72,7 @@ namespace ASCII_FPS.UI
                 elements[i].IsActive = option == i;
                 if (option == i)
                 {
-                    elements[option].Update(keyboard, keyboardPrev);
+                    elements[option].Update();
                     if (switchedThisFrame)
                     {
                         switchedThisFrame = false;

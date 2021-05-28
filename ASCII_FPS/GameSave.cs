@@ -1,4 +1,5 @@
-﻿using ASCII_FPS.GameComponents;
+﻿using ASCII_FPS.Input;
+using ASCII_FPS.GameComponents;
 using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -87,11 +88,12 @@ namespace ASCII_FPS
                 writer.WriteLine("Difficulty=" + ASCII_FPS.Difficulty);
                 writer.WriteLine("EyeEasy=" + Rasterizer.EyeEasy);
                 writer.WriteLine("Fullscreen=" + graphics.IsFullScreen);
-                
+                writer.WriteLine("InputMode=" + Controls.Scheme);
+
                 // Reflections hacks once more
                 foreach (FieldInfo fieldInfo in typeof(Keybinds).GetFields())
                 {
-                    writer.WriteLine("Keybind " + fieldInfo.Name + "=" + fieldInfo.GetValue(null));
+                    writer.WriteLine("Keybind " + fieldInfo.Name + "=" + ((Keybind)fieldInfo.GetValue(null)).Serialize());
                 }
             }
         }
@@ -153,7 +155,7 @@ namespace ASCII_FPS
                     if (key.StartsWith("Keybind"))
                     {
                         string name = key.Substring(8);
-                        if (Enum.TryParse(data, out Keys keybind))
+                        if (Keybind.TryParse(data, out Keybind keybind))
                             typeof(Keybinds).GetField(name).SetValue(null, keybind);
                     }
                     else switch(key)
@@ -172,6 +174,10 @@ namespace ASCII_FPS
                                 break;
                             case "Fullscreen":
                                 graphics.IsFullScreen = bool.Parse(data);
+                                break;
+                            case "InputMode":
+                                if (Enum.TryParse(data, out ControlScheme scheme))
+                                    Controls.Scheme = scheme;
                                 break;
                         }
                 }

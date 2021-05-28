@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using ASCII_FPS.UI;
 using System.Collections.Generic;
+using ASCII_FPS.Input;
 
 namespace ASCII_FPS
 {
@@ -194,20 +195,19 @@ namespace ASCII_FPS
         }
 
 
-        KeyboardState keyboardPrev;
         protected override void Update(GameTime gameTime)
         {
             additionalDebug = "";
-            KeyboardState keyboard = Keyboard.GetState();
+            Controls.UpdateState(this, graphics);
 
             float deltaTime = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
 
             if (gameState == GameState.Game)
             {
-                if (keyboard.IsKeyDown(Keys.OemOpenBrackets) && keyboard.IsKeyDown(Keys.OemCloseBrackets) && keyboard.IsKeyDown(Keys.LeftShift))
+                if (Controls.IsDown(Keys.OemCloseBrackets) && Controls.IsDown(Keys.OemOpenBrackets) && Controls.IsDown(Keys.LeftShift))
                     enableDebug = !enableDebug;
 
-                if (keyboard.IsKeyDown(Keys.Escape))
+                if (Controls.IsInGameBackPressed())
                 {
                     if (PlayerStats.dead)
                     {
@@ -224,7 +224,7 @@ namespace ASCII_FPS
                     gameState = GameState.MainMenu;
                 }
 
-                if (playerLogic.Update(deltaTime, keyboard, keyboardPrev))
+                if (playerLogic.Update(deltaTime))
                 {
                     Assets.theme.Play();
                     Scene = SelectGenerator(PlayerStats.floor, PlayerStats.seed).Generate();
@@ -265,10 +265,9 @@ namespace ASCII_FPS
             }
             else if (gameState == GameState.MainMenu)
             {
-                menuGroup.Update(keyboard, keyboardPrev);
+                menuGroup.Update();
             }
 
-            keyboardPrev = keyboard;
         
             
             // Update effects

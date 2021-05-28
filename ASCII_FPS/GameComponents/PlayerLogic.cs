@@ -1,9 +1,8 @@
-﻿using ASCII_FPS.Scenes;
+﻿using ASCII_FPS.Input;
+using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ASCII_FPS.GameComponents
 {
@@ -17,7 +16,7 @@ namespace ASCII_FPS.GameComponents
         }
 
 
-        public bool Update(float deltaTime, KeyboardState keyboard, KeyboardState keyboardPrev)
+        public bool Update(float deltaTime)
         {
             PlayerStats playerStats = game.PlayerStats;
             if (playerStats.dead)
@@ -25,23 +24,30 @@ namespace ASCII_FPS.GameComponents
 
             Scene scene = game.Scene;
 
-            float sprintMultiplier = keyboard.IsKeyDown(Keybinds.sprint) ? 2.5f : 1f;
+            float sprintMultiplier = Controls.IsDown(Keybinds.sprint) ? 2.5f : 1f;
 
             Vector3 shift = Vector3.Zero;
-            if (keyboard.IsKeyDown(Keybinds.forward))
+            if (Controls.IsDown(Keybinds.forward))
                 shift += 20f * deltaTime * scene.Camera.Forward * sprintMultiplier;
-            if (keyboard.IsKeyDown(Keybinds.backwards))
+            if (Controls.IsDown(Keybinds.backwards))
                 shift -= 20f * deltaTime * scene.Camera.Forward;
-            if (keyboard.IsKeyDown(Keybinds.strafeRight))
+            if (Controls.IsDown(Keybinds.strafeRight))
                 shift += 15f * deltaTime * scene.Camera.Right;
-            if (keyboard.IsKeyDown(Keybinds.strafeLeft))
+            if (Controls.IsDown(Keybinds.strafeLeft))
                 shift -= 15f * deltaTime * scene.Camera.Right;
 
             float rotation = 0f;
-            if (keyboard.IsKeyDown(Keybinds.turnLeft))
-                rotation -= 0.5f * (float)Math.PI * deltaTime * sprintMultiplier;
-            if (keyboard.IsKeyDown(Keybinds.turnRight))
-                rotation += 0.5f * (float)Math.PI * deltaTime * sprintMultiplier;
+            if (Controls.Scheme == ControlScheme.MouseKeyboard)
+            {
+                rotation += MathF.PI * 100f * deltaTime * Controls.MouseDelta();
+            }
+            else
+            {
+                if (Controls.IsDown(Keybinds.turnLeft))
+                    rotation -= 0.5f * MathF.PI * deltaTime * sprintMultiplier;
+                if (Controls.IsDown(Keybinds.turnRight))
+                    rotation += 0.5f * MathF.PI * deltaTime * sprintMultiplier;
+            }
 
             Vector3 realShift = scene.SmoothMovement(scene.Camera.CameraPos, shift, PlayerStats.thickness);
             scene.Camera.CameraPos += realShift;
@@ -77,7 +83,7 @@ namespace ASCII_FPS.GameComponents
 
             playerStats.onFire = false;
 
-            if (keyboard.IsKeyDown(Keybinds.fire))
+            if (Controls.IsDown(Keybinds.fire) || (Controls.Scheme == ControlScheme.MouseKeyboard && Controls.IsLMBDown()))
             {
                 if (playerStats.shootTime <= 0f)
                 {
@@ -89,7 +95,7 @@ namespace ASCII_FPS.GameComponents
                 }
             }
 
-            if (keyboard.IsKeyDown(Keybinds.action) && keyboardPrev.IsKeyUp(Keybinds.action))
+            if (Controls.IsPressed(Keybinds.action))
             {
                 if (Vector3.Distance(scene.Camera.CameraPos, new Vector3(playerStats.exitPosition.X, 0f, playerStats.exitPosition.Y)) < 7f
                     && 2 * playerStats.monsters >= playerStats.totalMonsters)
@@ -128,7 +134,7 @@ namespace ASCII_FPS.GameComponents
                 }
             }
 
-            if (playerStats.skillPoints > 0 && keyboard.IsKeyDown(Keybinds.skills) && !keyboardPrev.IsKeyDown(Keybinds.skills))
+            if (playerStats.skillPoints > 0 && Controls.IsPressed(Keybinds.skills))
             {
                 HUD.skillPointMenu = !HUD.skillPointMenu;
             }
@@ -138,7 +144,7 @@ namespace ASCII_FPS.GameComponents
             }
             if (HUD.skillPointMenu)
             {
-                if (keyboard.IsKeyDown(Keys.D1) && !keyboardPrev.IsKeyDown(Keys.D1))
+                if (Controls.IsPressed(Keybinds.skill1))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillMaxHealth++;
@@ -146,7 +152,7 @@ namespace ASCII_FPS.GameComponents
                     playerStats.AddHealth(20f);
                     Achievements.UnlockLeveled("HP", playerStats.skillMaxHealth, game.HUD);
                 }
-                else if (keyboard.IsKeyDown(Keys.D2) && !keyboardPrev.IsKeyDown(Keys.D2))
+                else if (Controls.IsPressed(Keybinds.skill2))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillMaxArmor++;
@@ -154,14 +160,14 @@ namespace ASCII_FPS.GameComponents
                     playerStats.AddArmor(20f);
                     Achievements.UnlockLeveled("Armor", playerStats.skillMaxArmor, game.HUD);
                 }
-                else if (keyboard.IsKeyDown(Keys.D3) && !keyboardPrev.IsKeyDown(Keys.D3) && playerStats.skillArmorProtection < 35)
+                else if (Controls.IsPressed(Keybinds.skill3) && playerStats.skillArmorProtection < 35)
                 {
                     playerStats.skillPoints--;
                     playerStats.skillArmorProtection++;
                     playerStats.armorProtection += 0.02f;
                     Achievements.UnlockLeveled("AP", playerStats.skillArmorProtection, game.HUD);
                 }
-                else if (keyboard.IsKeyDown(Keys.D4) && !keyboardPrev.IsKeyDown(Keys.D4))
+                else if (Controls.IsPressed(Keybinds.skill4))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillShootingSpeed++;

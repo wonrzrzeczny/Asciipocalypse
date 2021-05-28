@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ASCII_FPS.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace ASCII_FPS.UI
         public UIMenu() : this(UIPosition.TopLeft, UIPosition.BottomRight) { }
 
 
-        public override void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public override void Update()
         {
             if (!IsActive)
             {
@@ -49,7 +50,7 @@ namespace ASCII_FPS.UI
                 }
             }
 
-            if (keyboard.IsKeyDown(Keys.Down) && !keyboardPrev.IsKeyDown(Keys.Down))
+            if (Controls.IsMenuDownPressed())
             {
                 Assets.ding.Play();
                 int? next = GetNextSlot(option);
@@ -62,7 +63,7 @@ namespace ASCII_FPS.UI
                     option = next.Value;
                 }
             }
-            else if (keyboard.IsKeyDown(Keys.Up) && !keyboardPrev.IsKeyDown(Keys.Up))
+            else if (Controls.IsMenuUpPressed())
             {
                 Assets.ding.Play();
                 int? prev = GetPreviousSlot(option);
@@ -75,7 +76,7 @@ namespace ASCII_FPS.UI
                     option = prev.Value;
                 }
             }
-            else if (keyboard.IsKeyDown(Keys.Enter) && !keyboardPrev.IsKeyDown(Keys.Enter))
+            else if (Controls.IsMenuAcceptPressed())
             {
                 Assets.dingDing.Play();
                 entries[option].Call();

@@ -1,4 +1,4 @@
-﻿using ASCII_FPS.GameComponents;
+﻿using ASCII_FPS.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -34,14 +34,13 @@ namespace ASCII_FPS.UI
         public MainMenuGroup()
         {
             mainTab = new UICollection();
+            uiStack = new UIStack(mainTab);
             mainMenu = new UIMenu();
             tutorialMenu = new UIMenu();
             optionsTab = new UICollection();
-            keybindsMenu = new UIKeybinds();
+            keybindsMenu = new UIKeybinds(uiStack);
             achievementsMenu = new UIAchievements();
             badVersionPopup = new UIMenu();
-
-            uiStack = new UIStack(mainTab);
         }
 
         public void Init(bool firstRun)
@@ -123,7 +122,7 @@ namespace ASCII_FPS.UI
             difficultyMenu.AddEntry(new MenuEntry(16, "Easy", SelectDifficultyAction(-1), UIUtils.colorGray, UIUtils.colorLightBlue));
             difficultyMenu.AddEntry(new MenuEntry(18, "Normal (recommended)", SelectDifficultyAction(0), UIUtils.colorGray, UIUtils.colorLightBlue));
             difficultyMenu.AddEntry(new MenuEntry(20, "Hard", SelectDifficultyAction(1), UIUtils.colorGray, UIUtils.colorLightBlue));
-
+            
 
             UIMenu eyeEasyNotice = new UIMenu();
             eyeEasyNotice.AddEntry(new MenuEntry(12, "! Warning !", UIUtils.colorWhite));
@@ -214,13 +213,19 @@ namespace ASCII_FPS.UI
             tutorialMenu.AddEntry(new MenuEntry(12, "Controls", UIUtils.colorWhite));
 
             tutorialMenu.AddEntry(new MenuEntry(16, () => "Walk forward / backwards - " + Keybinds.forward + " / " + Keybinds.backwards, UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(18, () => "Turn left / right - " + Keybinds.turnLeft + " / " + Keybinds.turnRight, UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(18, 
+                () => "Turn left / right - " + (Controls.Scheme == ControlScheme.MouseKeyboard ? "Mouse" : Keybinds.turnLeft + " / " + Keybinds.turnRight),
+                UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(20, () => "Strafe left / right - " + Keybinds.strafeLeft + " / " + Keybinds.strafeRight, UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(22, () => "Hold " + Keybinds.sprint + " - faster movement", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(24, () => "Hold " + Keybinds.fire + " - shoot", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(24,
+                () => "Hold " + (Controls.Scheme == ControlScheme.MouseKeyboard ? "LMB" : Keybinds.fire.ToString()) + " - shoot",
+                UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(26, () => Keybinds.action + " - use barrel / ladder", UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(28, () => Keybinds.skills + " - skill menu", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(30, () => "1/2/3/4 - upgrade skill", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(30,
+                () => Keybinds.skill1 + "/" + Keybinds.skill2 + "/"
+                    + Keybinds.skill3 + "/" + Keybinds.skill4 + " - upgrade skill", UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(32, () => "Escape - pause game", UIUtils.colorWhite));
 
             tutorialMenu.AddEntry(new MenuEntry(36, "To progress you must kill at least half of the monsters on the floor", UIUtils.colorWhite));
@@ -232,9 +237,9 @@ namespace ASCII_FPS.UI
         }
 
 
-        public void Update(KeyboardState keyboard, KeyboardState keyboardPrev)
+        public void Update()
         {
-            uiStack.Update(keyboard, keyboardPrev);
+            uiStack.Update();
         }
 
         public void Draw(Console console)
