@@ -188,6 +188,7 @@ namespace ASCII_FPS
             {
                 () => new SceneGeneratorJungle(this, floor),
                 () => new SceneGeneratorLava(this, floor),
+                () => new SceneGeneratorIce(this, floor)
             };
             Mathg.Shuffle(new Random(seed), gens);
             gens.Insert(0, () => new SceneGeneratorDefault(this, floor));
