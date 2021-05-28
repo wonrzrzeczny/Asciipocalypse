@@ -1,6 +1,7 @@
 ﻿using ASCII_FPS.Input;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq;
 using System.Reflection;
 
 
@@ -24,15 +25,44 @@ namespace ASCII_FPS.UI
 
         public override void Update()
         {
+            FieldInfo[] filteredFields =
+                   Controls.Scheme == ControlScheme.MouseKeyboard
+                   ? fields.Where(f => !f.GetCustomAttribute<KeybindAttribute>().MouseInput).ToArray()
+                   : fields;
             if (waitingForKey)
             {
-                Keys[] keys = Keyboard.GetState().GetPressedKeys();
-
-                if (keys.Length > 0 && Controls.IsPressed(keys[0]))
+                if (Controls.Scheme == ControlScheme.GamePad)
                 {
-                    ((Keybind)fields[option - 2].GetValue(null)).Update(keys[0]);
-                    Assets.dingDing.Play();
-                    waitingForKey = false;
+                    foreach (Buttons button in Enum.GetValues(typeof(Buttons)))
+                    {
+                        if (Controls.IsPressed(button))
+                        {
+                            ((Keybind)filteredFields[option - 2].GetValue(null)).Update(button);
+                            Assets.dingDing.Play();
+                            waitingForKey = false;
+                            break;
+                        }
+                    }
+
+                    Keys[] keys = Keyboard.GetState().GetPressedKeys();
+                    if (keys.Length > 0 && Controls.IsPressed(keys[0]))
+                    {
+                        waitingForKey = false;
+                    }
+                }
+                else
+                {
+                    Keys[] keys = Keyboard.GetState().GetPressedKeys();
+
+                    if (keys.Length > 0 && Controls.IsPressed(keys[0]))
+                    {
+                        if (keys[0] != Keys.Escape)
+                        {
+                            ((Keybind)filteredFields[option - 2].GetValue(null)).Update(keys[0]);
+                        }
+                        Assets.dingDing.Play();
+                        waitingForKey = false;
+                    }
                 }
             }
             else
@@ -40,12 +70,12 @@ namespace ASCII_FPS.UI
                 if (Controls.IsPressed(Keys.Down))
                 {
                     Assets.ding.Play();
-                    option = (option + 1) % (fields.Length + 2);
+                    option = (option + 1) % (filteredFields.Length + 2);
                 }
                 else if (Controls.IsPressed(Keys.Up))
                 {
                     Assets.ding.Play();
-                    option = (option + fields.Length + 1) % (fields.Length + 2);
+                    option = (option + filteredFields.Length + 1) % (filteredFields.Length + 2);
                 }
                 else if (Controls.IsPressed(Keys.Enter))
                 {
@@ -81,10 +111,15 @@ namespace ASCII_FPS.UI
 
             UIUtils.Text(console, c, 12, "Back", option == 0 ? UIUtils.colorLightBlue : UIUtils.colorGray);
             UIUtils.Text(console, c, 16, "Input mode - " + Controls.Scheme, option == 1 ? UIUtils.colorLightBlue : UIUtils.colorGray);
-            for (int i = 0; i < fields.Length; i++)
+
+            FieldInfo[] filteredFields =
+                Controls.Scheme == ControlScheme.MouseKeyboard
+                ? fields.Where(f => !f.GetCustomAttribute<KeybindAttribute>().MouseInput).ToArray()
+                : fields;
+            for (int i = 0; i < filteredFields.Length; i++)
             {
-                string keyName = fields[i].GetCustomAttribute<KeyNameAttribute>().Name;
-                string currentBind = fields[i].GetValue(null).ToString();
+                string keyName = filteredFields[i].GetCustomAttribute<KeybindAttribute>().Name;
+                string currentBind = filteredFields[i].GetValue(null).ToString();
                 string text = keyName + " - " + (waitingForKey && option == i + 2 ? "< Press key >" : currentBind);
                 byte color = option == i + 2 ? UIUtils.colorLightBlue : UIUtils.colorGray;
                 UIUtils.Text(console, c, 19 + 2 * i, text, color);

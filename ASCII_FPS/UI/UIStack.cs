@@ -24,13 +24,10 @@ namespace ASCII_FPS.UI
 
         public override void Update()
         {
+            stack.Peek().Update();
             if (Controls.IsPressed(Keys.Escape))
             {
                 Pop();
-            }
-            else
-            {
-                stack.Peek().Update();
             }
         }
 
