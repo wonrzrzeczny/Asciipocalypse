@@ -1,4 +1,5 @@
-﻿using ASCII_FPS.Scenes;
+﻿using ASCII_FPS.Input;
+using ASCII_FPS.Scenes;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -99,10 +100,10 @@ namespace ASCII_FPS.GameComponents
             {
                 Rectangle(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorBlack, ' ');
                 Border(console.Width / 2 - 30, -11, console.Width / 2 + 30, -1, colorGray, '@');
-                Text(console.Width / 2, -9, "(1) Max health lvl. " + game.PlayerStats.skillMaxHealth, colorWhite);
-                Text(console.Width / 2, -7, "(2) Max armor lvl. " + game.PlayerStats.skillMaxArmor, colorWhite);
-                Text(console.Width / 2, -5, "(3) Armor protection lvl. " + game.PlayerStats.skillArmorProtection, colorWhite);
-                Text(console.Width / 2, -3, "(4) Shooting speed lvl. " + game.PlayerStats.skillShootingSpeed, colorWhite);
+                Text(console.Width / 2, -9, "(" + Keybinds.skill1 + ") Max health lvl. " + game.PlayerStats.skillMaxHealth, colorWhite);
+                Text(console.Width / 2, -7, "(" + Keybinds.skill2 + ") Max armor lvl. " + game.PlayerStats.skillMaxArmor, colorWhite);
+                Text(console.Width / 2, -5, "(" + Keybinds.skill3 + ") Armor protection lvl. " + game.PlayerStats.skillArmorProtection, colorWhite);
+                Text(console.Width / 2, -3, "(" + Keybinds.skill4 + ") Shooting speed lvl. " + game.PlayerStats.skillShootingSpeed, colorWhite);
             }
 
             if (Hint != "")

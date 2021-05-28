@@ -144,7 +144,7 @@ namespace ASCII_FPS.GameComponents
             }
             if (HUD.skillPointMenu)
             {
-                if (Controls.IsPressed(Keys.D1))
+                if (Controls.IsPressed(Keybinds.skill1))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillMaxHealth++;
@@ -152,7 +152,7 @@ namespace ASCII_FPS.GameComponents
                     playerStats.AddHealth(20f);
                     Achievements.UnlockLeveled("HP", playerStats.skillMaxHealth, game.HUD);
                 }
-                else if (Controls.IsPressed(Keys.D2))
+                else if (Controls.IsPressed(Keybinds.skill2))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillMaxArmor++;
@@ -160,14 +160,14 @@ namespace ASCII_FPS.GameComponents
                     playerStats.AddArmor(20f);
                     Achievements.UnlockLeveled("Armor", playerStats.skillMaxArmor, game.HUD);
                 }
-                else if (Controls.IsPressed(Keys.D3) && playerStats.skillArmorProtection < 35)
+                else if (Controls.IsPressed(Keybinds.skill3) && playerStats.skillArmorProtection < 35)
                 {
                     playerStats.skillPoints--;
                     playerStats.skillArmorProtection++;
                     playerStats.armorProtection += 0.02f;
                     Achievements.UnlockLeveled("AP", playerStats.skillArmorProtection, game.HUD);
                 }
-                else if (Controls.IsPressed(Keys.D4))
+                else if (Controls.IsPressed(Keybinds.skill4))
                 {
                     playerStats.skillPoints--;
                     playerStats.skillShootingSpeed++;

@@ -223,7 +223,9 @@ namespace ASCII_FPS.UI
                 UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(26, () => Keybinds.action + " - use barrel / ladder", UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(28, () => Keybinds.skills + " - skill menu", UIUtils.colorWhite));
-            tutorialMenu.AddEntry(new MenuEntry(30, () => "1/2/3/4 - upgrade skill", UIUtils.colorWhite));
+            tutorialMenu.AddEntry(new MenuEntry(30,
+                () => Keybinds.skill1 + "/" + Keybinds.skill2 + "/"
+                    + Keybinds.skill3 + "/" + Keybinds.skill4 + " - upgrade skill", UIUtils.colorWhite));
             tutorialMenu.AddEntry(new MenuEntry(32, () => "Escape - pause game", UIUtils.colorWhite));
 
             tutorialMenu.AddEntry(new MenuEntry(36, "To progress you must kill at least half of the monsters on the floor", UIUtils.colorWhite));
