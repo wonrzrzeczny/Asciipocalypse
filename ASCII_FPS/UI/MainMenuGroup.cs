@@ -139,8 +139,25 @@ namespace ASCII_FPS.UI
             eyeEasyNotice.AddEntry(new MenuEntry(27, "K", () => { uiStack.Pop(); SaveOptions(); }, UIUtils.colorWhite, UIUtils.colorLightBlue));
 
 
+            UIMenu controlsMenu = new UIMenu();
+
+            Action SelectInputModeAction(int id) => () =>
+            {
+                Controls.Scheme = (ControlScheme)id;
+                uiStack.Pop();
+            };
+
+            controlsMenu.AddEntry(new MenuEntry(12, "Select input mode", UIUtils.colorWhite));
+            controlsMenu.AddEntry(new MenuEntry(16, "Keyboard only (recommended)", SelectInputModeAction(0), UIUtils.colorGray, UIUtils.colorLightBlue));
+            controlsMenu.AddEntry(new MenuEntry(18, "Mouse + Keyboard", SelectInputModeAction(1), UIUtils.colorGray, UIUtils.colorLightBlue));
+            controlsMenu.AddEntry(new MenuEntry(20, "Gamepad", SelectInputModeAction(2), UIUtils.colorGray, UIUtils.colorLightBlue));
+            controlsMenu.AddEntry(new MenuEntry(23, "How scary it may sound, we highly recommend to at least try", UIUtils.colorGray));
+            controlsMenu.AddEntry(new MenuEntry(24, "several games using the keyboard only mode.", UIUtils.colorGray));
+
+
             uiStack.Push(eyeEasyNotice);
             uiStack.Push(difficultyMenu);
+            uiStack.Push(controlsMenu);
         }
 
         private void InitOptionsMenu()
