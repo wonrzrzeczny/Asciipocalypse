@@ -174,7 +174,7 @@ namespace ASCII_FPS.Scenes
                     {
                         if (!visited[q.X, q.Y])
                         {
-                            float pruneChance = (float)Math.Max(0f, 1 - roomsLeft / (sizeX + sizeY));
+                            float pruneChance = (float)Math.Max(0f, 1 - 0.3f * roomsLeft / (sizeX + sizeY));
                             if (rand.NextDouble() > pruneChance)
                             {
                                 visited[q.X, q.Y] = true;

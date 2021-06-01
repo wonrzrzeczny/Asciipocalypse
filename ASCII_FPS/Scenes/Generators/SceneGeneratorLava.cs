@@ -57,6 +57,16 @@ namespace ASCII_FPS.Scenes.Generators
                     }
                 }
             }
+
+            corridorWidths[size / 2, size / 2, 0] *= 0.5f;
+            corridorWidths[size / 2, size / 2, 1] *= 0.5f;
+            corridorWidths[size / 2, size / 2, 2] *= 0.5f;
+            corridorWidths[size / 2, size / 2, 3] *= 0.5f;
+
+            corridorWidths[size / 2 - 1, size / 2, 0] *= 0.5f;
+            corridorWidths[size / 2, size / 2 - 1, 1] *= 0.5f;
+            corridorWidths[size / 2 + 1, size / 2, 2] *= 0.5f;
+            corridorWidths[size / 2, size / 2 + 1, 3] *= 0.5f;
         }
 
         protected override Collectible.Type?[,] DistributeCollectibles()
