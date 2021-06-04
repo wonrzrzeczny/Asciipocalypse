@@ -89,6 +89,8 @@ namespace ASCII_FPS
                 writer.WriteLine("EyeEasy=" + Rasterizer.EyeEasy);
                 writer.WriteLine("Fullscreen=" + graphics.IsFullScreen);
                 writer.WriteLine("InputMode=" + Controls.Scheme);
+                writer.WriteLine("Gamma=" + Rasterizer.Gamma);
+                writer.WriteLine("MouseSensitivity=" + Controls.MouseSensitivity);
 
                 // Reflections hacks once more
                 foreach (FieldInfo fieldInfo in typeof(Keybinds).GetFields())
@@ -178,6 +180,12 @@ namespace ASCII_FPS
                             case "InputMode":
                                 if (Enum.TryParse(data, out ControlScheme scheme))
                                     Controls.Scheme = scheme;
+                                break;
+                            case "Gamma":
+                                Rasterizer.Gamma = float.Parse(data);
+                                break;
+                            case "MouseSensitivity":
+                                Controls.MouseSensitivity = float.Parse(data);
                                 break;
                         }
                 }

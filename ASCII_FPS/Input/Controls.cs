@@ -12,13 +12,15 @@ namespace ASCII_FPS.Input
 
     public static class Controls
     {
+        public static float MouseSensitivity { get; set; } = 1f;
+
         private static KeyboardState kbState0, kbState1;
         private static GamePadState gpState0, gpState1;
         private static MouseState mState;
 
         // Mouse movement is smoothed over time, because Monogame sometimes has problems with querying mouse position in time
         private static float mouseDelta;
-        private static float[] mouseDeltaBuffer;
+        private static readonly float[] mouseDeltaBuffer;
         private static int mouseDeltaBufferCtr;
         private static int screenWidth, screenHeight;
         private const int mouseDeltaBufferSize = 5;
@@ -70,7 +72,7 @@ namespace ASCII_FPS.Input
         public static bool IsUp(Buttons button) => gpState1.IsButtonUp(button);
         public static bool IsUp(Keybind keybind) => !keybind.IsDown(kbState1, gpState1, Scheme);
 
-        public static float MouseDelta() => mouseDelta;
+        public static float MouseDelta() => mouseDelta * MouseSensitivity;
         public static bool IsLMBDown() => mState.LeftButton == ButtonState.Pressed;
 
         public static bool IsMenuDownPressed() => IsPressed(Keys.Down) || IsPressed(Keys.S) ||

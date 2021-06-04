@@ -162,7 +162,7 @@ namespace ASCII_FPS.UI
 
         private void InitOptionsMenu()
         {
-            const int resolutionY = 26;
+            const int resolutionY = 28;
             UIMenu optionsMenu = new UIMenu();
 
             // Options main
@@ -200,7 +200,13 @@ namespace ASCII_FPS.UI
                 () => Rasterizer.EyeEasy = !Rasterizer.EyeEasy,
                 UIUtils.colorGray, UIUtils.colorLightBlue
             ));
-            optionsMenu.AddEntry(new MenuEntry(22, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
+            optionsMenu.AddEntry(new MenuEntry(
+                22,
+                () => "Brightness: +" + MathF.Round(Rasterizer.Gamma, 1),
+                () => Rasterizer.Gamma = (((int)MathF.Round(Rasterizer.Gamma * 5f) + 1) % 6) * 0.2f,
+                UIUtils.colorGray, UIUtils.colorLightBlue
+            ));
+            optionsMenu.AddEntry(new MenuEntry(24, "Fullscreen", ChangeFullScreen, UIUtils.colorGray, UIUtils.colorLightBlue));
 
             optionsMenu.AddEntry(new MenuEntry(resolutionY, "Resolution", UIUtils.colorWhite));
 

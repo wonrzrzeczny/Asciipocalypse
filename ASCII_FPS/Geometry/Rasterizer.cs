@@ -9,6 +9,7 @@ namespace ASCII_FPS
     public class Rasterizer
     {
         public static bool EyeEasy { get; set; } = false;
+        public static float Gamma { get; set; } = 0f;
 
         private Console console;
         private float[,] offset; // depth offset
@@ -121,13 +122,13 @@ namespace ASCII_FPS
                         {
                             float d = Math.Clamp(1f - (float)Math.Pow(z, 25), 0f, 1f);
                             console.Data[i, j] = '@';
-                            console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv) * d);
+                            console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv) * d * (1f + Gamma));
                         }
                         else
                         {
                             int fogId = (z < 0) ? 0 : Math.Min((int)(Math.Pow(z, 10) * fogString.Length + offset[i, j]), fogString.Length - 1);
                             console.Data[i, j] = fogString[fogId];
-                            console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv));
+                            console.Color[i, j] = Mathg.ColorTo8Bit(triangle.Texture.Sample(uv) * (1f + Gamma));
                         }
                     }
                 }
