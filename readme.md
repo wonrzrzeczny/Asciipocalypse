@@ -18,9 +18,9 @@ Everything shown on the screen (scene, UI, etc.) is first passed to a simple 8-b
 
 Screenshots
 -----------
-![](/Screenshots/game2.png)
+![](/Screenshots/jungle2.png)
 ![](/Screenshots/game4.png)
-![](/Screenshots/game5.png)
+![](/Screenshots/lava1.png)
 
 
 Technology used
@@ -33,4 +33,4 @@ Sound effects created using [Magical 8bit VST plugin](http://www.ymck.net/en/dow
 
 Final remarks
 -------------
-The project started over a year ago and has already been through a major update. However, the game in terms of gameplay still lacks some content. I plan to keep working on the game (as long as I'll find time to do so :) ), to improve its replay value and to make overall experience more diverse. Therefore, feel free to leave any suggestions for new content/improvements that could be introduced. The same goes for glitches and/or performance issues you've encountered during your play.
+The project started over a year ago and has already been through several major updates. I plan to keep working on in (as long as I'll find time to do so :) ), to improve Asciipocalypse's replay value and to make overall experience more diverse. Therefore, feel free to leave any suggestions for new content/improvements that could be introduced. The same goes for any glitches and/or performance issues you've encountered during your play.
