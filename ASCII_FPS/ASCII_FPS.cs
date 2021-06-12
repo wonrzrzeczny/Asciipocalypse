@@ -15,7 +15,7 @@ namespace ASCII_FPS
 {
     public class ASCII_FPS : Game
     {
-        public const string VERSION = "v1.1";
+        public const string VERSION = "v1.2";
 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;

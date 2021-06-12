@@ -43,13 +43,17 @@ namespace ASCII_FPS.GameComponents.Enemies
                 float distance = (targetPosition - Position).Length();
                 Vector3 desiredVelocity = (targetPosition - Position) / distance * Math.Min(Speed, 8f * distance);
                 Vector3 correction = desiredVelocity - velocity;
+                if (correction.Length() > 0.01f)
+                {
+                    correction = Vector3.Normalize(correction);
+                }
 
-                velocity += Vector3.Normalize(deltaTime * acceleration * Vector3.Normalize(correction));
+                velocity += Vector3.Normalize(deltaTime * acceleration * correction);
             }
             
-            if (velocity.Length() > 0f)
+            if (velocity.Length() > Speed)
             {
-                velocity = Vector3.Normalize(velocity) * Math.Min(Speed, velocity.Length());
+                velocity = Vector3.Normalize(velocity) * Speed;
             }
             Position += Scene.SmoothMovement(Position, velocity * deltaTime, HitRadius, ObstacleLayerMask.GetMask(ObstacleLayer.Wall));
 

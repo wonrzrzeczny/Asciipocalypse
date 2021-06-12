@@ -126,7 +126,7 @@ namespace ASCII_FPS.Scenes.Generators
                 {
                     SceneStructures.Pillars4Inner(Assets.jungleWallTexture),
                     SceneStructures.FancyPillars2(Assets.jungleWallTexture, rand.Next(2)),
-                    SceneStructures.JungleBushes(game, rand, bushMonsterChance)
+                    SceneStructures.JungleBushes(game, rand, bushMonsterChance, monsterHP, monsterDamage)
                 };
 
                 if (flags.ClearCenter)

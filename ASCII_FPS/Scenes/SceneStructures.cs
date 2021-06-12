@@ -126,7 +126,8 @@ namespace ASCII_FPS.Scenes
 
 
 
-        public static Generator JungleBushes(ASCII_FPS game, Random rng, float monsterChance) => (Scene scene, Zone zone, Vector3 roomCenter) =>
+        public static Generator JungleBushes(ASCII_FPS game, Random rng, float monsterChance, float bushHP, float monsterDamage)
+            => (Scene scene, Zone zone, Vector3 roomCenter) =>
         {
             new List<(int, int)> { (-1, -1), (-1, 1), (1, -1), (1, 1) }
                 .ForEach(((int, int) p) =>
@@ -136,7 +137,7 @@ namespace ASCII_FPS.Scenes
 
                     if (rng.NextDouble() < monsterChance)
                     {
-                        scene.AddGameObject(new BushMonster(position + new Vector3(0f, -3.25f, 0f), 10f, 5f));
+                        scene.AddGameObject(new BushMonster(position + new Vector3(0f, -3.25f, 0f), bushHP, monsterDamage));
                         game.PlayerStats.totalMonsters++;
                     }
                 });
