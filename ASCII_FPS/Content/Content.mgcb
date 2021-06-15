@@ -74,12 +74,12 @@
 /processorParam:Quality=Best
 /build:audio/tsch.wav
 
-#begin Font.spritefont
+#begin font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Font.spritefont
+/build:font.spritefont
 
 #begin models/barrel.obj
 /importer:OBJImporter

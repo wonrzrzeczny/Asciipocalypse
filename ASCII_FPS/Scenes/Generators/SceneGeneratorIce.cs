@@ -93,7 +93,7 @@ namespace ASCII_FPS.Scenes.Generators
                         () => new BasicMonster(position3, monsterHP, monsterDamage),
                         () => new IceMonster(position3, monsterHP, monsterDamage * 0.3f),
                         () => new ShotgunDude(position3, monsterHP, monsterDamage),
-                        () => new IceShotgunDude(position3, monsterHP, monsterDamage * 0.3f),
+                        () => new IceShotgunDude(position3, monsterHP, monsterDamage * 0.6f),
                         () => new SpinnyBoi(position3, monsterHP * 2, monsterDamage),
                         () => new Spooper(position3, monsterHP * 1.5f, monsterDamage)
                     }, monsterChances);

@@ -48,7 +48,7 @@ namespace ASCII_FPS.GameComponents.Enemies
                     correction = Vector3.Normalize(correction);
                 }
 
-                velocity += Vector3.Normalize(deltaTime * acceleration * correction);
+                velocity += deltaTime * acceleration * correction;
             }
             
             if (velocity.Length() > Speed)

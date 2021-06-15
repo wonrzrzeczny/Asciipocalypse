@@ -38,16 +38,20 @@ namespace ASCII_FPS.GameComponents
         public override void Update(float deltaTime)
         {
             Vector2 camPos = new Vector2(Camera.CameraPos.X, Camera.CameraPos.Z);
-            if (bounds.TestPoint(camPos))
+            if (soundTimer >= 0f)
             {
                 soundTimer -= deltaTime;
+            }
+                
+            if (bounds.TestPoint(camPos))
+            {
                 if (soundTimer < 0f)
                 {
                     soundTimer = 0.25f;
                     Assets.burn.Play();
                 }
 
-                Game.PlayerStats.DealDamage(5f * deltaTime, false);
+                Game.PlayerStats.DealDamage(10f * deltaTime, false);
                 Game.PlayerStats.onFire = true;
             }
         }
